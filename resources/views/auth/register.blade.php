@@ -1,38 +1,60 @@
-@extends('layouts.guest')
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Jejak Layar</title>
+    @vite('resources/css/app.css')
+</head>
+<body class="bg-yellow-100 flex items-center justify-center min-h-screen">
 
-@section('content')
-<h2 class="text-2xl font-bold text-center mb-6">Daftar Akun</h2>
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+        <h2 class="text-2xl font-bold text-center mb-6 text-yellow-600">Daftar Akun Baru</h2>
 
-<form method="POST" action="{{ route('register') }}">
-    @csrf
+        @if (session('error'))
+            <div class="bg-red-100 text-red-700 p-3 rounded mb-4 text-sm">
+                {{ session('error') }}
+            </div>
+        @endif
 
-    <div class="mb-4">
-        <label class="block font-medium mb-1">Nama Lengkap</label>
-        <input type="text" name="name" class="w-full border rounded p-2" required autofocus>
+        <form action="/register" method="POST" class="space-y-4">
+            @csrf
+
+            <div>
+                <input type="text" 
+                       name="nama" 
+                       placeholder="Nama lengkap" 
+                       required 
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
+            </div>
+
+            <div>
+                <input type="email" 
+                       name="email" 
+                       placeholder="Email" 
+                       required 
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
+            </div>
+
+            <div>
+                <input type="password" 
+                       name="password" 
+                       placeholder="Password" 
+                       required 
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
+            </div>
+
+            <button type="submit" 
+                    class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg font-semibold transition">
+                Daftar
+            </button>
+
+            <p class="text-center text-sm mt-4 text-gray-700">
+                Sudah punya akun? 
+                <a href="/login" class="text-yellow-600 font-medium hover:underline">Login</a>
+            </p>
+        </form>
     </div>
 
-    <div class="mb-4">
-        <label class="block font-medium mb-1">Email</label>
-        <input type="email" name="email" class="w-full border rounded p-2" required>
-    </div>
-
-    <div class="mb-4">
-        <label class="block font-medium mb-1">Password</label>
-        <input type="password" name="password" class="w-full border rounded p-2" required>
-    </div>
-
-    <div class="mb-6">
-        <label class="block font-medium mb-1">Konfirmasi Password</label>
-        <input type="password" name="password_confirmation" class="w-full border rounded p-2" required>
-    </div>
-
-    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-        Daftar
-    </button>
-
-    <p class="text-center mt-4 text-sm">
-        Sudah punya akun?
-        <a href="{{ route('login') }}" class="text-blue-600 hover:underline">Login di sini</a>
-    </p>
-</form>
-@endsection
+</body>
+</html>
