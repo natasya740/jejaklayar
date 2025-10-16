@@ -15,6 +15,8 @@
             background-color: #fffaf2;
             transition: background-color 0.4s ease-in-out;
         }
+
+        /* Tombol utama */
         .btn-primary {
             background-color: #f4b400;
             color: white;
@@ -38,7 +40,7 @@
             transform: translateY(0);
         }
 
-        /* Efek aktif pada navbar */
+        /* Navbar aktif */
         .nav-link {
             position: relative;
             transition: color 0.3s;
@@ -63,12 +65,13 @@
         }
     </style>
 </head>
+
 <body class="min-h-screen flex flex-col">
 
     <!-- 🔸 Navbar -->
     <header class="bg-yellow-400 shadow sticky top-0 z-50">
         <div class="container mx-auto px-6 py-4 flex items-center justify-between">
-
+            
             <!-- Logo -->
             <h1 class="text-2xl font-bold text-gray-900">Jejak Layar</h1>
 
@@ -80,27 +83,30 @@
                     placeholder="Cari budaya, pustaka..." 
                     class="w-full px-5 py-3 text-base rounded-lg border border-gray-300 bg-white focus:ring-2 focus:ring-yellow-500 focus:outline-none shadow-sm"
                 >
-                <button type="submit" class="absolute right-4 top-3 text-gray-500 hover:text-yellow-600">
-                    🔍
-                </button>
+                <button type="submit" class="absolute right-4 top-3 text-gray-500 hover:text-yellow-600">🔍</button>
             </form>
 
-            <!-- Navigasi -->
+            <!-- 🔸 Navigasi -->
             <nav class="space-x-6 text-gray-800 font-medium flex items-center">
-                <a href="{{ route('home') }}" 
-                   class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a>
-                <a href="{{ route('budaya') }}" 
-                   class="nav-link {{ request()->routeIs('budaya') ? 'active' : '' }}">Budaya</a>
-                <a href="{{ route('pustaka') }}" 
-                   class="nav-link {{ request()->routeIs('pustaka') ? 'active' : '' }}">Pustaka</a>
-                <a href="{{ route('tentang') }}" 
-                   class="nav-link {{ request()->routeIs('tentang') ? 'active' : '' }}">Tentang</a>
+                <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a>
+                <a href="{{ route('budaya') }}" class="nav-link {{ request()->routeIs('budaya') ? 'active' : '' }}">Budaya</a>
+                <a href="{{ route('pustaka') }}" class="nav-link {{ request()->routeIs('pustaka') ? 'active' : '' }}">Pustaka</a>
+                <a href="{{ route('tentang') }}" class="nav-link {{ request()->routeIs('tentang') ? 'active' : '' }}">Tentang</a>
 
-                @guest
-                    <a href="{{ route('login') }}" class="nav-link">Login</a>
+                @if(session()->has('user'))
+                    <!-- Dropdown Profil -->
+                    <div class="relative group">
+                        <button class="nav-link font-semibold">
+                            👤 {{ session('user')->nama }}
+                        </button>
+                        <div class="absolute hidden group-hover:block right-0 mt-2 bg-white shadow-lg rounded-lg border w-40">
+                            <a href="{{ route('kontributor') }}" class="block px-4 py-2 hover:bg-yellow-100">Profil</a>
+                            <a href="{{ route('logout') }}" class="block px-4 py-2 hover:bg-yellow-100">Logout</a>
+                        </div>
+                    </div>
                 @else
-                    <a href="{{ route('dashboard') }}" class="nav-link">Dashboard</a>
-                @endguest
+                    <a href="{{ route('login') }}" class="nav-link">Login</a>
+                @endif
             </nav>
         </div>
     </header>
@@ -140,16 +146,13 @@
                 <p>jejaklayar@gmail.com</p>
                 <div class="flex justify-center md:justify-start gap-2 mt-3">
                     <a href="https://www.instagram.com/" target="_blank">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" 
-                             alt="Instagram" class="w-5 h-5 hover:opacity-80 transition">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" class="w-5 h-5 hover:opacity-80 transition">
                     </a>
                     <a href="https://wa.me/628123456789" target="_blank">
-                        <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" 
-                             alt="WhatsApp" class="w-5 h-5 hover:opacity-80 transition">
+                        <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp" class="w-5 h-5 hover:opacity-80 transition">
                     </a>
                     <a href="mailto:jejaklayar@gmail.com">
-                        <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" 
-                             alt="Email" class="w-5 h-5 hover:opacity-80 transition">
+                        <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Email" class="w-5 h-5 hover:opacity-80 transition">
                     </a>
                 </div>
             </div>
