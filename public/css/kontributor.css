@@ -1,0 +1,121 @@
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: #f4f6f9;
+}
+
+/* Header */
+.kontributor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #114b36;
+  color: #fff;
+  padding: 12px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.kontributor-header .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.kontributor-header .logo {
+  width: 36px;
+  height: auto;
+}
+
+.nav-links {
+  display: flex;
+  gap: 14px;
+}
+
+.nav-links a {
+  color: #fff;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+.nav-links a:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    background: #0e3a2b;
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    padding: 12px;
+    border-radius: 6px;
+  }
+  .nav-links.open {
+    display: flex;
+  }
+  .menu-toggle {
+    display: block;
+  }
+}
+
+/* Main content */
+.container {
+  padding: 20px;
+}
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.profile-card .avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.table-section table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  margin-top: 20px;
+}
+.table-section th, .table-section td {
+  padding: 12px;
+  border: 1px solid #eee;
+  text-align: left;
+}
+
+.badge { padding: 5px 10px; border-radius: 4px; color: #fff; }
+.badge.pending { background: orange; }
+.badge.approved { background: green; }
+.badge.rejected { background: red; }
+
+.btn {
+  background: #114b36;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn:hover { background: #0e3a2b; }

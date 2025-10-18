@@ -1,0 +1,145 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6f9;
+}
+
+/* Layout utama */
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 210px;
+  background: #114b36; /* hijau tua */
+  color: #fff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  position: fixed;  /* biar full kiri */
+  top: 0;
+  left: 0;
+  bottom: 0;
+  height: 100vh;
+}
+
+.sidebar h2 {
+  color: #fff;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.3rem;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sidebar-nav a {
+  display: block;
+  padding: 10px 14px;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.sidebar-nav a:hover,
+.sidebar-nav a.active {
+  background: #0e3a2b;
+  transform: translateX(4px); /* animasi geser */
+}
+
+/* Main Content */
+.main-content {
+  margin-left: 250px; /* match dengan sidebar width */
+  padding: 20px;
+  flex: 1;
+}
+
+/* Dashboard Cards */
+.dashboard-cards {
+  display: flex;
+  gap: 20px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.card {
+  flex: 1;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: transform 0.2s;
+}
+.card:hover {
+  transform: translateY(-4px);
+}
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  margin-top: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+table th, 
+table td {
+  border: 1px solid #eee;
+  padding: 12px;
+  text-align: left;
+}
+
+table th {
+  background: #f9fafb;
+  font-weight: 600;
+}
+
+/* Badge */
+.badge {
+  padding: 5px 10px;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 0.85rem;
+}
+.badge.pending { background: orange; }
+.badge.published { background: green; }
+.badge.rejected { background: red; }
+
+/* Buttons */
+button, .approve, .reject {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.approve { background: green; color: #fff; }
+.reject { background: red; color: #fff; }
+
+/* Logo kecil di sidebar */
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* biar rata tengah */
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.sidebar-brand .logo {
+  width: 100px;   /* kecilin lebar */
+  height: auto;  /* biar proporsional */
+  object-fit: contain;
+}
+

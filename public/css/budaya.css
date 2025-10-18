@@ -1,0 +1,69 @@
+/* =====================
+   BUDAYA PAGE STYLES
+   ===================== */
+
+/* Tambahkan gaya khusus Budaya tanpa mengubah global */
+.budaya-section {
+  max-width: 1100px;
+  margin: 60px auto;
+  padding: 20px;
+}
+
+.budaya-section h1 {
+  color: var(--accent);
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.budaya-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.budaya-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 18px;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.budaya-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
+}
+
+.budaya-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.budaya-card h3 {
+  color: var(--accent);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.budaya-card p {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* Responsif */
+@media (max-width: 768px) {
+  .budaya-section {
+    padding: 16px;
+  }
+  .budaya-card img {
+    height: 160px;
+  }
+}
