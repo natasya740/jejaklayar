@@ -30,3 +30,4 @@ Route::get('/tentang', [TentangController::class, 'index'])->name('tentang');
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
+
