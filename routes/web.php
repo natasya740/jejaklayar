@@ -36,3 +36,4 @@ Route::get('/kontributor', function () {
     // akan menampilkan form kontributor jika user sudah login
     return view('layouts.home');
 })->name('kontributor');
+natasyaa
