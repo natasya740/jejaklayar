@@ -3,12 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jejak Layar</title>
+    <title>@yield('title', 'Jejak Layar')</title>
 
-    <!-- Tailwind CSS -->
+    <!-- Tailwind -->
     @vite('resources/css/app.css')
 
-    <!-- Font dan Animasi -->
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}?v={{ time() }}">
+
+    <!-- Fonts & Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -16,7 +22,6 @@
             transition: background-color 0.4s ease-in-out;
         }
 
-        /* Tombol utama */
         .btn-primary {
             background-color: #f4b400;
             color: white;
@@ -25,30 +30,21 @@
             font-weight: 600;
             transition: all 0.3s ease-in-out;
         }
+
         .btn-primary:hover {
             background-color: #e09a00;
         }
 
-        /* Efek transisi halaman */
-        .page-transition {
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-        .page-transition.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Navbar aktif */
         .nav-link {
             position: relative;
             transition: color 0.3s;
         }
+
         .nav-link.active {
-            color: #b45309; /* kuning tua */
+            color: #b45309;
             font-weight: 700;
         }
+
         .nav-link::after {
             content: "";
             position: absolute;
@@ -59,130 +55,160 @@
             background-color: #b45309;
             transition: width 0.3s;
         }
+
         .nav-link:hover::after,
         .nav-link.active::after {
             width: 100%;
         }
+
+        footer {
+            background-color: #fcd34d;
+            color: #1f2937;
+        }
+
+        footer .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        footer h3 {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        footer a {
+            color: #1f2937;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: #92400e;
+        }
+
+        .footer-socials img {
+            width: 22px;
+            height: 22px;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+
+        .footer-socials img:hover {
+            opacity: 0.8;
+            transform: scale(1.1);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
     </style>
+
+    @stack('styles')
 </head>
 
 <body class="min-h-screen flex flex-col">
 
-    <!-- 🔸 Navbar -->
-    <header class="bg-yellow-400 shadow sticky top-0 z-50">
-        <div class="container mx-auto px-6 py-4 flex items-center justify-between">
-            
-            <!-- Logo -->
-            <h1 class="text-2xl font-bold text-gray-900">Jejak Layar</h1>
-
-            <!-- 🔍 Search Bar -->
-            <form action="{{ route('search') }}" method="GET" class="relative flex-1 mx-10 max-w-md">
-                <input 
-                    type="text" 
-                    name="q" 
-                    placeholder="Cari budaya, pustaka..." 
-                    class="w-full px-5 py-3 text-base rounded-lg border border-gray-300 bg-white focus:ring-2 focus:ring-yellow-500 focus:outline-none shadow-sm"
-                >
-                <button type="submit" class="absolute right-4 top-3 text-gray-500 hover:text-yellow-600">🔍</button>
-            </form>
-
-            <!-- 🔸 Navigasi -->
-            <nav class="space-x-6 text-gray-800 font-medium flex items-center">
-                <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a>
-                <a href="{{ route('budaya') }}" class="nav-link {{ request()->routeIs('budaya') ? 'active' : '' }}">Budaya</a>
-                <a href="{{ route('pustaka') }}" class="nav-link {{ request()->routeIs('pustaka') ? 'active' : '' }}">Pustaka</a>
-                <a href="{{ route('tentang') }}" class="nav-link {{ request()->routeIs('tentang') ? 'active' : '' }}">Tentang</a>
-
-                @if(session()->has('user'))
-                    <!-- Dropdown Profil -->
-                    <div class="relative group">
-                        <button class="nav-link font-semibold">
-                            👤 {{ session('user')->nama }}
-                        </button>
-                        <div class="absolute hidden group-hover:block right-0 mt-2 bg-white shadow-lg rounded-lg border w-40">
-                            <a href="{{ route('kontributor') }}" class="block px-4 py-2 hover:bg-yellow-100">Profil</a>
-                            <a href="{{ route('logout') }}" class="block px-4 py-2 hover:bg-yellow-100">Logout</a>
-                        </div>
-                    </div>
-                @else
-                    <a href="{{ route('login') }}" class="nav-link">Login</a>
-                @endif
-            </nav>
+    {{-- ✅ Header --}}
+    <header class="site-header">
+        <div class="header-left">
+            <a href="{{ route('home') }}" class="logo-link">
+                <img src="{{ asset('images/Logo Header.png') }}" alt="Jejak Layar" class="logo">
+            </a>
         </div>
+
+        <div class="header-center">
+            <form class="search-bar" action="{{ route('search') }}" method="GET">
+                <input type="search" name="q" placeholder="Cari: judul, tokoh, kata kunci...">
+            </form>
+        </div>
+<nav class="header-right main-nav">
+    <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a>
+    <a href="{{ route('budaya') }}" class="nav-link {{ request()->routeIs('budaya') ? 'active' : '' }}">Budaya</a>
+    <a href="{{ route('pustaka') }}" class="nav-link {{ request()->routeIs('pustaka') ? 'active' : '' }}">Pustaka</a>
+    <a href="{{ route('tentang') }}" class="nav-link {{ request()->routeIs('tentang') ? 'active' : '' }}">Tentang</a>
+
+    {{-- ✅ Jika user belum login (guest) tampilkan tombol Login --}}
+    @guest
+        <a href="{{ route('login') }}" class="btn-login nav-link">Login</a>
+    @endguest
+
+    {{-- ✅ Jika user sudah login tampilkan profil & nama --}}
+    @auth
+        <div class="user-info" style="display:flex;align-items:center;gap:10px;">
+            <img src="{{ asset('images/profile.png') }}" alt="Profil"
+                 class="profile-img"
+                 style="width:35px;height:35px;border-radius:50%;object-fit:cover;">
+            <span class="username">{{ Auth::user()->nama }}</span>
+
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" style="background:none;border:none;color:red;cursor:pointer;">
+                    Logout
+                </button>
+            </form>
+        </div>
+    @endauth
+</nav>
+
     </header>
 
-    <!-- 🔸 Efek Transisi Halaman -->
+    {{-- ✅ Konten Halaman --}}
     <main class="flex-grow page-transition" id="page-content">
         @yield('content')
     </main>
 
-    <!-- 🔸 Footer -->
-    <footer class="bg-yellow-500 text-gray-900 py-8 mt-10">
-        <div class="container mx-auto grid md:grid-cols-3 gap-6 px-6 text-sm">
-            
-            <!-- Kolom 1 -->
+    {{-- ✅ Footer --}}
+    <footer>
+        <div class="container">
             <div>
-                <h3 class="font-bold mb-2">Jejak Layar</h3>
-                <p>
-                    Melayu Bengkalis dalam satu portal digital untuk semua generasi.<br>
-                    Menjaga warisan budaya, mendekatkan generasi muda dengan sejarahnya.
-                </p>
+                <h3>Jejak Layar</h3>
+                <p>Melayu Bengkalis dalam satu portal digital untuk semua generasi.</p>
+                <p>Menjaga warisan budaya, mendekatkan generasi muda dengan sejarahnya.</p>
             </div>
 
-            <!-- Kolom 2 -->
             <div>
-                <h3 class="font-bold mb-2">Navigasi</h3>
-                <ul class="space-y-1">
+                <h3>Navigasi</h3>
+                <ul>
                     <li><a href="{{ route('home') }}">Beranda</a></li>
                     <li><a href="{{ route('budaya') }}">Budaya</a></li>
                     <li><a href="{{ route('pustaka') }}">Pustaka</a></li>
                     <li><a href="{{ route('tentang') }}">Tentang</a></li>
+                    <li><a href="/hubungi">Hubungi Kami</a></li>
                 </ul>
             </div>
 
-            <!-- Kolom 3 -->
-            <div class="text-center md:text-left">
-                <h3 class="font-bold mb-2">Hubungi Kami</h3>
-                <p>jejaklayar@gmail.com</p>
-                <div class="flex justify-center md:justify-start gap-2 mt-3">
-                    <a href="https://www.instagram.com/" target="_blank">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" class="w-5 h-5 hover:opacity-80 transition">
+            <div>
+                <h3>Hubungi Kami</h3>
+                <p><a href="mailto:jejaklayar@gmail.com">jejaklayar@gmail.com</a></p>
+
+                <div class="footer-socials">
+                    <a href="#">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
                     </a>
-                    <a href="https://wa.me/628123456789" target="_blank">
-                        <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp" class="w-5 h-5 hover:opacity-80 transition">
+                    <a href="#">
+                        <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp">
                     </a>
                     <a href="mailto:jejaklayar@gmail.com">
-                        <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Email" class="w-5 h-5 hover:opacity-80 transition">
+                        <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Email">
                     </a>
                 </div>
             </div>
-
         </div>
 
-        <div class="text-center text-xs text-gray-800 mt-6">
+        <div class="footer-bottom">
             © 2025 Jejak Layar — All Rights Reserved
         </div>
     </footer>
 
-    <!-- 🔸 Script Transisi -->
+    <!-- ✅ Script transition -->
     <script>
-        // Efek transisi saat halaman dimuat
         document.addEventListener('DOMContentLoaded', () => {
-            const page = document.getElementById('page-content');
-            page.classList.add('show');
-        });
-
-        // Efek klik navbar sebelum pindah halaman
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', e => {
-                const href = link.getAttribute('href');
-                if (href && !href.startsWith('#')) {
-                    e.preventDefault();
-                    const page = document.getElementById('page-content');
-                    page.classList.remove('show');
-                    setTimeout(() => window.location.href = href, 300);
-                }
-            });
+            document.getElementById('page-content').classList.add('show');
         });
     </script>
 

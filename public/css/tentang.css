@@ -1,0 +1,126 @@
+/* ===== Reset & Global ===== */
+
+/* logo */
+.logo{height:72px; width:auto}
+.logo-link{display:inline-block}
+
+body {
+  background: #fff;
+  color: #222;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  text-align: left;
+}
+
+h1, h2 {
+  color: #8B5E3C;
+  margin-bottom: 12px;
+}
+
+h1 {
+  font-size: 1.8rem;
+}
+
+h2 {
+  font-size: 1.3rem;
+  margin-top: 30px;
+}
+
+p, li {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+/* ===== Header Mobile ===== */
+.mobile-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffd95a;
+  padding: 10px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid #8B5E3C;
+}
+
+.mobile-header .back-btn {
+  position: absolute;
+  left: 16px;
+  font-size: 1.4rem;
+  text-decoration: none;
+  color: #8B5E3C;
+  font-weight: bold;
+}
+
+.mobile-header .logo-center img {
+  height: 40px;
+}
+
+/* ===== Grid Visi & Misi ===== */
+.grid-vm {
+  display: grid;
+  gap: 20px;
+}
+
+.grid-vm .visi,
+.grid-vm .misi {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+@media (min-width: 768px) {
+  .grid-vm {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ===== Tim ===== */
+.team-list {
+  list-style: disc;
+  padding-left: 20px;
+}
+
+.team-list li {
+  margin-bottom: 6px;
+}
+
+/* ===== Hubungi Kami ===== */
+.contact ul {
+  list-style: none;
+  padding: 0;
+}
+
+.contact li {
+  margin-bottom: 8px;
+}
+
+.socials img {
+  width: 28px;
+  margin-right: 10px;
+  vertical-align: middle;
+  transition: transform 0.3s;
+}
+
+.socials img:hover {
+  transform: scale(1.2);
+}
+
+/* ===== Footer ===== */
+footer {
+  text-align: center;
+  padding: 20px;
+  background: #ffd95a;
+  color: #222;
+  font-size: 0.9rem;
+  border-top: 2px solid #8B5E3C;
+}
