@@ -1,9 +1,6 @@
-/* ===== Reset & Global ===== */
-
-/* logo */
-.logo{height:72px; width:auto}
-.logo-link{display:inline-block}
-
+/* ================================
+   GLOBAL STYLE
+================================ */
 body {
   background: #fff;
   color: #222;
@@ -13,114 +10,141 @@ body {
   line-height: 1.6;
 }
 
-main {
-  max-width: 800px;
+/* ================================
+   HERO SECTION
+================================ */
+.hero-section {
+  position: relative;
+  background: url('../images/bg-jejak.jpg') center center/cover no-repeat;
+  text-align: center;
+  padding: 120px 20px 160px;
+  color: #222;
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.6);
+  z-index: 0;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 50px 40px;
+  border-radius: 20px;
+  max-width: 850px;
   margin: 0 auto;
-  padding: 40px 20px;
-  text-align: left;
 }
 
-h1, h2 {
+/* ================================
+   VISI & MISI SECTION
+================================ */
+.visi-misi-section {
+  text-align: center;
+  padding: 100px 20px;
+  background: #fffef8;
+}
+
+.visi-misi-section h2 {
   color: #8B5E3C;
-  margin-bottom: 12px;
+  font-size: 2rem;
+  margin-bottom: 60px;
+  font-weight: 700;
 }
 
-h1 {
-  font-size: 1.8rem;
+.visi-misi-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 60px;
 }
 
-h2 {
-  font-size: 1.3rem;
-  margin-top: 30px;
+.visi-box,
+.misi-box {
+  background: #ffffff;
+  border: 2px solid #f5d78a;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 40px 30px;
+  width: 320px;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-p, li {
-  font-size: 1rem;
+.visi-box h3,
+.misi-box h3 {
+  color: #b87a3c;
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+}
+
+.visi-box p,
+.misi-box ul {
+  color: #333;
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+.misi-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.misi-box li {
   margin-bottom: 10px;
 }
 
-/* ===== Header Mobile ===== */
-.mobile-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #ffd95a;
-  padding: 10px 16px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  border-bottom: 2px solid #8B5E3C;
+/* ================================
+   TIM KAMI
+================================ */
+.tim-section {
+  background: #fff8cc;
+  text-align: center;
+  padding: 100px 20px;
 }
 
-.mobile-header .back-btn {
-  position: absolute;
-  left: 16px;
-  font-size: 1.4rem;
-  text-decoration: none;
+.tim-section h2 {
   color: #8B5E3C;
-  font-weight: bold;
+  font-size: 2rem;
+  margin-bottom: 30px;
 }
 
-.mobile-header .logo-center img {
-  height: 40px;
-}
-
-/* ===== Grid Visi & Misi ===== */
-.grid-vm {
-  display: grid;
-  gap: 20px;
-}
-
-.grid-vm .visi,
-.grid-vm .misi {
-  background: #f9f9f9;
-  padding: 20px;
-  border-radius: 8px;
-}
-
-@media (min-width: 768px) {
-  .grid-vm {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-/* ===== Tim ===== */
 .team-list {
-  list-style: disc;
-  padding-left: 20px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .team-list li {
-  margin-bottom: 6px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #333;
 }
 
-/* ===== Hubungi Kami ===== */
-.contact ul {
-  list-style: none;
-  padding: 0;
-}
-
-.contact li {
-  margin-bottom: 8px;
-}
-
-.socials img {
-  width: 28px;
-  margin-right: 10px;
-  vertical-align: middle;
-  transition: transform 0.3s;
-}
-
-.socials img:hover {
-  transform: scale(1.2);
-}
-
-/* ===== Footer ===== */
+/* ================================
+   FOOTER
+================================ */
 footer {
   text-align: center;
   padding: 20px;
   background: #ffd95a;
   color: #222;
-  font-size: 0.9rem;
   border-top: 2px solid #8B5E3C;
 }
+.tentang-container {
+    text-align: center;
+}
+
+.tentang-container p,
+.version-text {
+    max-width: 900px;
+    margin: 0 auto;
+}
+

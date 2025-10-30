@@ -4,56 +4,51 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    // Tampilkan form login
     public function showLogin()
     {
         return view('login');
     }
 
-    // Proses login
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/dashboard');
+            return redirect()->route('home'); // ✅ ke halaman beranda
         }
 
         return back()->with('error', 'Email atau password salah');
     }
 
-    // Tampilkan form register
     public function showRegister()
     {
         return view('register');
     }
 
-    // Proses register
     public function register(Request $request)
     {
         $request->validate([
             'nama' => 'required|string|max:100',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|min:6|confirmed',
         ]);
 
         User::create([
             'nama' => $request->nama,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'kontributor', // default
+            'role' => 'kontributor',
         ]);
 
-        return redirect()->route('login')->with('success', 'Registrasi berhasil, silakan login');
+        return redirect()->route('login')->with('success', 'Registrasi Berhasil! Silakan Login.');
     }
 
-    // Logout
     public function logout(Request $request)
     {
         Auth::logout();

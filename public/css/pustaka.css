@@ -1,128 +1,92 @@
-/* Hero */
-.pk-hero {
-  padding: 80px 20px 40px;
-  text-align: center;
-  background: linear-gradient(180deg, #ffd95a, #fce28a);
-}
-.pk-hero h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 2.4rem;
-  margin-bottom: 10px;
-  color: #222;
-}
-.pk-hero .accent { color: #8B5E3C; }
-.pk-hero .lead {
-  font-size: 1.05rem;
-  color: #555;
-  max-width: 720px;
-  margin: 0 auto;
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Poppins", sans-serif;
 }
 
-/* Filter */
-.pk-filter {
-  background: #fff;
-  border-bottom: 1px solid #eee;
-  padding: 16px 0;
-}
-.filter-search {
-  width: 100%;
-  max-width: 500px;
-  padding: 10px 14px;
-  border: 1px solid #ccc;
-  border-radius: 999px;
-  margin-bottom: 12px;
-}
-.filter-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-}
-.filter-tags button {
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid #ccc;
-  background: #f8f8f8;
-  cursor: pointer;
-  font-weight: 600;
-}
-.filter-tags button.active,
-.filter-tags button:hover {
-  background: #ffd95a;
-  border-color: #8B5E3C;
-  color: #222;
+/* ✅ HERO */
+.hero {
+    background-color: #e3b933;
+    width: 100%;
+    height: 10px;
+    display: flex;
+    justify-content: center;
+    
+    text-align: center;
 }
 
-/* Grid */
-.pk-grid .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 28px;
-  margin-top: 28px;
-}
-.pk-grid .card {
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 8px 26px rgba(0,0,0,0.06);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  transition: transform .25s ease, box-shadow .25s ease;
-}
-.pk-grid .card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 14px 40px rgba(0,0,0,0.12);
-}
-.pk-grid img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-}
-.pk-grid .card-body {
-  padding: 16px;
-}
-.pk-grid .card-body h3 {
-  font-family: 'Playfair Display', serif;
-  margin-bottom: 6px;
-  font-size: 1.3rem;
-  color: #222;
-}
-.pk-grid .card-body p {
-  font-size: 0.95rem;
-  color: #555;
-  margin-bottom: 14px;
-}
-.pk-grid .actions {
-  display: flex;
-  gap: 10px;
-}
-.btn.primary {
-  background: #8B5E3C;
-  color: #fff;
-  padding: 8px 14px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-}
-.btn.secondary {
-  background: #ffd95a;
-  color: #222;
-  padding: 8px 14px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
+.hero-content h1 {
+    font-size: 50px;
+    font-weight: 700;
+    color: #3a2100;
+    line-height: 1.2;
 }
 
-.kamus-preview {
-  margin: 10px 0 14px;
-  padding-left: 18px;
-  list-style: none;
+.hero-content h1 span {
+    color: #7a4a0c;
 }
-.kamus-preview li {
-  margin-bottom: 6px;
-  font-size: 0.9rem;
-  color: #333;
+
+.hero-content p {
+    margin-top: 15px;
+    font-size: 18px;
+    color: #3a2100;
 }
-.kamus-preview strong {
-  color: #8B5E3C;
+
+/* ✅ SEARCH & FILTER */
+.filter-section {
+    background: #fff;
+    text-align: center;
+    padding: 25px 0;
+}
+
+.filter-section input {
+    width: 45%;
+    padding: 12px;
+    border-radius: 30px;
+    border: 1px solid #bbb;
+    margin-bottom: 10px;
+    outline: none;
+}
+
+.filter-btn button {
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 18px;
+    margin: 6px;
+    padding: 8px 20px;
+    cursor: pointer;
+}
+
+.filter-btn button.active,
+.filter-btn button:hover {
+    background: #f0d79c;
+    border-color: #c4962e;
+}
+
+/* ✅ CARD */
+.cards {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    background: #efefef;
+    padding: 35px 0;
+}
+
+.card {
+    width: 280px;
+    background: #fff;
+    border-radius: 12px;
+    text-align: center;
+    overflow: hidden;
+}
+
+.card img {
+    width: 100%;
+    height: 200px;
+    background: #d5d5d5;
+}
+
+.card p {
+    font-weight: 600;
+    padding: 15px;
 }

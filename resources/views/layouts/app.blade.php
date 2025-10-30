@@ -148,7 +148,7 @@
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
                 <button type="submit" style="background:none;border:none;color:red;cursor:pointer;">
-                    Logout
+                    Logouts
                 </button>
             </form>
         </div>
@@ -184,7 +184,6 @@
 
             <div>
                 <h3>Hubungi Kami</h3>
-                <p><a href="mailto:jejaklayar@gmail.com">jejaklayar@gmail.com</a></p>
 
                 <div class="footer-socials">
                     <a href="#">
