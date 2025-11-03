@@ -1,14 +1,16 @@
 @extends('layouts.guest')
 
 @section('content')
-<h2 class="text-2xl font-bold text-center mb-6">Daftar Akun</h2>
+<div class="max-w-md mx-auto bg-white p-6 rounded shadow-md">
+    <h2 class="text-2xl font-bold text-center mb-6">Daftar Akun</h2>
 
-<form method="POST" action="{{ route('register') }}">
+   
+   <form method="POST" action="{{ route('register') }}">
     @csrf
 
     <div class="mb-4">
         <label class="block font-medium mb-1">Nama Lengkap</label>
-        <input type="text" name="name" class="w-full border rounded p-2" required autofocus>
+        <input type="text" name="nama" class="w-full border rounded p-2" required autofocus>
     </div>
 
     <div class="mb-4">
@@ -29,10 +31,4 @@
     <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
         Daftar
     </button>
-
-    <p class="text-center mt-4 text-sm">
-        Sudah punya akun?
-        <a href="{{ route('login') }}" class="text-blue-600 hover:underline">Login di sini</a>
-    </p>
 </form>
-@endsection
