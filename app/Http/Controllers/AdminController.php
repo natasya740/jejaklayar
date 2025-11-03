@@ -4,66 +4,44 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Artikel; // Asumsi model artikel Anda bernama Artikel
 
 class AdminController extends Controller
 {
-    /**
-     * Tampilkan form login admin
-     */
-    public function showLoginForm()
-    {
-        // Pastikan file: resources/views/admin_login.blade.php
-        return view('admin_login');
-    }
-
-    /**
-     * Proses login admin
-     */
-    public function login(Request $request)
-    {
-        // Validasi input
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
-
-        $credentials = $request->only('email', 'password');
-
-        if (Auth::attempt($credentials)) {
-
-            // ✅ Pastikan hanya admin yang bisa masuk dashboard
-            if (Auth::user()->role === 'admin' || Auth::user()->role === 'superadmin') {
-                $request->session()->regenerate();
-                return redirect()->route('admin.home');
-            } else {
-                Auth::logout();
-                return back()->withErrors(['email' => 'Anda tidak memiliki akses sebagai admin.']);
-            }
-        }
-
-        return back()->withErrors([
-            'email' => 'Email atau password salah.',
-        ])->onlyInput('email');
-    }
-
-    /**
-     * Halaman utama (dashboard) admin
-     */
+    // Method yang dipanggil oleh rute admin.dashboard
     public function index()
     {
-        $user = Auth::user();
-        return view('admin.home', compact('user'));
+        // 💡 Di sini Anda akan menarik data Laravel yang sebelumnya Anda ambil via PHP murni
+        
+        // Contoh: Mengambil data untuk dashboard
+        // Di sini Anda akan menjalankan query untuk mendapatkan total artikel, pending, published, dll.
+        // Untuk saat ini, kita akan mengirim data dummy atau mengambil semua data.
+        
+        // Ambil semua artikel yang statusnya pending untuk antrian
+        $pendingArticles = Artikel::where('status', 'pending')->with('user')->get(); 
+        
+        $stats = [
+            'total_artikel' => Artikel::count(),
+            'total_pending' => Artikel::where('status', 'pending')->count(),
+            'total_published' => Artikel::where('status', 'published')->count(),
+            'total_user' => \App\Models\User::count(), // Asumsi model User ada
+        ];
+
+        // Ganti 'admin.dashboard' dengan lokasi view Blade baru Anda
+        return view('admin.dashboard', compact('pendingArticles', 'stats'));
     }
 
-    /**
-     * Logout admin
-     */
-    public function logout(Request $request)
+    // Method untuk Form Input Konten (artikel_form.html)
+    public function showUploadForm()
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        return view('admin.artikel_form');
+    }
 
-        return redirect()->route('admin.login');
+    // Method untuk Kelola Artikel (artikel_list.html)
+    public function listArticles()
+    {
+        // Ambil semua artikel untuk halaman kelola
+        $articles = Artikel::all();
+        return view('admin.artikel_list', compact('articles'));
     }
 }
