@@ -10,21 +10,28 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::create('media', function (Blueprint $table) {
-        $table->id('id_media');
-        $table->unsignedBigInteger('id_artikel');
-        $table->string('judul', 150)->nullable();
-        $table->enum('tipe', ['foto', 'video', 'dokumen', 'ebook']);
-        $table->string('path', 250);
-        $table->text('deskripsi')->nullable();
-        $table->timestamp('dibuat_pada')->useCurrent();
+    {
+        Schema::create('media', function (Blueprint $table) {
+            $table->id();
 
-        // foreign key
-        $table->foreign('id_artikel')->references('id_artikel')->on('artikel')->onDelete('cascade');
-    });
-}
+            // === INI ADALAH PERBAIKANNYA ===
+            // 1. Buat kolom 'artikel_id' (standar Laravel)
+            // 2. 'constrained' akan mengaitkannya ke 'id' di tabel 'artikel'
+            // 3. 'onDelete('cascade')' berarti jika artikel dihapus, media terkait juga terhapus.
+            $table->foreignId('artikel_id')
+                  ->nullable()
+                  ->constrained('artikel') // Mengacu ke 'id' di tabel 'artikel'
+                  ->onDelete('cascade'); 
+            // ================================
 
+            // Kolom tambahan untuk media
+            $table->string('path'); // Path ke file (mis: 'images/artikel/gambar.jpg')
+            $table->string('tipe', 50)->default('image'); // Tipe file (image, video, pdf)
+            $table->string('keterangan')->nullable(); // Teks alt atau keterangan
+
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.

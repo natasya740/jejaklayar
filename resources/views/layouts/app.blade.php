@@ -16,6 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
 
     <style>
+        /* --- CSS Bawaan Anda --- */
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #fffaf2;
@@ -106,6 +107,64 @@
             font-size: 0.85rem;
             border-top: 1px solid rgba(0,0,0,0.1);
         }
+        
+        /* === ⬇️ CSS UNTUK DROPDOWN MENU (SOLUSI) ⬇️ === */
+        .user-menu {
+             position: relative;
+             /* Menambahkan ini agar menu sejajar dengan link nav lain */
+             display: flex;
+             align-items: center;
+        }
+        .user-menu .nav-link { /* Mengatur tombol toggle */
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        .user-menu .profile-img {
+            width:35px;
+            height:35px;
+            border-radius:50%;
+            object-fit:cover;
+        }
+        .user-menu-dropdown {
+            position:absolute; 
+            background:#fff; 
+            min-width:180px; 
+            border-radius:8px; 
+            box-shadow:0 4px 12px rgba(0,0,0,0.1); 
+            padding:10px; 
+            display:none; /* Di-toggle oleh JS */
+            top:50px; /* Jarak dari atas */
+            right:0; 
+            z-index:100;
+            border: 1px solid #eee;
+        }
+        .user-menu-dropdown a,
+        .user-menu-dropdown button {
+            display:block; 
+            padding:8px 12px; 
+            text-decoration:none; 
+            color: #333;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font: inherit;
+            font-family: 'Poppins', sans-serif; /* Pastikan font sama */
+            font-size: 0.95rem;
+            border-radius: 6px; 
+        }
+        .user-menu-dropdown a:hover,
+        .user-menu-dropdown button:hover {
+            background: #f4f4f4;
+        }
+        .user-menu-dropdown .logout-btn {
+            color: red; /* Tombol logout berwarna merah */
+        }
+        /* === ⬆️ BATAS AKHIR CSS DROPDOWN ⬆️ === */
+
     </style>
 
     @stack('styles')
@@ -126,36 +185,53 @@
                 <input type="search" name="q" placeholder="Cari: judul, tokoh, kata kunci...">
             </form>
         </div>
-<nav class="header-right main-nav">
-    <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a>
-    <a href="{{ route('budaya') }}" class="nav-link {{ request()->routeIs('budaya') ? 'active' : '' }}">Budaya</a>
-    <a href="{{ route('pustaka') }}" class="nav-link {{ request()->routeIs('pustaka') ? 'active' : '' }}">Pustaka</a>
-    <a href="{{ route('tentang') }}" class="nav-link {{ request()->routeIs('tentang') ? 'active' : '' }}">Tentang</a>
-   
 
-    {{-- ✅ Jika user belum login (guest) tampilkan tombol Login --}}
-    @guest
-        <a href="{{ route('login') }}" class="btn-login nav-link">Login</a>
-    @endguest
+        <nav class="header-right main-nav">
+            <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a>
+            <a href="{{ route('budaya') }}" class="nav-link {{ request()->routeIs('budaya') ? 'active' : '' }}">Budaya</a>
+            <a href="{{ route('pustaka') }}" class="nav-link {{ request()->routeIs('pustaka') ? 'active' : '' }}">Pustaka</a>
+            <a href="{{ route('tentang') }}" class="nav-link {{ request()->routeIs('tentang') ? 'active' : '' }}">Tentang</a>
+        
 
-    {{-- ✅ Jika user sudah login tampilkan profil & nama --}}
-    @auth
-        <div class="user-info" style="display:flex;align-items:center;gap:10px;">
-            <img src="{{ asset('images/profile.png') }}" alt="Profil"
-                 class="profile-img"
-                 style="width:35px;height:35px;border-radius:50%;object-fit:cover;">
-            <span class="username">{{ Auth::user()->nama }}</span>
+            {{-- ✅ Jika user belum login (guest) tampilkan tombol Login --}}
+            @guest
+                <a href="{{ route('login') }}" class="btn-login nav-link">Login</a>
+            @endguest
 
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" style="background:none;border:none;color:red;cursor:pointer;">
-                    Logouts
-                </button>
-            </form>
-        </div>
-    @endauth
-</nav>
+            {{-- === ⬇️ BLOK @AUTH YANG SUDAH DIPERBAIKI ⬇️ === --}}
+            @auth
+                <div class="user-menu">
+                    {{-- Tombol Toggle Dropdown --}}
+                    <a href="#" class="nav-link user-toggle" id="user-menu-toggle">
+                        <img src="{{ asset('images/profile.png') }}" alt="Profil" class="profile-img">
+                        <span class="username">{{ Auth::user()->nama }} ▼</span>
+                    </a>
 
+                    {{-- Dropdown Menu --}}
+                    <div class="user-menu-dropdown" id="user-menu-dropdown">
+                        
+                        {{-- Cek Peran Pengguna --}}
+                        @if (Auth::user()->role === 'admin')
+                            <a href="{{ route('admin.dashboard') }}">Dashboard Admin</a>
+                        @elseif (Auth::user()->role === 'kontributor')
+                            <a href="{{ route('kontributor.dashboard') }}">Dashboard Kontributor</a>
+                        @endif
+                        
+                        <a href="#">Profil Saya</a>
+
+                        {{-- Form Logout --}}
+                        <form action="{{ route('logout') }}" method="POST" style="margin:0;">
+                            @csrf
+                            <button type="submit" class="logout-btn">
+                                Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @endauth
+            {{-- === ⬆️ BATAS AKHIR BLOK @AUTH ⬆️ === --}}
+
+        </nav>
     </header>
 
     {{-- ✅ Konten Halaman --}}
@@ -205,12 +281,46 @@
         </div>
     </footer>
 
-    <!-- ✅ Script transition -->
+    <!-- ✅ Script transition DAN LOGIKA DROPDOWN -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('page-content').classList.add('show');
+            
+            // --- Logika transisi halaman (sudah ada) ---
+            const pageContent = document.getElementById('page-content');
+            if(pageContent) {
+                pageContent.classList.add('show');
+            }
+
+            // === ⬇️ JAVASCRIPT UNTUK DROPDOWN MENU (SOLUSI) ⬇️ ===
+            
+            // --- Logika Dropdown User Menu ---
+            const userToggle = document.getElementById('user-menu-toggle');
+            const userDropdown = document.getElementById('user-menu-dropdown');
+
+            if (userToggle && userDropdown) {
+                userToggle.addEventListener('click', (e) => {
+                    e.preventDefault(); // Mencegah link '#' berpindah halaman
+                    // Toggle tampilan dropdown
+                    userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+                });
+            }
+
+            // --- Sembunyikan dropdown jika klik di luar area menu ---
+            document.addEventListener('click', function(event) {
+                const userMenu = document.querySelector('.user-menu');
+                // Cek apakah userMenu ada DAN target klik BUKAN bagian dari userMenu
+                if (userMenu && !userMenu.contains(event.target)) {
+                    if(userDropdown) {
+                        userDropdown.style.display = 'none'; // Sembunyikan dropdown
+                    }
+                }
+            });
+            // === ⬆️ BATAS AKHIR JAVASCRIPT DROPDOWN ⬆️ ===
+
         });
     </script>
+    
+    @stack('scripts') <!-- Untuk JS spesifik halaman -->
 
 </body>
 </html>
