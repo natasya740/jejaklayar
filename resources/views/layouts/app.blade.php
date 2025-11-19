@@ -27,6 +27,76 @@
         }
         main { flex: 1; width: 100%; }
 
+        /* --- LOGO SPLASH SCREEN --- */
+        #logo-splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffd000 0%, #fef3c7 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        #logo-splash.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .splash-logo-container {
+            position: relative;
+            animation: logoEntrance 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .splash-logo {
+            max-width: 280px;
+            height: auto;
+            filter: drop-shadow(0 8px 20px rgba(0,0,0,0.08));
+        }
+
+        @keyframes logoEntrance {
+            0% {
+                transform: scale(0.85) translateY(20px);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Efek Subtle Glow pada Logo Splash */
+        .splash-logo-container::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 120%;
+            height: 120%;
+            background: radial-gradient(
+                circle,
+                rgba(252, 211, 77, 0.15) 0%,
+                transparent 70%
+            );
+            animation: subtleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes subtleGlow {
+            0%, 100% { 
+                opacity: 0.5;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+        }
+
         /* --- 2. HEADER & NAVBAR --- */
         .site-header {
             background-color: #ffffff;
@@ -39,7 +109,38 @@
             top: 0;
             z-index: 50;
         }
-        .logo { height: 45px; width: auto; }
+
+        /* Logo Header dengan Efek Hover */
+        .logo-link {
+            position: relative;
+            display: inline-block;
+        }
+
+        .logo { 
+            height: 45px; 
+            width: auto;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .logo-link:hover .logo {
+            transform: scale(1.03);
+        }
+
+        /* Canvas untuk Click Spark pada Logo */
+        .logo-spark-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        #logo-spark-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
         
         .search-bar input {
             background: #f3f4f6; border: none; padding: 10px 20px;
@@ -155,10 +256,9 @@
             align-items: end;
         }
 
-        /* Tombol Utama Tanda Tanya */
         .help-trigger-btn {
-            background-color: #1e293b; /* Warna Gelap Elegan */
-            color: #fcd34d; /* Ikon Kuning */
+            background-color: #1e293b;
+            color: #fcd34d;
             width: 60px; height: 60px;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
@@ -169,7 +269,6 @@
             border: 2px solid #fcd34d;
         }
         
-        /* Efek Putar saat aktif */
         .help-trigger-btn.active {
             transform: rotate(45deg);
             background-color: #fcd34d;
@@ -177,10 +276,9 @@
             border-color: #1e293b;
         }
 
-        /* Menu Opsi Bantuan */
         .help-options {
             position: absolute;
-            bottom: 75px; /* Muncul di atas tombol */
+            bottom: 75px;
             right: 0;
             display: flex;
             flex-direction: column;
@@ -191,14 +289,12 @@
             transition: all 0.3s ease;
         }
 
-        /* Saat tombol aktif, menu muncul */
         .help-trigger-btn.active ~ .help-options {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
         }
 
-        /* Item Opsi Bantuan */
         .help-item {
             display: flex;
             align-items: center;
@@ -232,12 +328,22 @@
 </head>
 
 <body>
+    {{-- LOGO SPLASH SCREEN --}}
+    <div id="logo-splash">
+        <div class="splash-logo-container">
+            <img src="{{ asset('images/LogoJejakLayar.png') }}" alt="Jejak Layar" class="splash-logo">
+        </div>
+    </div>
+
     {{-- HEADER --}}
     <header class="site-header">
         <div class="header-left">
-            <a href="{{ route('home') }}" class="logo-link">
-                <img src="{{ asset('images/Logo Header.png') }}" alt="Jejak Layar" class="logo">
-            </a>
+            <div class="logo-spark-container">
+                <canvas id="logo-spark-canvas"></canvas>
+                <a href="{{ route('home') }}" class="logo-link" id="logo-clickable">
+                    <img src="{{ asset('images/Logo Header.png') }}" alt="Jejak Layar" class="logo">
+                </a>
+            </div>
         </div>
 
         <div class="header-center">
@@ -289,13 +395,10 @@
 
     {{-- TOMBOL BANTUAN MENGAMBANG (INTERAKTIF) --}}
     <div class="floating-help-container">
-        
-        <!-- Tombol Pemicu (Tanda Tanya) -->
         <div class="help-trigger-btn" id="help-btn">
             <i class="fas fa-question"></i>
         </div>
 
-        <!-- Menu Opsi Bantuan (Akan Muncul saat diklik) -->
         <div class="help-options" id="help-options">
             <a href="#" class="help-item">
                 <span>FAQ / Pertanyaan</span>
@@ -319,7 +422,6 @@
     {{-- FOOTER --}}
     <footer class="site-footer">
         <div class="footer-container">
-            <!-- Brand -->
             <div class="footer-col brand">
                 <img src="{{ asset('images/Logo Header.png') }}" alt="Jejak Layar" style="height: 50px; margin-bottom: 15px;">
                 <p>
@@ -327,7 +429,6 @@
                     Kami berdedikasi menjaga warisan budaya dan mendekatkan generasi muda dengan sejarahnya.
                 </p>
             </div>
-            <!-- Jelajahi -->
             <div class="footer-col">
                 <h3>JELAJAHI</h3>
                 <ul>
@@ -337,7 +438,6 @@
                     <li><a href="{{ route('tentang') }}"><i class="fas fa-chevron-right text-xs"></i> Tentang Kami</a></li>
                 </ul>
             </div>
-            <!-- Bantuan -->
             <div class="footer-col">
                 <h3>BANTUAN</h3>
                 <ul>
@@ -347,7 +447,6 @@
                     <li><a href="{{ route('register') }}"><i class="fas fa-user-plus"></i> Menjadi Kontributor</a></li>
                 </ul>
             </div>
-            <!-- Kontak -->
             <div class="footer-col">
                 <h3>KONTAK KAMI</h3>
                 <p class="flex items-center gap-2"><span class="contact-icon"><i class="fas fa-map-marker-alt"></i></span> Bengkalis, Riau, Indonesia</p>
@@ -361,7 +460,6 @@
                 </div>
             </div>
         </div>
-        <!-- Footer Bottom -->
         <div class="footer-bottom">
             <p>&copy; 2025 Jejak Layar — All Rights Reserved.</p>
         </div>
@@ -370,7 +468,131 @@
     {{-- SCRIPT --}}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Logic Dropdown Profil
+            // ===== 1. SPLASH SCREEN LOGO =====
+            const splash = document.getElementById('logo-splash');
+            
+            // Tampilkan splash selama 2.5 detik, lalu fade out
+            setTimeout(() => {
+                splash.classList.add('fade-out');
+                // Hapus dari DOM setelah animasi selesai
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                }, 800);
+            }, 2500);
+
+            // ===== 2. CLICK SPARK EFFECT =====
+            class ClickSparkEffect {
+                constructor(canvas, options = {}) {
+                    this.canvas = canvas;
+                    this.ctx = canvas.getContext('2d');
+                    this.sparks = [];
+                    
+                    // Konfigurasi
+                    this.sparkColor = options.sparkColor || '#f4b400';
+                    this.sparkSize = options.sparkSize || 10;
+                    this.sparkRadius = options.sparkRadius || 20;
+                    this.sparkCount = options.sparkCount || 8;
+                    this.duration = options.duration || 400;
+                    this.extraScale = options.extraScale || 1.0;
+                    
+                    this.setupCanvas();
+                    this.animate();
+                }
+                
+                setupCanvas() {
+                    const parent = this.canvas.parentElement;
+                    const rect = parent.getBoundingClientRect();
+                    this.canvas.width = rect.width;
+                    this.canvas.height = rect.height;
+                    
+                    // Update canvas size on window resize
+                    window.addEventListener('resize', () => {
+                        const newRect = parent.getBoundingClientRect();
+                        this.canvas.width = newRect.width;
+                        this.canvas.height = newRect.height;
+                    });
+                }
+                
+                easeOutQuad(t) {
+                    return t * (2 - t);
+                }
+                
+                createSparks(x, y) {
+                    const now = performance.now();
+                    for (let i = 0; i < this.sparkCount; i++) {
+                        this.sparks.push({
+                            x,
+                            y,
+                            angle: (2 * Math.PI * i) / this.sparkCount,
+                            startTime: now
+                        });
+                    }
+                }
+                
+                animate() {
+                    const draw = (timestamp) => {
+                        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                        
+                        this.sparks = this.sparks.filter(spark => {
+                            const elapsed = timestamp - spark.startTime;
+                            if (elapsed >= this.duration) return false;
+                            
+                            const progress = elapsed / this.duration;
+                            const eased = this.easeOutQuad(progress);
+                            const distance = eased * this.sparkRadius * this.extraScale;
+                            const lineLength = this.sparkSize * (1 - eased);
+                            
+                            const x1 = spark.x + distance * Math.cos(spark.angle);
+                            const y1 = spark.y + distance * Math.sin(spark.angle);
+                            const x2 = spark.x + (distance + lineLength) * Math.cos(spark.angle);
+                            const y2 = spark.y + (distance + lineLength) * Math.sin(spark.angle);
+                            
+                            this.ctx.strokeStyle = this.sparkColor;
+                            this.ctx.lineWidth = 2;
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(x1, y1);
+                            this.ctx.lineTo(x2, y2);
+                            this.ctx.stroke();
+                            
+                            return true;
+                        });
+                        
+                        requestAnimationFrame(draw);
+                    };
+                    
+                    requestAnimationFrame(draw);
+                }
+            }
+            
+            // Inisialisasi Click Spark pada Logo
+            const logoCanvas = document.getElementById('logo-spark-canvas');
+            const logoClickable = document.getElementById('logo-clickable');
+            
+            if (logoCanvas && logoClickable) {
+                const sparkEffect = new ClickSparkEffect(logoCanvas, {
+                    sparkColor: '#d97706',
+                    sparkSize: 8,
+                    sparkRadius: 18,
+                    sparkCount: 8,
+                    duration: 600,
+                    extraScale: 1.0
+                });
+                
+                logoClickable.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const rect = logoCanvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    sparkEffect.createSparks(x, y);
+                    
+                    // Navigate after subtle delay
+                    setTimeout(() => {
+                        window.location.href = logoClickable.href;
+                    }, 200);
+                });
+            }
+
+            // ===== 3. DROPDOWN PROFIL =====
             const userToggle = document.getElementById('user-menu-toggle');
             const userDropdown = document.getElementById('user-menu-dropdown');
             
@@ -386,18 +608,16 @@
                 });
             }
 
-            // 2. Logic Tombol Bantuan Melayang (Help Button)
+            // ===== 4. TOMBOL BANTUAN MELAYANG =====
             const helpBtn = document.getElementById('help-btn');
             const helpOptions = document.getElementById('help-options');
 
             if (helpBtn && helpOptions) {
                 helpBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    // Toggle class 'active' untuk animasi putar dan munculin menu
                     helpBtn.classList.toggle('active');
                 });
 
-                // Tutup menu bantuan jika klik di luar
                 document.addEventListener('click', (e) => {
                     if (!helpBtn.contains(e.target) && !helpOptions.contains(e.target)) {
                         helpBtn.classList.remove('active');
