@@ -10,24 +10,28 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::create('artikel', function (Blueprint $table) {
-        $table->id('id_artikel');
-        $table->unsignedBigInteger('id_kategori');
-        $table->unsignedBigInteger('id_user')->nullable();
-        $table->string('judul', 200);
-        $table->string('subjudul', 250)->nullable();
-        $table->string('gambar', 250)->nullable();
-        $table->longText('isi');
-        $table->enum('status', ['pending', 'draft', 'published', 'rejected'])->default('draft');
-        $table->timestamps(); // <-- ini otomatis buat created_at & updated_at
-        $table->timestamp('diperbarui_pada')->useCurrent()->useCurrentOnUpdate();
+    {
+        // Ganti 'artikel' dengan 'artikels' jika Anda lebih suka jamak
+        Schema::create('artikel', function (Blueprint $table) {
+            $table->id();
 
-        // foreign key
-        $table->foreign('id_kategori')->references('id_kategori')->on('kategori')->onDelete('cascade');
-        $table->foreign('id_user')->references('id_user')->on('users')->onDelete('set null');
-    });
-}
+            // === INI ADALAH PERBAIKANNYA ===
+            // Kita gunakan foreignId('user_id') yang standar
+            // dan mengaitkannya ('constrained') ke tabel 'users' (yang otomatis mencari 'id')
+            $table->foreignId('user_id')
+                  ->nullable()
+                  ->constrained('users') // Mengacu ke 'id' di tabel 'users'
+                  ->onDelete('set null'); // Jika user dihapus, artikel tidak terhapus
+            
+            // Kolom standar untuk artikel
+            $table->string('judul');
+            $table->string('slug')->unique(); // Untuk URL yang cantik
+            $table->longText('isi');
+            $table->string('gambar_header')->nullable(); // Untuk gambar
+            
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.

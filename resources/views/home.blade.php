@@ -73,7 +73,7 @@
     <div class="member">
       <div class="frame"></div>
       <div class="photo">
-        <img src="{{ asset('images/irfan iswandi.png') }}" alt="Irfan Iswandi">
+        <img src="{{ asset('images/Irfan Iswandi.png') }}" alt="Irfan Iswandi">
       </div>
       <h3>Irfan Iswandi</h3>
     </div>
@@ -81,7 +81,7 @@
     <div class="member">
       <div class="frame"></div>
       <div class="photo">
-        <img src="{{ asset('images/team2.png') }}" alt="Masnidar Akmi">
+        <img src="{{ asset('images/Irfan Iswandi.png') }}" alt="Masnidar Akmi">
       </div>
       <h3>Masnidar Akmi</h3>
     </div>
@@ -89,7 +89,7 @@
     <div class="member">
       <div class="frame"></div>
       <div class="photo">
-        <img src="{{ asset('images/team3.png') }}" alt="Natasya">
+        <img src="{{ asset('images/Irfan Iswandi.png') }}" alt="Natasya">
       </div>
       <h3>Natasya</h3>
     </div>

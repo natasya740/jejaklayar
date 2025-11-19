@@ -9,25 +9,29 @@ use Illuminate\Support\Facades\Auth;
 class CheckRole
 {
     /**
+     * Handle an incoming request.
+     *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
-     * @param  ...$roles (Ini akan menampung semua role yg diizinkan, misal: 'superadmin', 'admin')
+     * @param  ...string  $roles
      * @return mixed
      */
     public function handle(Request $request, Closure $next, ...$roles)
     {
-        // Jika user tidak login, lempar ke halaman login
+        // 1. Cek apakah pengguna sudah login
         if (!Auth::check()) {
             return redirect('login');
         }
 
-        // Cek apakah role user ada di dalam daftar $roles yang diizinkan
-        if (!in_array(Auth::user()->role, $roles)) {
-            // Jika tidak, tolak akses
-            return abort(403, 'AKSES DITOLAK. ANDA TIDAK MEMILIKI HAK AKSES.');
+        // 2. Cek apakah peran pengguna diizinkan
+        foreach ($roles as $role) {
+            if (Auth::user()->role == $role) {
+                // Jika diizinkan, lanjutkan ke Controller
+                return $next($request);
+            }
         }
 
-        // Jika punya, izinkan user melanjutkan
-        return $next($request);
+        // 3. Jika tidak diizinkan, tampilkan halaman error
+        abort(403, 'ANDA TIDAK MEMILIKI HAK AKSES.');
     }
 }
