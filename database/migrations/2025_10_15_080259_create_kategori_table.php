@@ -6,23 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
-{
-    Schema::create('kategori', function (Blueprint $table) {
-        $table->id('id_kategori');
-        $table->string('nama_kategori', 100);
-        $table->text('deskripsi')->nullable();
-        $table->timestamps(); // <-- ini otomatis buat created_at & updated_at
-    });
-}
+    {
+        Schema::create('kategori', function (Blueprint $table) {
+            $table->id();
+            
+            // === 💡 PERBAIKAN DI SINI 💡 ===
+            // 'parent_id' untuk relasi self-referencing (Budaya > Seni)
+            $table->unsignedBigInteger('parent_id')->nullable(); 
+            // =============================
+            
+            $table->string('nama');
+            $table->string('slug')->unique();
+            
+            // Definisi foreign key
+            $table->foreign('parent_id')->references('id')->on('kategori')->onDelete('set null');
+        });
+    }
 
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('kategori');

@@ -5,174 +5,234 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Jejak Layar')</title>
 
-    <!-- Tailwind -->
+    <!-- Tailwind CSS -->
     @vite('resources/css/app.css')
 
-    <!-- Custom CSS -->
+    <!-- Custom CSS Utama -->
     <link rel="stylesheet" href="{{ asset('css/style.css') }}?v={{ time() }}">
 
     <!-- Fonts & Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- CSS Bawaan Anda --- */
+        /* --- 1. LAYOUT UTAMA --- */
+        html, body { height: 100%; margin: 0; }
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #fffaf2;
-            transition: background-color 0.4s ease-in-out;
-        }
-
-        .btn-primary {
-            background-color: #f4b400;
-            color: white;
-            padding: 0.6rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .btn-primary:hover {
-            background-color: #e09a00;
-        }
-
-        .nav-link {
-            position: relative;
-            transition: color 0.3s;
-        }
-
-        .nav-link.active {
-            color: #b45309;
-            font-weight: 700;
-        }
-
-        .nav-link::after {
-            content: "";
-            position: absolute;
-            width: 0%;
-            height: 2px;
-            left: 0;
-            bottom: -2px;
-            background-color: #b45309;
-            transition: width 0.3s;
-        }
-
-        .nav-link:hover::after,
-        .nav-link.active::after {
-            width: 100%;
-        }
-
-        footer {
-            background-color: #fcd34d;
-            color: #1f2937;
-        }
-
-        footer .container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        footer h3 {
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        footer a {
-            color: #1f2937;
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            color: #92400e;
-        }
-
-        .footer-socials img {
-            width: 22px;
-            height: 22px;
-            transition: transform 0.3s, opacity 0.3s;
-        }
-
-        .footer-socials img:hover {
-            opacity: 0.8;
-            transform: scale(1.1);
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding: 1rem;
-            font-size: 0.85rem;
-            border-top: 1px solid rgba(0,0,0,0.1);
-        }
-        
-        /* === ⬇️ CSS UNTUK DROPDOWN MENU (SOLUSI) ⬇️ === */
-        .user-menu {
-             position: relative;
-             /* Menambahkan ini agar menu sejajar dengan link nav lain */
-             display: flex;
-             align-items: center;
-        }
-        .user-menu .nav-link { /* Mengatur tombol toggle */
             display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
+            flex-direction: column;
+            min-height: 100vh;
         }
-        .user-menu .profile-img {
-            width:35px;
-            height:35px;
-            border-radius:50%;
-            object-fit:cover;
+        main { flex: 1; width: 100%; }
+
+        /* --- 2. HEADER & NAVBAR --- */
+        .site-header {
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .logo { height: 45px; width: auto; }
+        
+        .search-bar input {
+            background: #f3f4f6; border: none; padding: 10px 20px;
+            border-radius: 50px; width: 300px; outline: none;
+            transition: box-shadow 0.3s;
+        }
+        .search-bar input:focus { box-shadow: 0 0 0 2px #f4b400; }
+
+        .main-nav { display: flex; align-items: center; gap: 25px; }
+        .nav-link { 
+            text-decoration: none; color: #374151; font-weight: 500; 
+            font-size: 0.95rem; transition: color 0.3s; 
+        }
+        .nav-link:hover, .nav-link.active { color: #d97706; }
+
+        /* --- 3. DROPDOWN PROFIL --- */
+        .user-menu { position: relative; display: flex; align-items: center; }
+        .user-toggle {
+            display: flex; align-items: center; gap: 10px; cursor: pointer;
+            text-decoration: none; color: #333; font-weight: 600;
+            padding: 6px 12px; border-radius: 30px; transition: background 0.2s;
+        }
+        .user-toggle:hover { background-color: #f3f4f6; }
+        .profile-img {
+            width: 35px; height: 35px; border-radius: 50%;
+            object-fit: cover; border: 2px solid #f4b400;
         }
         .user-menu-dropdown {
-            position:absolute; 
-            background:#fff; 
-            min-width:180px; 
-            border-radius:8px; 
-            box-shadow:0 4px 12px rgba(0,0,0,0.1); 
-            padding:10px; 
-            display:none; /* Di-toggle oleh JS */
-            top:50px; /* Jarak dari atas */
-            right:0; 
-            z-index:100;
-            border: 1px solid #eee;
+            position: absolute; top: 55px; right: 0; background: #ffffff;
+            min-width: 220px; border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); padding: 8px 0;
+            display: none; z-index: 1000; border: 1px solid #eee;
         }
-        .user-menu-dropdown a,
-        .user-menu-dropdown button {
-            display:block; 
-            padding:8px 12px; 
-            text-decoration:none; 
-            color: #333;
-            width: 100%;
-            text-align: left;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font: inherit;
-            font-family: 'Poppins', sans-serif; /* Pastikan font sama */
-            font-size: 0.95rem;
-            border-radius: 6px; 
+        .user-menu-dropdown a, .user-menu-dropdown button {
+            display: flex; align-items: center; gap: 12px; padding: 12px 20px;
+            text-decoration: none; color: #4b5563; width: 100%; text-align: left;
+            background: none; border: none; cursor: pointer; font-size: 0.9rem;
+            font-family: inherit; font-weight: 500;
         }
-        .user-menu-dropdown a:hover,
-        .user-menu-dropdown button:hover {
-            background: #f4f4f4;
+        .user-menu-dropdown a:hover, .user-menu-dropdown button:hover {
+            background-color: #fffaf2; color: #d97706;
         }
         .user-menu-dropdown .logout-btn {
-            color: red; /* Tombol logout berwarna merah */
+            color: #ef4444; border-top: 1px solid #f3f4f6; margin-top: 5px; padding-top: 15px;
         }
-        /* === ⬆️ BATAS AKHIR CSS DROPDOWN ⬆️ === */
 
+        /* --- 4. FOOTER KUNING UTUH --- */
+        footer.site-footer {
+            background-color: #fcd34d; 
+            color: #1f2937; 
+            padding-top: 4rem;
+            margin-top: auto;
+            font-size: 0.95rem;
+        }
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 2rem; 
+        }
+        .footer-col h3 { 
+            font-weight: 800; font-size: 1.1rem; margin-bottom: 1.5rem; 
+            color: #111827; 
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .footer-col p { line-height: 1.6; color: #374151; margin-bottom: 1rem; }
+        .footer-col ul { list-style: none; padding: 0; }
+        .footer-col ul li { margin-bottom: 0.8rem; }
+        .footer-col a { 
+            text-decoration: none; color: #374151; transition: all 0.3s; 
+            display: inline-flex; align-items: center; gap: 8px; font-weight: 500;
+        }
+        .footer-col a:hover { color: #000; transform: translateX(5px); }
+        .contact-icon {
+            width: 24px; height: 24px; background: rgba(255,255,255,0.5);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; color: #1f2937;
+        }
+        .socials { display: flex; gap: 12px; margin-top: 20px; }
+        .socials a {
+            width: 38px; height: 38px; background: #ffffff; 
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; transition: all 0.3s; color: #1f2937;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .socials a:hover { 
+            background: #1f2937; color: #fcd34d; transform: translateY(-3px); 
+        }
+        .footer-bottom {
+            text-align: center; padding: 2rem 0; background-color: transparent;
+            font-size: 0.85rem; color: #4b5563; border-top: 1px solid rgba(0,0,0,0.05);
+            width: 100%; margin-top: 1rem;
+        }
+
+        /* --- 5. TOMBOL LOGIN --- */
+        .btn-primary {
+            background-color: #f4b400; color: white; padding: 0.6rem 1.5rem;
+            border-radius: 50px; font-weight: 600; text-decoration: none;
+            transition: all 0.3s; display: inline-block;
+        }
+        .btn-primary:hover { background-color: #d97706; transform: translateY(-2px); }
+
+        /* --- 6. TOMBOL BANTUAN MENGAMBANG (INTERAKTIF) --- */
+        .floating-help-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            align-items: end;
+        }
+
+        /* Tombol Utama Tanda Tanya */
+        .help-trigger-btn {
+            background-color: #1e293b; /* Warna Gelap Elegan */
+            color: #fcd34d; /* Ikon Kuning */
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            border: 2px solid #fcd34d;
+        }
+        
+        /* Efek Putar saat aktif */
+        .help-trigger-btn.active {
+            transform: rotate(45deg);
+            background-color: #fcd34d;
+            color: #1e293b;
+            border-color: #1e293b;
+        }
+
+        /* Menu Opsi Bantuan */
+        .help-options {
+            position: absolute;
+            bottom: 75px; /* Muncul di atas tombol */
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        /* Saat tombol aktif, menu muncul */
+        .help-trigger-btn.active ~ .help-options {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Item Opsi Bantuan */
+        .help-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+            white-space: nowrap;
+        }
+        .help-item:hover {
+            transform: translateX(-5px);
+            color: #d97706;
+        }
+        .help-item i {
+            width: 25px; height: 25px;
+            display: flex; align-items: center; justify-content: center;
+            background: #f3f4f6;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            color: #d97706;
+        }
     </style>
 
     @stack('styles')
 </head>
 
-<body class="min-h-screen flex flex-col">
-
-    {{-- ✅ Header --}}
+<body>
+    {{-- HEADER --}}
     <header class="site-header">
         <div class="header-left">
             <a href="{{ route('home') }}" class="logo-link">
@@ -182,7 +242,7 @@
 
         <div class="header-center">
             <form class="search-bar" action="{{ route('search') }}" method="GET">
-                <input type="search" name="q" placeholder="Cari: judul, tokoh, kata kunci...">
+                <input type="search" name="q" placeholder="Cari: judul, tokoh, kata kunci..." value="{{ request('q') }}">
             </form>
         </div>
 
@@ -191,136 +251,162 @@
             <a href="{{ route('budaya') }}" class="nav-link {{ request()->routeIs('budaya') ? 'active' : '' }}">Budaya</a>
             <a href="{{ route('pustaka') }}" class="nav-link {{ request()->routeIs('pustaka') ? 'active' : '' }}">Pustaka</a>
             <a href="{{ route('tentang') }}" class="nav-link {{ request()->routeIs('tentang') ? 'active' : '' }}">Tentang</a>
-        
-
-            {{-- ✅ Jika user belum login (guest) tampilkan tombol Login --}}
+            
             @guest
-                <a href="{{ route('login') }}" class="btn-login nav-link">Login</a>
+                <a href="{{ route('login') }}" class="btn-primary">Login</a>
             @endguest
 
-            {{-- === ⬇️ BLOK @AUTH YANG SUDAH DIPERBAIKI ⬇️ === --}}
             @auth
                 <div class="user-menu">
-                    {{-- Tombol Toggle Dropdown --}}
-                    <a href="#" class="nav-link user-toggle" id="user-menu-toggle">
-                        <img src="{{ asset('images/profile.png') }}" alt="Profil" class="profile-img">
-                        <span class="username">{{ Auth::user()->nama }} ▼</span>
-                    </a>
+                    <div class="user-toggle" id="user-menu-toggle">
+                        <img src="{{ asset('FOTO/avatar.png') }}" 
+                             onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=random'" 
+                             alt="Profil" class="profile-img">
+                        <span>{{ explode(' ', Auth::user()->name)[0] }} ▼</span>
+                    </div>
 
-                    {{-- Dropdown Menu --}}
                     <div class="user-menu-dropdown" id="user-menu-dropdown">
-                        
-                        {{-- Cek Peran Pengguna --}}
                         @if (Auth::user()->role === 'admin')
-                            <a href="{{ route('admin.dashboard') }}">Dashboard Admin</a>
+                            <a href="{{ route('admin.dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard Admin</a>
                         @elseif (Auth::user()->role === 'kontributor')
-                            <a href="{{ route('kontributor.dashboard') }}">Dashboard Kontributor</a>
+                            <a href="{{ route('kontributor.dashboard') }}"><i class="fas fa-pencil-alt"></i> Dashboard Kontributor</a>
                         @endif
-                        
-                        <a href="#">Profil Saya</a>
-
-                        {{-- Form Logout --}}
+                        <a href="{{ route('kontributor.profil') }}"><i class="fas fa-user-circle"></i> Profil Saya</a>
                         <form action="{{ route('logout') }}" method="POST" style="margin:0;">
                             @csrf
-                            <button type="submit" class="logout-btn">
-                                Logout
-                            </button>
+                            <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Keluar</button>
                         </form>
                     </div>
                 </div>
             @endauth
-            {{-- === ⬆️ BATAS AKHIR BLOK @AUTH ⬆️ === --}}
-
         </nav>
     </header>
 
-    {{-- ✅ Konten Halaman --}}
-    <main class="flex-grow page-transition" id="page-content">
+    {{-- KONTEN UTAMA --}}
+    <main>
         @yield('content')
     </main>
 
-    {{-- ✅ Footer --}}
-    <footer>
-        <div class="container">
-            <div>
-                <h3>Jejak Layar</h3>
-                <p>Melayu Bengkalis dalam satu portal digital untuk semua generasi.</p>
-                <p>Menjaga warisan budaya, mendekatkan generasi muda dengan sejarahnya.</p>
-            </div>
+    {{-- TOMBOL BANTUAN MENGAMBANG (INTERAKTIF) --}}
+    <div class="floating-help-container">
+        
+        <!-- Tombol Pemicu (Tanda Tanya) -->
+        <div class="help-trigger-btn" id="help-btn">
+            <i class="fas fa-question"></i>
+        </div>
 
-            <div>
-                <h3>Navigasi</h3>
+        <!-- Menu Opsi Bantuan (Akan Muncul saat diklik) -->
+        <div class="help-options" id="help-options">
+            <a href="#" class="help-item">
+                <span>FAQ / Pertanyaan</span>
+                <i class="fas fa-book-open"></i>
+            </a>
+            <a href="mailto:admin@jejaklayar.com" class="help-item">
+                <span>Email Admin</span>
+                <i class="fas fa-envelope"></i>
+            </a>
+            <a href="#" class="help-item">
+                <span>Panduan Kontributor</span>
+                <i class="fas fa-user-edit"></i>
+            </a>
+             <a href="https://wa.me/628123456789" target="_blank" class="help-item">
+                <span>Chat WhatsApp</span>
+                <i class="fab fa-whatsapp"></i>
+            </a>
+        </div>
+    </div>
+
+    {{-- FOOTER --}}
+    <footer class="site-footer">
+        <div class="footer-container">
+            <!-- Brand -->
+            <div class="footer-col brand">
+                <img src="{{ asset('images/Logo Header.png') }}" alt="Jejak Layar" style="height: 50px; margin-bottom: 15px;">
+                <p>
+                    Melayu Bengkalis dalam satu portal digital untuk semua generasi. 
+                    Kami berdedikasi menjaga warisan budaya dan mendekatkan generasi muda dengan sejarahnya.
+                </p>
+            </div>
+            <!-- Jelajahi -->
+            <div class="footer-col">
+                <h3>JELAJAHI</h3>
                 <ul>
-                    <li><a href="{{ route('home') }}">Beranda</a></li>
-                    <li><a href="{{ route('budaya') }}">Budaya</a></li>
-                    <li><a href="{{ route('pustaka') }}">Pustaka</a></li>
-                    <li><a href="{{ route('tentang') }}">Tentang</a></li>
-                    <li><a href="/hubungi">Hubungi Kami</a></li>
+                    <li><a href="{{ route('home') }}"><i class="fas fa-chevron-right text-xs"></i> Beranda</a></li>
+                    <li><a href="{{ route('budaya') }}"><i class="fas fa-chevron-right text-xs"></i> Budaya</a></li>
+                    <li><a href="{{ route('pustaka') }}"><i class="fas fa-chevron-right text-xs"></i> Pustaka Digital</a></li>
+                    <li><a href="{{ route('tentang') }}"><i class="fas fa-chevron-right text-xs"></i> Tentang Kami</a></li>
                 </ul>
             </div>
-
-            <div>
-                <h3>Hubungi Kami</h3>
-
-                <div class="footer-socials">
-                    <a href="#">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
-                    </a>
-                    <a href="#">
-                        <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp">
-                    </a>
-                    <a href="mailto:jejaklayar@gmail.com">
-                        <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Email">
-                    </a>
+            <!-- Bantuan -->
+            <div class="footer-col">
+                <h3>BANTUAN</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-question-circle"></i> FAQ / Pertanyaan</a></li>
+                    <li><a href="#"><i class="fas fa-shield-alt"></i> Kebijakan Privasi</a></li>
+                    <li><a href="#"><i class="fas fa-file-contract"></i> Syarat & Ketentuan</a></li>
+                    <li><a href="{{ route('register') }}"><i class="fas fa-user-plus"></i> Menjadi Kontributor</a></li>
+                </ul>
+            </div>
+            <!-- Kontak -->
+            <div class="footer-col">
+                <h3>KONTAK KAMI</h3>
+                <p class="flex items-center gap-2"><span class="contact-icon"><i class="fas fa-map-marker-alt"></i></span> Bengkalis, Riau, Indonesia</p>
+                <p class="flex items-center gap-2"><span class="contact-icon"><i class="fas fa-envelope"></i></span> admin@jejaklayar.com</p>
+                <p class="flex items-center gap-2"><span class="contact-icon"><i class="fas fa-phone"></i></span> </p>
+                <div class="socials">
+                    <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
         </div>
-
+        <!-- Footer Bottom -->
         <div class="footer-bottom">
-            © 2025 Jejak Layar — All Rights Reserved
+            <p>&copy; 2025 Jejak Layar — All Rights Reserved.</p>
         </div>
     </footer>
 
-    <!-- ✅ Script transition DAN LOGIKA DROPDOWN -->
+    {{-- SCRIPT --}}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            
-            // --- Logika transisi halaman (sudah ada) ---
-            const pageContent = document.getElementById('page-content');
-            if(pageContent) {
-                pageContent.classList.add('show');
-            }
-
-            // === ⬇️ JAVASCRIPT UNTUK DROPDOWN MENU (SOLUSI) ⬇️ ===
-            
-            // --- Logika Dropdown User Menu ---
+            // 1. Logic Dropdown Profil
             const userToggle = document.getElementById('user-menu-toggle');
             const userDropdown = document.getElementById('user-menu-dropdown');
-
+            
             if (userToggle && userDropdown) {
                 userToggle.addEventListener('click', (e) => {
-                    e.preventDefault(); // Mencegah link '#' berpindah halaman
-                    // Toggle tampilan dropdown
+                    e.stopPropagation();
                     userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+                });
+                document.addEventListener('click', (e) => {
+                    if (!userToggle.contains(e.target) && !userDropdown.contains(e.target)) {
+                        userDropdown.style.display = 'none';
+                    }
                 });
             }
 
-            // --- Sembunyikan dropdown jika klik di luar area menu ---
-            document.addEventListener('click', function(event) {
-                const userMenu = document.querySelector('.user-menu');
-                // Cek apakah userMenu ada DAN target klik BUKAN bagian dari userMenu
-                if (userMenu && !userMenu.contains(event.target)) {
-                    if(userDropdown) {
-                        userDropdown.style.display = 'none'; // Sembunyikan dropdown
-                    }
-                }
-            });
-            // === ⬆️ BATAS AKHIR JAVASCRIPT DROPDOWN ⬆️ ===
+            // 2. Logic Tombol Bantuan Melayang (Help Button)
+            const helpBtn = document.getElementById('help-btn');
+            const helpOptions = document.getElementById('help-options');
 
+            if (helpBtn && helpOptions) {
+                helpBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // Toggle class 'active' untuk animasi putar dan munculin menu
+                    helpBtn.classList.toggle('active');
+                });
+
+                // Tutup menu bantuan jika klik di luar
+                document.addEventListener('click', (e) => {
+                    if (!helpBtn.contains(e.target) && !helpOptions.contains(e.target)) {
+                        helpBtn.classList.remove('active');
+                    }
+                });
+            }
         });
     </script>
     
-    @stack('scripts') <!-- Untuk JS spesifik halaman -->
-
+    @stack('scripts') 
 </body>
 </html>

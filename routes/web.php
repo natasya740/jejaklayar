@@ -9,6 +9,7 @@ use App\Http\Controllers\TentangController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\AdminController; 
 use App\Http\Controllers\KontributorController; 
+use App\Http\Controllers\KategoriController;
 
 // ===============================================
 // 🔹 Halaman Beranda & Umum (tanpa login)
@@ -27,15 +28,21 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
-
-// 💡 LOGOUT HARUS POST, tapi kita sediakan rute GET untuk pemicu FORM (untuk link <a>)
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+// ===============================================
+// 🔐 RUTE LUPA PASSWORD (KRITIS)
+// ===============================================
+Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
+Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
+Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword'])->name('password.reset');
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 
 
 // ===============================================
 // 🔹 Autentikasi KHUSUS ADMIN (Rute /team)
 // ===============================================
-// Rute Login Admin
 Route::get('/team', [AuthController::class, 'showLoginAdmin'])->name('login.admin'); 
 Route::post('/team', [AuthController::class, 'loginAdmin'])->name('login.admin.post'); 
 
@@ -43,29 +50,37 @@ Route::post('/team', [AuthController::class, 'loginAdmin'])->name('login.admin.p
 // ===============================================
 // 🔸 AREA KONTRIBUTOR (Terlindungi)
 // ===============================================
-Route::middleware(['auth', 'role:kontributor'])->group(function () {
-    Route::get('/kontributor/dashboard', [KontributorController::class, 'index'])->name('kontributor.dashboard');
-    Route::get('/kontributor/upload', [KontributorController::class, 'showUploadForm'])->name('kontributor.upload');
-    Route::post('/kontributor/upload', [KontributorController::class, 'storeContent'])->name('kontributor.store');
-    Route::get('/kontributor/status', [KontributorController::class, 'viewStatus'])->name('kontributor.status');
-});
+Route::middleware(['auth', 'checkrole:kontributor'])
+    ->prefix('kontributor') // Tambahkan prefix agar rute lebih ringkas
+    ->name('kontributor.') // Tambahkan name prefix agar pemanggilan route lebih mudah
+    ->controller(KontributorController::class) // 🔹 PERBAIKAN UTAMA
+    ->group(function () {
+        Route::get('/dashboard', 'index')->name('dashboard');
+        
+        Route::get('/artikel/baru', 'showArticleForm')->name('artikel.form');
+        Route::post('/artikel/store', 'storeContent')->name('artikel.store');
+        Route::get('/artikel-saya', 'viewStatus')->name('artikel.saya');
+        
+        Route::get('/profil', 'showProfil')->name('profil');
+        Route::post('/profil', 'updateProfil')->name('profil.update');
+    });
 
 
 // ===============================================
 // 🔸 AREA ADMIN (Terlindungi)
 // ===============================================
-// Harus memiliki role 'admin'
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    // Dashboard khusus admin
-    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard'); 
-    
-    // Rute admin lainnya...
-    // Route::get('/admin/users', [AdminController::class, 'userList'])->name('admin.user_list');
-    
-    // Form input konten
-    Route::get('/admin/artikel/upload', [AdminController::class, 'showUploadForm'])->name('admin.artikel_form');
-    Route::post('/admin/artikel/upload', [AdminController::class, 'storeArtikel'])->name('admin.artikel_store');
-    
-    // Kelola artikel
-    Route::get('/admin/artikel/kelola', [AdminController::class, 'listArticles'])->name('admin.artikel_list');
-});
+Route::middleware(['auth', 'checkrole:admin'])
+    ->prefix('admin') // Tambahkan prefix agar rute lebih ringkas
+    ->name('admin.') // Tambahkan name prefix agar pemanggilan route lebih mudah
+    ->controller(AdminController::class) // 🔹 PERBAIKAN UTAMA
+    ->group(function () {
+        Route::get('/dashboard', 'index')->name('dashboard');
+        Route::get('/artikel/upload', 'showUploadForm')->name('artikel_form');
+        Route::post('/artikel/upload', 'storeArtikel')->name('artikel_store');
+        Route::get('/artikel/kelola', 'listArticles')->name('artikel_list');
+    });
+
+// ===============================================
+// 🌎 RUTE API (Untuk JavaScript Dropdown)
+// ===============================================
+Route::get('/api/kategori/{kategori}/subkategori', [KategoriController::class, 'getSubKategori'])->name('api.subkategori');

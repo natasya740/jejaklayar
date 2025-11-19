@@ -709,10 +709,12 @@ footer .copyright {
   transform: scale(1.2);
 }
 
-.footer-bottom {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 0.85rem;
-  color: #444;
-}
 
+.footer-bottom {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.95rem;
+    color: #000000;
+    background-color: transparent;
+    padding: 10px 160px;
+}

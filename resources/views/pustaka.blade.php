@@ -3,7 +3,7 @@
 @section('title', 'Pustaka — Jejak Layar')
 
 @section('content')
-
+<link rel="stylesheet" href="{{ asset('css/style.css') }}">
 <link rel="stylesheet" href="{{ asset('css/pustaka.css') }}">
 
 <!-- ✅ HERO SECTION -->
