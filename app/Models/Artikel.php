@@ -9,42 +9,30 @@ class Artikel extends Model
 {
     use HasFactory;
 
-    /**
-     * Menentukan nama tabel database yang digunakan oleh model ini.
-     * (Wajib jika nama tabel Anda 'artikel', bukan 'artikels')
-     */
-    protected $table = 'artikel';
+    // 1. Pastikan tabel yang digunakan adalah 'artikels'
+    protected $table = 'artikels';
 
-    /**
-     * Kolom yang boleh diisi secara massal (mass assignable).
-     */
+    // 2. Izinkan kolom ini diisi
     protected $fillable = [
         'user_id',
-        'kategori_id',
-        'judul',
+        'category_id',
+        'title',
         'slug',
-        'isi',
+        'content',
+        'image',
         'status',
-        'gambar_header',
+        'feedback',
     ];
 
-    /**
-     * Relasi: Satu Artikel dimiliki oleh satu User.
-     * Ini memungkinkan Anda memanggil $artikel->user->nama
-     */
+    // 3. Relasi: Artikel milik satu User (Penulis)
     public function user()
     {
-        // terhubung ke Model 'User', foreign key 'user_id'
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
-    /**
-     * Relasi: Satu Artikel dimiliki oleh satu Kategori.
-     * Ini memungkinkan Anda memanggil $artikel->kategori->nama
-     */
-    public function kategori()
+    // 4. Relasi: Artikel milik satu Kategori
+    public function category()
     {
-        // terhubung ke Model 'Kategori', foreign key 'kategori_id'
-        return $this->belongsTo(Kategori::class, 'kategori_id');
+        return $this->belongsTo(Category::class);
     }
 }

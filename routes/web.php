@@ -69,15 +69,25 @@ Route::middleware(['auth', 'checkrole:kontributor'])
 // ===============================================
 // 🔸 AREA ADMIN (Terlindungi)
 // ===============================================
+// ===============================================
+// 🔸 AREA ADMIN (Terlindungi)
+// ===============================================
 Route::middleware(['auth', 'checkrole:admin'])
-    ->prefix('admin') // Tambahkan prefix agar rute lebih ringkas
-    ->name('admin.') // Tambahkan name prefix agar pemanggilan route lebih mudah
-    ->controller(AdminController::class) // 🔹 PERBAIKAN UTAMA
+    ->prefix('admin')
+    ->name('admin.')
+    ->controller(AdminController::class)
     ->group(function () {
+        
+        // Dashboard
         Route::get('/dashboard', 'index')->name('dashboard');
-        Route::get('/artikel/upload', 'showUploadForm')->name('artikel_form');
-        Route::post('/artikel/upload', 'storeArtikel')->name('artikel_store');
-        Route::get('/artikel/kelola', 'listArticles')->name('artikel_list');
+
+        // Monitoring Artikel
+        Route::get('/artikel/pending', 'pendingArtikel')->name('artikel.pending');
+        Route::get('/artikel/{id}/review', 'reviewArtikel')->name('artikel.review');
+
+        // Aksi (Tombol Approve/Reject)
+        Route::patch('/artikel/{id}/approve', 'approveArtikel')->name('artikel.approve');
+        Route::patch('/artikel/{id}/reject', 'rejectArtikel')->name('artikel.reject');
     });
 
 // ===============================================

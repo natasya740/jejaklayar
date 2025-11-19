@@ -2,46 +2,71 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Artikel;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Artikel; // Asumsi model artikel Anda bernama Artikel
 
 class AdminController extends Controller
 {
-    // Method yang dipanggil oleh rute admin.dashboard
+    // Dashboard Admin
     public function index()
     {
-        // 💡 Di sini Anda akan menarik data Laravel yang sebelumnya Anda ambil via PHP murni
-        
-        // Contoh: Mengambil data untuk dashboard
-        // Di sini Anda akan menjalankan query untuk mendapatkan total artikel, pending, published, dll.
-        // Untuk saat ini, kita akan mengirim data dummy atau mengambil semua data.
-        
-        // Ambil semua artikel yang statusnya pending untuk antrian
-        $pendingArticles = Artikel::where('status', 'pending')->with('user')->get(); 
-        
-        $stats = [
-            'total_artikel' => Artikel::count(),
-            'total_pending' => Artikel::where('status', 'pending')->count(),
-            'total_published' => Artikel::where('status', 'published')->count(),
-            'total_user' => \App\Models\User::count(), // Asumsi model User ada
-        ];
+        // Hitung statistik
+        $totalUsers = User::count();
+        $pendingArtikel = Artikel::where('status', 'pending')->count();
+        $publishedArtikel = Artikel::where('status', 'published')->count();
 
-        // Ganti 'admin.dashboard' dengan lokasi view Blade baru Anda
-        return view('admin.dashboard', compact('pendingArticles', 'stats'));
+        // Ambil 5 artikel pending terbaru untuk tabel dashboard
+        $pendingArtikelsList = Artikel::where('status', 'pending')
+                                     ->with(['user', 'category']) // Eager load relasi
+                                     ->latest()
+                                     ->take(5)
+                                     ->get();
+
+        return view('admin.dashboard', compact('totalUsers', 'pendingArtikel', 'publishedArtikel', 'pendingArtikelsList'));
     }
 
-    // Method untuk Form Input Konten (artikel_form.html)
-    public function showUploadForm()
+    // Halaman List Artikel Pending
+    public function pendingArtikel()
     {
-        return view('admin.artikel_form');
+        // Ambil semua artikel pending dengan pagination
+        $artikels = Artikel::where('status', 'pending')
+                           ->with(['user', 'category'])
+                           ->latest()
+                           ->paginate(10);
+
+        return view('admin.artikel.pending', compact('artikels'));
     }
 
-    // Method untuk Kelola Artikel (artikel_list.html)
-    public function listArticles()
+    // Halaman Review Single Artikel
+    public function reviewArtikel($id)
     {
-        // Ambil semua artikel untuk halaman kelola
-        $articles = Artikel::all();
-        return view('admin.artikel_list', compact('articles'));
+        $artikel = Artikel::with(['user', 'category'])->findOrFail($id);
+        return view('admin.artikel.review', compact('artikel'));
+    }
+
+    // Logika Approve (Terbitkan)
+    public function approveArtikel($id)
+    {
+        $artikel = Artikel::findOrFail($id);
+        $artikel->status = 'published';
+        $artikel->save();
+
+        return redirect()->route('admin.artikel.pending')->with('success', 'Artikel berhasil diterbitkan!');
+    }
+
+    // Logika Reject (Tolak)
+    public function rejectArtikel(Request $request, $id)
+    {
+        $request->validate([
+            'feedback' => 'required|string'
+        ]);
+
+        $artikel = Artikel::findOrFail($id);
+        $artikel->status = 'rejected';
+        $artikel->feedback = $request->feedback; // Simpan alasan penolakan
+        $artikel->save();
+
+        return redirect()->route('admin.artikel.pending')->with('success', 'Artikel ditolak dan dikembalikan ke kontributor.');
     }
 }
