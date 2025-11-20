@@ -1,75 +1,60 @@
-@extends('layouts.admin')
+@extends('layouts.dashboard') <!-- Panggil Layout yang SAMA -->
 
 @section('title', 'Dashboard Admin')
 
 @section('content')
-
-    <div class="page-header">
-        <h1>Dashboard Admin</h1>
-        <p>Selamat datang, {{ Auth::user()->name }}. Berikut adalah ringkasan aktivitas.</p>
+    
+    <div class="mb-8">
+        <h2 class="text-2xl font-bold text-gray-800">Panel Monitoring</h2>
+        <p class="text-gray-500">Ringkasan aktivitas Jejak Layar hari ini.</p>
     </div>
 
-    <!-- STATISTIK -->
-    <div class="stats-grid">
-        <div class="stat-card blue">
-            <div class="icon-wrapper"><i class="fas fa-users"></i></div>
-            <div class="stat-info">
-                <span class="value">{{ $totalUsers }}</span>
-                <span class="label">Total Pengguna</span>
-            </div>
+    <!-- Statistik Admin -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500">
+            <p class="text-gray-500 text-sm uppercase font-bold">Total Pengguna</p>
+            <h3 class="text-3xl font-bold">{{ $totalUsers }}</h3>
         </div>
-        <div class="stat-card yellow">
-            <div class="icon-wrapper"><i class="fas fa-hourglass-half"></i></div>
-            <div class="stat-info">
-                <span class="value">{{ $pendingArtikel }}</span>
-                <span class="label">Perlu Validasi</span>
-            </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-yellow-500">
+            <p class="text-gray-500 text-sm uppercase font-bold">Menunggu Validasi</p>
+            <h3 class="text-3xl font-bold">{{ $pendingArtikel }}</h3>
         </div>
-        <div class="stat-card green">
-            <div class="icon-wrapper"><i class="fas fa-check-double"></i></div>
-            <div class="stat-info">
-                <span class="value">{{ $publishedArtikel }}</span>
-                <span class="label">Artikel Tayang</span>
-            </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-500">
+            <p class="text-gray-500 text-sm uppercase font-bold">Artikel Tayang</p>
+            <h3 class="text-3xl font-bold">{{ $publishedArtikel }}</h3>
         </div>
     </div>
 
-    <!-- TABEL ARTIKEL TERBARU (YANG PERLU VALIDASI) -->
-    <div class="card">
-        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-            <h2>Artikel Menunggu Validasi</h2>
-            <a href="{{ route('admin.artikel.pending') }}" class="btn btn-primary" style="font-size: 0.8rem; padding: 8px 15px;">Lihat Semua</a>
+    <!-- Tabel Artikel Pending -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+            <h3 class="font-bold text-gray-800">Butuh Persetujuan</h3>
+            <a href="{{ route('admin.artikel.pending') }}" class="text-indigo-600 text-sm font-bold hover:underline">Proses Semua &rarr;</a>
         </div>
-        <div class="card-body" style="padding: 0;">
-            <table class="modern-table">
-                <thead>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-gray-50 text-gray-500 uppercase">
                     <tr>
-                        <th>Judul</th>
-                        <th>Penulis</th>
-                        <th>Kategori</th>
-                        <th>Tanggal</th>
-                        <th>Aksi</th>
+                        <th class="px-6 py-3">Judul</th>
+                        <th class="px-6 py-3">Penulis</th>
+                        <th class="px-6 py-3">Tanggal</th>
+                        <th class="px-6 py-3 text-center">Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @forelse($pendingArtikelsList as $artikel)
-                        <tr>
-                            <td>{{ $artikel->title }}</td>
-                            <td>{{ $artikel->user->name ?? 'Anonim' }}</td>
-                            <td>{{ $artikel->category->name ?? '-' }}</td>
-                            <td>{{ $artikel->created_at->format('d M Y') }}</td>
-                            <td>
-                                <a href="{{ route('admin.artikel.review', $artikel->id) }}" class="btn btn-primary" style="padding: 5px 10px; font-size: 0.8rem;">
-                                    Review
-                                </a>
-                            </td>
-                        </tr>
+                <tbody class="divide-y divide-gray-100">
+                    @forelse($pendingArtikelsList as $item)
+                    <tr>
+                        <td class="px-6 py-3 font-medium">{{ Str::limit($item->title, 30) }}</td>
+                        <td class="px-6 py-3">{{ $item->user->name }}</td>
+                        <td class="px-6 py-3">{{ $item->created_at->diffForHumans() }}</td>
+                        <td class="px-6 py-3 text-center">
+                            <a href="{{ route('admin.artikel.review', $item->id) }}" class="text-indigo-600 hover:text-indigo-800 font-bold">Review</a>
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="5" style="text-align: center; padding: 20px; color: #999;">
-                                Tidak ada artikel yang perlu divalidasi saat ini.
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="4" class="px-6 py-4 text-center text-gray-400">Aman, tidak ada antrian.</td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>

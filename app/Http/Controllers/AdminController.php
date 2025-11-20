@@ -8,17 +8,17 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    // Dashboard Admin
+    // 1. Dashboard Admin
     public function index()
     {
-        // Hitung statistik
+        // Hitung statistik real-time
         $totalUsers = User::count();
         $pendingArtikel = Artikel::where('status', 'pending')->count();
         $publishedArtikel = Artikel::where('status', 'published')->count();
 
-        // Ambil 5 artikel pending terbaru untuk tabel dashboard
+        // Ambil 5 artikel pending terbaru untuk tabel ringkasan di dashboard
         $pendingArtikelsList = Artikel::where('status', 'pending')
-                                     ->with(['user', 'category']) // Eager load relasi
+                                     ->with(['user', 'category']) // Optimasi query
                                      ->latest()
                                      ->take(5)
                                      ->get();
@@ -26,36 +26,37 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('totalUsers', 'pendingArtikel', 'publishedArtikel', 'pendingArtikelsList'));
     }
 
-    // Halaman List Artikel Pending
+    // 2. Halaman List Artikel Pending (READ)
     public function pendingArtikel()
     {
-        // Ambil semua artikel pending dengan pagination
         $artikels = Artikel::where('status', 'pending')
                            ->with(['user', 'category'])
                            ->latest()
                            ->paginate(10);
 
-        return view('admin.artikel.pending', compact('artikels'));
+        // PERBAIKAN: Mengarah ke file 'index.blade.php' di dalam folder 'admin/artikel'
+        return view('admin.artikel.index', compact('artikels'));
     }
 
-    // Halaman Review Single Artikel
+    // 3. Halaman Review Single Artikel (READ DETAIL)
     public function reviewArtikel($id)
     {
         $artikel = Artikel::with(['user', 'category'])->findOrFail($id);
-        return view('admin.artikel.review', compact('artikel'));
+        
+        // PERBAIKAN: Mengarah ke file 'show.blade.php' di dalam folder 'admin/artikel'
+        return view('admin.artikel.show', compact('artikel'));
     }
 
-    // Logika Approve (Terbitkan)
+    // 4. Logika Approve (UPDATE STATUS)
     public function approveArtikel($id)
     {
         $artikel = Artikel::findOrFail($id);
-        $artikel->status = 'published';
-        $artikel->save();
+        $artikel->update(['status' => 'published']); // Cara penulisan lebih singkat
 
         return redirect()->route('admin.artikel.pending')->with('success', 'Artikel berhasil diterbitkan!');
     }
 
-    // Logika Reject (Tolak)
+    // 5. Logika Reject (UPDATE STATUS)
     public function rejectArtikel(Request $request, $id)
     {
         $request->validate([
@@ -63,10 +64,20 @@ class AdminController extends Controller
         ]);
 
         $artikel = Artikel::findOrFail($id);
-        $artikel->status = 'rejected';
-        $artikel->feedback = $request->feedback; // Simpan alasan penolakan
-        $artikel->save();
+        $artikel->update([
+            'status' => 'rejected',
+            'feedback' => $request->feedback
+        ]);
 
         return redirect()->route('admin.artikel.pending')->with('success', 'Artikel ditolak dan dikembalikan ke kontributor.');
+    }
+
+    // 6. Logika Hapus (DELETE - Fitur Baru)
+    public function destroyArtikel($id)
+    {
+        $artikel = Artikel::findOrFail($id);
+        $artikel->delete();
+
+        return back()->with('success', 'Artikel berhasil dihapus permanen.');
     }
 }

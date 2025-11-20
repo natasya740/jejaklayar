@@ -1,120 +1,56 @@
-{{-- 
-  ==============================================================
-  🔹 Menggunakan layout sidebar BARU 🔹
-  ==============================================================
---}}
-@extends('layouts.kontributor')
+@extends('layouts.dashboard') <!-- Panggil Layout Utama -->
 
 @section('title', 'Dashboard Kontributor')
 
-@push('styles')
-  {{-- CSS khusus dashboard bisa ditambahkan di sini --}}
-@endpush
-
-
 @section('content')
-
-    <!-- HEADER HALAMAN -->
-    <div class="page-header">
-        <h1>Dashboard</h1>
-        <p>Selamat datang kembali, {{ Auth::user()->name }} 👋</p>
+    <!-- ISI KONTEN DASHBOARD KONTRIBUTOR DIMULAI DARI SINI -->
+    
+    <div class="mb-8">
+        <h2 class="text-2xl font-bold text-gray-800">Halo, {{ Auth::user()->name }} 👋</h2>
+        <p class="text-gray-500">Selamat datang kembali di panel penulis.</p>
     </div>
 
-    <!-- =============================================== -->
-    <!-- 🔹 KARTU STATISTIK 🔹 -->
-    <!-- =============================================== -->
-    <div class="stats-grid">
-        <!-- Stat Card 1 -->
-        <div class="stat-card blue">
-            <div class="icon-wrapper">
-                <i class="fas fa-file-alt"></i>
-            </div>
-            <div class="stat-info">
-                {{-- TODO: Ganti angka 5 dengan data asli --}}
-                <span class="value">5</span> 
-                <span class="label">Total Artikel</span>
+    <!-- Statistik -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-indigo-500">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-500 text-sm font-medium">Total Artikel</p>
+                    <h3 class="text-3xl font-bold text-gray-800">{{ $artikels->count() }}</h3>
+                </div>
+                <div class="p-3 bg-indigo-50 rounded-full text-indigo-600">
+                    <i class="fas fa-newspaper text-xl"></i>
+                </div>
             </div>
         </div>
         
-        <!-- Stat Card 2 -->
-        <div class="stat-card yellow">
-            <div class="icon-wrapper">
-                <i class="fas fa-clock"></i>
-            </div>
-            <div class="stat-info">
-                {{-- TODO: Ganti angka 1 dengan data asli --}}
-                <span class="value">1</span>
-                <span class="label">Menunggu Validasi</span>
-            </div>
-        </div>
-
-        <!-- Stat Card 3 -->
-        <div class="stat-card green">
-            <div class="icon-wrapper">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="stat-info">
-                {{-- TODO: Ganti angka 4 dengan data asli --}}
-                <span class="value">4</span>
-                <span class="label">Artikel Diterbitkan</span>
-            </div>
-        </div>
+        <!-- Tambahkan widget statistik lain disini jika mau -->
     </div>
 
-    <!-- =============================================== -->
-    <!-- 🔹 AREA KONTEN UTAMA (GRID) 🔹 -->
-    <!-- =============================================== -->
-    <div class="dashboard-grid">
-        
-        <!-- Kolom Kiri: Artikel Terbaru -->
-        <div class="card">
-            <div class="card-header">
-                <h2>Artikel Terbaru Anda</h2>
-            </div>
-            <div class="card-body" style="padding: 0;"> {{-- Hapus padding agar tabel penuh --}}
-                <table class="modern-table">
-                    <thead>
-                        <tr>
-                            <th>Judul</th>
-                            <th>Kategori</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{-- TODO: Ganti ini dengan @foreach loop data artikel --}}
-                        <tr>
-                            <td>Asal Usul Bengkalis</td>
-                            <td>Sejarah</td>
-                            <td><span class="badge approved">Disetujui</span></td>
-                        </tr>
-                        <tr>
-                            <td>Legenda Putri Tujuh</td>
-                            <td>Cerita Rakyat</td>
-                            <td><span class="badge pending">Pending</span></td>
-                        </tr>
-                        <tr>
-                            <td>Upacara Tepuk Tepung Tawar</td>
-                            <td>Budaya</td>
-                            <td><span class="badge approved">Disetujui</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+    <!-- Tabel Ringkas -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+            <h3 class="font-bold text-gray-700">Artikel Terbaru</h3>
+            <a href="{{ route('kontributor.artikel.saya') }}" class="text-sm text-indigo-600 hover:underline">Lihat Semua</a>
         </div>
-
-        <!-- Kolom Kanan: Aksi Cepat -->
-        <div class="card">
-            <div class="card-header">
-                <h2>Aksi Cepat</h2>
-            </div>
-            <div class="card-body">
-                <p style="margin-bottom: 15px;">Siap untuk membagikan cerita atau pengetahuan baru?</p>
-                <a href="{{ route('kontributor.artikel.form') }}" class="btn btn-primary btn-full-width">
-                    <i class="fas fa-plus"></i> Tulis Artikel Baru
-                </a>
-            </div>
+        <div class="p-6">
+            @if($artikels->isEmpty())
+                <p class="text-gray-500 text-center py-4">Belum ada artikel. <a href="{{ route('kontributor.artikel.form') }}" class="text-indigo-600 underline">Tulis sekarang!</a></p>
+            @else
+                <ul class="divide-y divide-gray-100">
+                    @foreach($artikels->take(5) as $artikel)
+                        <li class="py-3 flex justify-between items-center">
+                            <span class="text-gray-700 font-medium">{{ $artikel->title }}</span>
+                            <span class="px-2 py-1 rounded text-xs font-bold 
+                                {{ $artikel->status == 'published' ? 'bg-green-100 text-green-700' : 
+                                  ($artikel->status == 'rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }}">
+                                {{ ucfirst($artikel->status) }}
+                            </span>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
         </div>
-
     </div>
 
 @endsection

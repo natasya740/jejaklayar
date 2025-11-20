@@ -32,7 +32,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 // ===============================================
-// 🔐 RUTE LUPA PASSWORD (KRITIS)
+// 🔐 RUTE LUPA PASSWORD
 // ===============================================
 Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
 Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
@@ -51,24 +51,25 @@ Route::post('/team', [AuthController::class, 'loginAdmin'])->name('login.admin.p
 // 🔸 AREA KONTRIBUTOR (Terlindungi)
 // ===============================================
 Route::middleware(['auth', 'checkrole:kontributor'])
-    ->prefix('kontributor') // Tambahkan prefix agar rute lebih ringkas
-    ->name('kontributor.') // Tambahkan name prefix agar pemanggilan route lebih mudah
-    ->controller(KontributorController::class) // 🔹 PERBAIKAN UTAMA
+    ->prefix('kontributor')
+    ->name('kontributor.')
+    ->controller(KontributorController::class)
     ->group(function () {
+        
+        // Dashboard
         Route::get('/dashboard', 'index')->name('dashboard');
         
+        // Artikel (CRUD: Create & Read)
         Route::get('/artikel/baru', 'showArticleForm')->name('artikel.form');
         Route::post('/artikel/store', 'storeContent')->name('artikel.store');
-        Route::get('/artikel-saya', 'viewStatus')->name('artikel.saya');
+        Route::get('/artikel-saya', 'viewStatus')->name('artikel.saya'); // Alias listMyArticles
         
+        // Profil
         Route::get('/profil', 'showProfil')->name('profil');
         Route::post('/profil', 'updateProfil')->name('profil.update');
     });
 
 
-// ===============================================
-// 🔸 AREA ADMIN (Terlindungi)
-// ===============================================
 // ===============================================
 // 🔸 AREA ADMIN (Terlindungi)
 // ===============================================
@@ -81,14 +82,18 @@ Route::middleware(['auth', 'checkrole:admin'])
         // Dashboard
         Route::get('/dashboard', 'index')->name('dashboard');
 
-        // Monitoring Artikel
+        // Monitoring Artikel (Read)
         Route::get('/artikel/pending', 'pendingArtikel')->name('artikel.pending');
         Route::get('/artikel/{id}/review', 'reviewArtikel')->name('artikel.review');
 
-        // Aksi (Tombol Approve/Reject)
+        // Aksi Validasi (Update Status)
         Route::patch('/artikel/{id}/approve', 'approveArtikel')->name('artikel.approve');
         Route::patch('/artikel/{id}/reject', 'rejectArtikel')->name('artikel.reject');
+
+        // TAMBAHAN PENTING: Hapus Artikel (Delete)
+        Route::delete('/artikel/{id}', 'destroyArtikel')->name('artikel.destroy');
     });
+
 
 // ===============================================
 // 🌎 RUTE API (Untuk JavaScript Dropdown)
