@@ -16,16 +16,34 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- 1. LAYOUT UTAMA --- */
-        html, body { height: 100%; margin: 0; }
+        /* --- RESET & BASE --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #fffaf2;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
         }
-        main { flex: 1; width: 100%; }
+
+        main { 
+            flex: 1; 
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
 
         /* --- LOGO SPLASH SCREEN --- */
         #logo-splash {
@@ -70,7 +88,6 @@
             }
         }
 
-        /* Efek Subtle Glow pada Logo Splash */
         .splash-logo-container::before {
             content: '';
             position: absolute;
@@ -97,20 +114,28 @@
             }
         }
 
-        /* --- 2. HEADER & NAVBAR --- */
+        /* --- HEADER & NAVBAR (FIXED) --- */
         .site-header {
             background-color: #ffffff;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
             padding: 0.8rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
+            position: fixed;
             top: 0;
-            z-index: 50;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
         }
 
-        /* Logo Header dengan Efek Hover */
+        /* Offset untuk konten agar tidak tertutup header */
+        body > main {
+            padding-top: 80px;
+        }
+
+        /* Logo Header */
         .logo-link {
             position: relative;
             display: inline-block;
@@ -123,10 +148,9 @@
         }
 
         .logo-link:hover .logo {
-            transform: scale(1.03);
+            transform: scale(1.05);
         }
 
-        /* Canvas untuk Click Spark pada Logo */
         .logo-spark-container {
             position: relative;
             display: inline-block;
@@ -142,59 +166,156 @@
             z-index: 10;
         }
         
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            align-items: center;
+        }
+
         .search-bar input {
-            background: #f3f4f6; border: none; padding: 10px 20px;
-            border-radius: 50px; width: 300px; outline: none;
-            transition: box-shadow 0.3s;
+            background: #f3f4f6; 
+            border: none; 
+            padding: 10px 20px;
+            border-radius: 50px; 
+            width: 300px; 
+            outline: none;
+            transition: all 0.3s;
+            font-size: 0.9rem;
         }
-        .search-bar input:focus { box-shadow: 0 0 0 2px #f4b400; }
 
-        .main-nav { display: flex; align-items: center; gap: 25px; }
+        .search-bar input:focus { 
+            box-shadow: 0 0 0 3px rgba(244, 180, 0, 0.2);
+            background: #ffffff;
+        }
+
+        /* Main Navigation */
+        .main-nav { 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+        }
+
         .nav-link { 
-            text-decoration: none; color: #374151; font-weight: 500; 
-            font-size: 0.95rem; transition: color 0.3s; 
+            text-decoration: none; 
+            color: #374151; 
+            font-weight: 500; 
+            font-size: 0.95rem; 
+            transition: color 0.3s;
+            position: relative;
+            padding: 5px 0;
         }
-        .nav-link:hover, .nav-link.active { color: #d97706; }
 
-        /* --- 3. DROPDOWN PROFIL --- */
-        .user-menu { position: relative; display: flex; align-items: center; }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #d97706;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .nav-link:hover, 
+        .nav-link.active { 
+            color: #d97706; 
+        }
+
+        /* --- DROPDOWN PROFIL --- */
+        .user-menu { 
+            position: relative; 
+            display: flex; 
+            align-items: center; 
+        }
+
         .user-toggle {
-            display: flex; align-items: center; gap: 10px; cursor: pointer;
-            text-decoration: none; color: #333; font-weight: 600;
-            padding: 6px 12px; border-radius: 30px; transition: background 0.2s;
-        }
-        .user-toggle:hover { background-color: #f3f4f6; }
-        .profile-img {
-            width: 35px; height: 35px; border-radius: 50%;
-            object-fit: cover; border: 2px solid #f4b400;
-        }
-        .user-menu-dropdown {
-            position: absolute; top: 55px; right: 0; background: #ffffff;
-            min-width: 220px; border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); padding: 8px 0;
-            display: none; z-index: 1000; border: 1px solid #eee;
-        }
-        .user-menu-dropdown a, .user-menu-dropdown button {
-            display: flex; align-items: center; gap: 12px; padding: 12px 20px;
-            text-decoration: none; color: #4b5563; width: 100%; text-align: left;
-            background: none; border: none; cursor: pointer; font-size: 0.9rem;
-            font-family: inherit; font-weight: 500;
-        }
-        .user-menu-dropdown a:hover, .user-menu-dropdown button:hover {
-            background-color: #fffaf2; color: #d97706;
-        }
-        .user-menu-dropdown .logout-btn {
-            color: #ef4444; border-top: 1px solid #f3f4f6; margin-top: 5px; padding-top: 15px;
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            cursor: pointer;
+            text-decoration: none; 
+            color: #333; 
+            font-weight: 600;
+            padding: 6px 12px; 
+            border-radius: 30px; 
+            transition: background 0.2s;
         }
 
-        /* --- 4. FOOTER KUNING UTUH --- */
+        .user-toggle:hover { 
+            background-color: #f3f4f6; 
+        }
+
+        .profile-img {
+            width: 35px; 
+            height: 35px; 
+            border-radius: 50%;
+            object-fit: cover; 
+            border: 2px solid #f4b400;
+        }
+
+        .user-menu-dropdown {
+            position: absolute; 
+            top: 55px; 
+            right: 0; 
+            background: #ffffff;
+            min-width: 220px; 
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
+            padding: 8px 0;
+            display: none; 
+            z-index: 1000; 
+            border: 1px solid #eee;
+        }
+
+        .user-menu-dropdown a, 
+        .user-menu-dropdown button {
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            padding: 12px 20px;
+            text-decoration: none; 
+            color: #4b5563; 
+            width: 100%; 
+            text-align: left;
+            background: none; 
+            border: none; 
+            cursor: pointer; 
+            font-size: 0.9rem;
+            font-family: inherit; 
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .user-menu-dropdown a:hover, 
+        .user-menu-dropdown button:hover {
+            background-color: #fffaf2; 
+            color: #d97706;
+            padding-left: 25px;
+        }
+
+        .user-menu-dropdown .logout-btn {
+            color: #ef4444; 
+            border-top: 1px solid #f3f4f6; 
+            margin-top: 5px; 
+            padding-top: 15px;
+        }
+
+        /* --- FOOTER (FIXED AT BOTTOM) --- */
         footer.site-footer {
             background-color: #fcd34d; 
             color: #1f2937; 
             padding-top: 4rem;
             margin-top: auto;
             font-size: 0.95rem;
+            position: relative;
+            z-index: 2;
         }
+
         .footer-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -203,65 +324,133 @@
             margin: 0 auto;
             padding: 0 2rem 2rem; 
         }
+
         .footer-col h3 { 
-            font-weight: 800; font-size: 1.1rem; margin-bottom: 1.5rem; 
+            font-weight: 800; 
+            font-size: 1.1rem; 
+            margin-bottom: 1.5rem; 
             color: #111827; 
-            text-transform: uppercase; letter-spacing: 1px;
+            text-transform: uppercase; 
+            letter-spacing: 1px;
         }
-        .footer-col p { line-height: 1.6; color: #374151; margin-bottom: 1rem; }
-        .footer-col ul { list-style: none; padding: 0; }
-        .footer-col ul li { margin-bottom: 0.8rem; }
+
+        .footer-col p { 
+            line-height: 1.6; 
+            color: #374151; 
+            margin-bottom: 1rem; 
+        }
+
+        .footer-col ul { 
+            list-style: none; 
+            padding: 0; 
+        }
+
+        .footer-col ul li { 
+            margin-bottom: 0.8rem; 
+        }
+
         .footer-col a { 
-            text-decoration: none; color: #374151; transition: all 0.3s; 
-            display: inline-flex; align-items: center; gap: 8px; font-weight: 500;
+            text-decoration: none; 
+            color: #374151; 
+            transition: all 0.3s; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-weight: 500;
         }
-        .footer-col a:hover { color: #000; transform: translateX(5px); }
+
+        .footer-col a:hover { 
+            color: #000; 
+            transform: translateX(5px); 
+        }
+
         .contact-icon {
-            width: 24px; height: 24px; background: rgba(255,255,255,0.5);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 0.8rem; color: #1f2937;
+            width: 24px; 
+            height: 24px; 
+            background: rgba(255,255,255,0.5);
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 0.8rem; 
+            color: #1f2937;
         }
-        .socials { display: flex; gap: 12px; margin-top: 20px; }
+
+        .socials { 
+            display: flex; 
+            gap: 12px; 
+            margin-top: 20px; 
+        }
+
         .socials a {
-            width: 38px; height: 38px; background: #ffffff; 
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 50%; transition: all 0.3s; color: #1f2937;
+            width: 38px; 
+            height: 38px; 
+            background: #ffffff; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            border-radius: 50%; 
+            transition: all 0.3s; 
+            color: #1f2937;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
+
         .socials a:hover { 
-            background: #1f2937; color: #fcd34d; transform: translateY(-3px); 
+            background: #1f2937; 
+            color: #fcd34d; 
+            transform: translateY(-3px) scale(1.1);
         }
+
         .footer-bottom {
-            text-align: center; padding: 2rem 0; background-color: transparent;
-            font-size: 0.85rem; color: #4b5563; border-top: 1px solid rgba(0,0,0,0.05);
-            width: 100%; margin-top: 1rem;
+            text-align: center; 
+            padding: 2rem 0; 
+            background-color: transparent;
+            font-size: 0.85rem; 
+            color: #4b5563; 
+            border-top: 1px solid rgba(0,0,0,0.05);
+            width: 100%; 
+            margin-top: 1rem;
         }
 
-        /* --- 5. TOMBOL LOGIN --- */
+        /* --- TOMBOL LOGIN --- */
         .btn-primary {
-            background-color: #f4b400; color: white; padding: 0.6rem 1.5rem;
-            border-radius: 50px; font-weight: 600; text-decoration: none;
-            transition: all 0.3s; display: inline-block;
+            background-color: #f4b400; 
+            color: white; 
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px; 
+            font-weight: 600; 
+            text-decoration: none;
+            transition: all 0.3s; 
+            display: inline-block;
+            border: 2px solid transparent;
         }
-        .btn-primary:hover { background-color: #d97706; transform: translateY(-2px); }
 
-        /* --- 6. TOMBOL BANTUAN MENGAMBANG (INTERAKTIF) --- */
+        .btn-primary:hover { 
+            background-color: #d97706; 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(244, 180, 0, 0.4);
+        }
+
+        /* --- TOMBOL BANTUAN MENGAMBANG (FIXED) --- */
         .floating-help-container {
             position: fixed;
             bottom: 30px;
             right: 30px;
-            z-index: 999;
+            z-index: 99;
             display: flex;
             flex-direction: column;
-            align-items: end;
+            align-items: flex-end;
         }
 
         .help-trigger-btn {
             background-color: #1e293b;
             color: #fcd34d;
-            width: 60px; height: 60px;
+            width: 60px; 
+            height: 60px;
             border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
             font-size: 24px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             cursor: pointer;
@@ -302,25 +491,185 @@
             background: white;
             padding: 10px 20px;
             border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
             text-decoration: none;
             color: #333;
             font-weight: 600;
             font-size: 0.9rem;
-            transition: transform 0.2s;
+            transition: all 0.2s;
             white-space: nowrap;
         }
+
         .help-item:hover {
             transform: translateX(-5px);
             color: #d97706;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
+
         .help-item i {
-            width: 25px; height: 25px;
-            display: flex; align-items: center; justify-content: center;
+            width: 25px; 
+            height: 25px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
             background: #f3f4f6;
             border-radius: 50%;
             font-size: 0.8rem;
             color: #d97706;
+        }
+
+        /* --- MOBILE MENU TOGGLE --- */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .mobile-menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: #374151;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        /* --- RESPONSIVE DESIGN --- */
+        @media (max-width: 1024px) {
+            .site-header {
+                padding: 0.8rem 1.5rem;
+            }
+
+            .search-bar input {
+                width: 200px;
+            }
+
+            .main-nav {
+                gap: 15px;
+            }
+
+            .nav-link {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body > main {
+                padding-top: 70px;
+            }
+
+            .site-header {
+                padding: 0.6rem 1rem;
+                flex-wrap: wrap;
+            }
+
+            .header-left {
+                order: 1;
+            }
+
+            .header-right {
+                order: 3;
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .header-center {
+                order: 2;
+                margin-left: auto;
+            }
+
+            .logo {
+                height: 38px;
+            }
+
+            .search-bar input {
+                width: 160px;
+                padding: 8px 15px;
+                font-size: 0.85rem;
+            }
+
+            .main-nav {
+                width: 100%;
+                justify-content: space-around;
+                gap: 10px;
+                padding-top: 10px;
+                border-top: 1px solid #f3f4f6;
+                flex-wrap: wrap;
+            }
+
+            .nav-link {
+                font-size: 0.85rem;
+            }
+
+            .btn-primary {
+                padding: 0.5rem 1.2rem;
+                font-size: 0.85rem;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 0 1.5rem 1.5rem;
+            }
+
+            .footer-col h3 {
+                font-size: 1rem;
+            }
+
+            .floating-help-container {
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .help-trigger-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+
+            .help-item {
+                font-size: 0.85rem;
+                padding: 8px 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .site-header {
+                padding: 0.5rem 0.8rem;
+            }
+
+            .logo {
+                height: 32px;
+            }
+
+            .search-bar input {
+                width: 120px;
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+
+            .main-nav {
+                gap: 8px;
+            }
+
+            .nav-link {
+                font-size: 0.8rem;
+            }
+
+            .user-toggle span {
+                font-size: 0.85rem;
+            }
+
+            .profile-img {
+                width: 30px;
+                height: 30px;
+            }
+        }
+
+        /* Prevent layout shift on scroll */
+        .prevent-shift {
+            overflow-anchor: none;
         }
     </style>
 
@@ -335,7 +684,7 @@
         </div>
     </div>
 
-    {{-- HEADER --}}
+    {{-- HEADER (FIXED) --}}
     <header class="site-header">
         <div class="header-left">
             <div class="logo-spark-container">
@@ -348,7 +697,7 @@
 
         <div class="header-center">
             <form class="search-bar" action="{{ route('search') }}" method="GET">
-                <input type="search" name="q" placeholder="Cari: judul, tokoh, kata kunci..." value="{{ request('q') }}">
+                <input type="search" name="q" placeholder="Cari..." value="{{ request('q') }}">
             </form>
         </div>
 
@@ -389,11 +738,11 @@
     </header>
 
     {{-- KONTEN UTAMA --}}
-    <main>
+    <main class="prevent-shift">
         @yield('content')
     </main>
 
-    {{-- TOMBOL BANTUAN MENGAMBANG (INTERAKTIF) --}}
+    {{-- TOMBOL BANTUAN MENGAMBANG (FIXED) --}}
     <div class="floating-help-container">
         <div class="help-trigger-btn" id="help-btn">
             <i class="fas fa-question"></i>
@@ -412,7 +761,7 @@
                 <span>Panduan Kontributor</span>
                 <i class="fas fa-user-edit"></i>
             </a>
-             <a href="https://wa.me/628123456789" target="_blank" class="help-item">
+            <a href="https://wa.me/628123456789" target="_blank" class="help-item">
                 <span>Chat WhatsApp</span>
                 <i class="fab fa-whatsapp"></i>
             </a>
@@ -451,7 +800,7 @@
                 <h3>KONTAK KAMI</h3>
                 <p class="flex items-center gap-2"><span class="contact-icon"><i class="fas fa-map-marker-alt"></i></span> Bengkalis, Riau, Indonesia</p>
                 <p class="flex items-center gap-2"><span class="contact-icon"><i class="fas fa-envelope"></i></span> admin@jejaklayar.com</p>
-                <p class="flex items-center gap-2"><span class="contact-icon"><i class="fas fa-phone"></i></span> </p>
+                <p class="flex items-center gap-2"><span class="contact-icon"><i class="fas fa-phone"></i></span> +62 812 3456 789</p>
                 <div class="socials">
                     <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
                     <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -471,10 +820,8 @@
             // ===== 1. SPLASH SCREEN LOGO =====
             const splash = document.getElementById('logo-splash');
             
-            // Tampilkan splash selama 2.5 detik, lalu fade out
             setTimeout(() => {
                 splash.classList.add('fade-out');
-                // Hapus dari DOM setelah animasi selesai
                 setTimeout(() => {
                     splash.style.display = 'none';
                 }, 800);
@@ -487,7 +834,6 @@
                     this.ctx = canvas.getContext('2d');
                     this.sparks = [];
                     
-                    // Konfigurasi
                     this.sparkColor = options.sparkColor || '#f4b400';
                     this.sparkSize = options.sparkSize || 10;
                     this.sparkRadius = options.sparkRadius || 20;
@@ -505,7 +851,6 @@
                     this.canvas.width = rect.width;
                     this.canvas.height = rect.height;
                     
-                    // Update canvas size on window resize
                     window.addEventListener('resize', () => {
                         const newRect = parent.getBoundingClientRect();
                         this.canvas.width = newRect.width;
@@ -585,7 +930,6 @@
                     const y = e.clientY - rect.top;
                     sparkEffect.createSparks(x, y);
                     
-                    // Navigate after subtle delay
                     setTimeout(() => {
                         window.location.href = logoClickable.href;
                     }, 200);
@@ -601,6 +945,7 @@
                     e.stopPropagation();
                     userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
                 });
+                
                 document.addEventListener('click', (e) => {
                     if (!userToggle.contains(e.target) && !userDropdown.contains(e.target)) {
                         userDropdown.style.display = 'none';
@@ -624,6 +969,54 @@
                     }
                 });
             }
+
+            // ===== 5. HEADER SCROLL EFFECT (Optional Enhancement) =====
+            let lastScroll = 0;
+            const header = document.querySelector('.site-header');
+            
+            window.addEventListener('scroll', () => {
+                const currentScroll = window.pageYOffset;
+                
+                if (currentScroll > 100) {
+                    header.style.boxShadow = '0 4px 15px rgba(0,0,0,0.12)';
+                } else {
+                    header.style.boxShadow = '0 2px 10px rgba(0,0,0,0.08)';
+                }
+                
+                lastScroll = currentScroll;
+            }, { passive: true });
+
+            // ===== 6. SMOOTH SCROLL FOR ANCHOR LINKS =====
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if (href === '#' || href === '') return;
+                    
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        const headerHeight = header.offsetHeight;
+                        const targetPosition = target.offsetTop - headerHeight - 20;
+                        
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // ===== 7. PREVENT LAYOUT SHIFT ON IMAGES =====
+            const images = document.querySelectorAll('img');
+            images.forEach(img => {
+                if (img.complete) {
+                    img.style.display = 'block';
+                } else {
+                    img.addEventListener('load', () => {
+                        img.style.display = 'block';
+                    });
+                }
+            });
         });
     </script>
     

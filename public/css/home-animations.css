@@ -1,0 +1,482 @@
+/* ============================================
+   HOME PAGE ANIMATIONS STYLESHEET
+   Letakkan di: public/css/home-animations.css
+   ============================================ */
+
+/* Preload Background & Prevent Flash - INSTANT DISPLAY */
+.gallery-section,
+.features,
+.promo {
+  opacity: 1 !important;
+  background: #ffffff !important;
+  transition: none !important;
+  will-change: auto !important;
+}
+
+.gallery-section {
+  background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%) !important;
+}
+
+.promo {
+  background: #f7fafc !important;
+}
+
+/* Force immediate render */
+body, section {
+  content-visibility: auto;
+}
+
+/* Preload images */
+.circular-gallery-container::before {
+  content: '';
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  background: url('/images/circular-gallery(1).png'),
+              url('/images/circular-gallery(2).png'),
+              url('/images/circular-gallery(3).png');
+}
+.scroll-reveal {
+  margin: 20px 0;
+}
+
+.scroll-reveal-text {
+  font-size: clamp(1.6rem, 4vw, 3rem);
+  line-height: 1.5;
+  font-weight: 600;
+}
+.circular-gallery {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  cursor: grab;
+}
+
+.circular-gallery:active {
+  cursor: grabbing;
+}
+
+.word {
+  display: inline-block;
+}
+
+/* ============================================
+   SCROLL REVEAL STYLES
+   ============================================ */
+
+.scroll-reveal-wrapper {
+  margin: 30px 0;
+  padding: 0 20px;
+  overflow: visible;
+  position: relative;
+  min-height: 100px;
+  z-index: 10;
+  opacity: 1 !important;
+}
+
+.scroll-reveal-text {
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  line-height: 1.8;
+  font-weight: 500;
+  color: #4a5568;
+  max-width: 850px;
+  margin: 0 auto;
+  text-align: center;
+  letter-spacing: 0.3px;
+  transform-origin: center center;
+  padding: 20px 15px;
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+.scroll-reveal-text.ready {
+  will-change: transform, opacity, filter;
+}
+
+.scroll-reveal-text .word {
+  display: inline-block;
+  white-space: pre;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  opacity: 1;
+  filter: none;
+}
+
+.scroll-reveal-text.ready .word {
+  will-change: opacity, filter;
+}
+
+/* ============================================
+   GALLERY SECTION
+   ============================================ */
+
+.gallery-section {
+  overflow: hidden;
+  padding: 60px 0 80px 0;
+  position: relative;
+  z-index: 1;
+}
+
+.gallery-section .scroll-reveal-wrapper {
+  margin-bottom: 40px;
+  z-index: 10;
+  position: relative;
+}
+
+.gallery-section .scroll-reveal-text {
+  color: #2d3748;
+  padding: 20px 30px;
+  max-width: 850px;
+  font-weight: 500;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+  z-index: 10;
+}
+
+.circular-gallery-container {
+  width: 100%;
+  height: 500px;
+  overflow: hidden;
+  position: relative;
+  margin-top: 50px;
+  z-index: 1;
+  background: transparent;
+  contain: layout style paint;
+}
+
+.circular-gallery {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  cursor: grab;
+  user-select: none;
+}
+
+.circular-gallery:active {
+  cursor: grabbing;
+}
+
+.circular-gallery canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+/* ============================================
+   SECTION TITLES - ALWAYS ON TOP
+   ============================================ */
+
+.section-title {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  text-align: center;
+  margin-bottom: 50px;
+  font-weight: 700;
+  color: #1a202c;
+  padding: 0 20px;
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+  position: relative;
+  z-index: 9999 !important;
+  isolation: isolate;
+}
+
+.hero-title,
+h1, h2, h3, h4, h5, h6,
+.card h3,
+.promo h2 {
+  position: relative;
+  z-index: 9999 !important;
+  filter: none !important;
+  opacity: 1 !important;
+  isolation: isolate;
+  pointer-events: auto;
+}
+
+/* ============================================
+   FEATURES SECTION
+   ============================================ */
+
+.features {
+  padding: 80px 0;
+  position: relative;
+  z-index: 10;
+}
+
+.features .scroll-reveal-wrapper {
+  margin-bottom: 50px;
+  z-index: 9999 !important;
+  position: relative;
+  isolation: isolate;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  padding: 0 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+
+/* ============================================
+   CARD STYLES
+   ============================================ */
+
+.card {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  z-index: 10;
+  isolation: isolate;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.card:hover::before {
+  left: 100%;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+}
+
+.card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+
+.card h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #1a202c;
+}
+
+.card p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4a5568;
+  margin-bottom: 20px;
+}
+
+.card-cta {
+  display: inline-block;
+  color: #3182ce;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.card-cta:hover {
+  color: #2c5aa0;
+}
+
+/* ============================================
+   PROMO SECTION
+   ============================================ */
+
+.promo {
+  padding: 80px 20px;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+}
+
+.promo .scroll-reveal-wrapper {
+  margin-bottom: 30px;
+  z-index: 9999 !important;
+  position: relative;
+  isolation: isolate;
+}
+
+.promo h2 {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  margin-bottom: 0;
+  font-weight: 700;
+  color: #1a202c;
+  opacity: 1 !important;
+  filter: none !important;
+  position: relative;
+  z-index: 9999 !important;
+  isolation: isolate;
+}
+
+.promo p {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.8;
+  color: #4a5568;
+  font-weight: 400;
+  padding: 0 20px;
+  opacity: 1 !important;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .circular-gallery-container {
+    height: 450px;
+  }
+  
+  .scroll-reveal-wrapper {
+    margin: 25px 0;
+    min-height: 90px;
+  }
+}
+
+@media (max-width: 768px) {
+  .scroll-reveal-wrapper {
+    padding: 0 15px;
+    margin: 20px 0;
+    min-height: 80px;
+  }
+  
+  .scroll-reveal-text {
+    font-size: clamp(1rem, 3.5vw, 1.25rem);
+    line-height: 1.7;
+    padding: 15px 10px;
+    max-width: 100%;
+  }
+  
+  .circular-gallery-container {
+    height: 350px !important;
+    margin-top: 30px;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0 15px;
+  }
+  
+  .gallery-section {
+    padding: 40px 0 60px 0;
+  }
+  
+  .gallery-section .scroll-reveal-wrapper {
+    margin-bottom: 30px;
+  }
+  
+  .features {
+    padding: 60px 0;
+  }
+  
+  .features .scroll-reveal-wrapper {
+    margin-bottom: 40px;
+  }
+  
+  .promo {
+    padding: 60px 15px;
+  }
+  
+  .promo .scroll-reveal-wrapper {
+    margin-bottom: 25px;
+  }
+  
+  .card {
+    padding: 25px;
+  }
+  
+  .card-icon {
+    font-size: 2rem;
+  }
+  
+  .card h3 {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .scroll-reveal-wrapper {
+    padding: 0 10px;
+    margin: 15px 0;
+    min-height: 70px;
+  }
+  
+  .scroll-reveal-text {
+    font-size: clamp(0.95rem, 4vw, 1.15rem);
+    line-height: 1.6;
+    padding: 10px;
+  }
+  
+  .circular-gallery-container {
+    height: 300px !important;
+    margin-top: 20px;
+  }
+  
+  .gallery-section {
+    padding: 30px 0 50px 0;
+  }
+  
+  .features {
+    padding: 50px 0;
+  }
+  
+  .promo {
+    padding: 50px 10px;
+  }
+  
+  .features-grid {
+    gap: 15px;
+  }
+  
+  .card {
+    padding: 20px;
+  }
+}
+
+/* ============================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================ */
+
+.scroll-reveal-text.ready,
+.scroll-reveal-text.ready .word {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.gallery-section,
+.features,
+.promo {
+  position: relative;
+  isolation: isolate;
+}
+
+section {
+  position: relative;
+}
