@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +18,12 @@
 
     <style>
         /* --- 1. LAYOUT UTAMA --- */
-        html, body { height: 100%; margin: 0; }
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #fffaf2;
@@ -25,7 +31,11 @@
             flex-direction: column;
             min-height: 100vh;
         }
-        main { flex: 1; width: 100%; }
+
+        main {
+            flex: 1;
+            width: 100%;
+        }
 
         /* --- LOGO SPLASH SCREEN --- */
         #logo-splash {
@@ -56,7 +66,7 @@
         .splash-logo {
             max-width: 280px;
             height: auto;
-            filter: drop-shadow(0 8px 20px rgba(0,0,0,0.08));
+            filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.08));
         }
 
         @keyframes logoEntrance {
@@ -64,6 +74,7 @@
                 transform: scale(0.85) translateY(20px);
                 opacity: 0;
             }
+
             100% {
                 transform: scale(1) translateY(0);
                 opacity: 1;
@@ -78,20 +89,21 @@
             left: -10%;
             width: 120%;
             height: 120%;
-            background: radial-gradient(
-                circle,
-                rgba(252, 211, 77, 0.15) 0%,
-                transparent 70%
-            );
+            background: radial-gradient(circle,
+                    rgba(252, 211, 77, 0.15) 0%,
+                    transparent 70%);
             animation: subtleGlow 3s ease-in-out infinite;
         }
 
         @keyframes subtleGlow {
-            0%, 100% { 
+
+            0%,
+            100% {
                 opacity: 0.5;
                 transform: scale(1);
             }
-            50% { 
+
+            50% {
                 opacity: 0.8;
                 transform: scale(1.05);
             }
@@ -100,7 +112,7 @@
         /* --- 2. HEADER & NAVBAR --- */
         .site-header {
             background-color: #ffffff;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             padding: 0.8rem 2rem;
             display: flex;
             justify-content: space-between;
@@ -116,8 +128,8 @@
             display: inline-block;
         }
 
-        .logo { 
-            height: 45px; 
+        .logo {
+            height: 45px;
             width: auto;
             transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
@@ -141,109 +153,238 @@
             pointer-events: none;
             z-index: 10;
         }
-        
+
         .search-bar input {
-            background: #f3f4f6; border: none; padding: 10px 20px;
-            border-radius: 50px; width: 300px; outline: none;
+            background: #f3f4f6;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            width: 300px;
+            outline: none;
             transition: box-shadow 0.3s;
         }
-        .search-bar input:focus { box-shadow: 0 0 0 2px #f4b400; }
 
-        .main-nav { display: flex; align-items: center; gap: 25px; }
-        .nav-link { 
-            text-decoration: none; color: #374151; font-weight: 500; 
-            font-size: 0.95rem; transition: color 0.3s; 
+        .search-bar input:focus {
+            box-shadow: 0 0 0 2px #f4b400;
         }
-        .nav-link:hover, .nav-link.active { color: #d97706; }
+
+        .main-nav {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #374151;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #d97706;
+        }
 
         /* --- 3. DROPDOWN PROFIL --- */
-        .user-menu { position: relative; display: flex; align-items: center; }
+        .user-menu {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
         .user-toggle {
-            display: flex; align-items: center; gap: 10px; cursor: pointer;
-            text-decoration: none; color: #333; font-weight: 600;
-            padding: 6px 12px; border-radius: 30px; transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 30px;
+            transition: background 0.2s;
         }
-        .user-toggle:hover { background-color: #f3f4f6; }
+
+        .user-toggle:hover {
+            background-color: #f3f4f6;
+        }
+
         .profile-img {
-            width: 35px; height: 35px; border-radius: 50%;
-            object-fit: cover; border: 2px solid #f4b400;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #f4b400;
         }
+
         .user-menu-dropdown {
-            position: absolute; top: 55px; right: 0; background: #ffffff;
-            min-width: 220px; border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); padding: 8px 0;
-            display: none; z-index: 1000; border: 1px solid #eee;
+            position: absolute;
+            top: 55px;
+            right: 0;
+            background: #ffffff;
+            min-width: 220px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 8px 0;
+            display: none;
+            z-index: 1000;
+            border: 1px solid #eee;
         }
-        .user-menu-dropdown a, .user-menu-dropdown button {
-            display: flex; align-items: center; gap: 12px; padding: 12px 20px;
-            text-decoration: none; color: #4b5563; width: 100%; text-align: left;
-            background: none; border: none; cursor: pointer; font-size: 0.9rem;
-            font-family: inherit; font-weight: 500;
+
+        .user-menu-dropdown a,
+        .user-menu-dropdown button {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            text-decoration: none;
+            color: #4b5563;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-family: inherit;
+            font-weight: 500;
         }
-        .user-menu-dropdown a:hover, .user-menu-dropdown button:hover {
-            background-color: #fffaf2; color: #d97706;
+
+        .user-menu-dropdown a:hover,
+        .user-menu-dropdown button:hover {
+            background-color: #fffaf2;
+            color: #d97706;
         }
+
         .user-menu-dropdown .logout-btn {
-            color: #ef4444; border-top: 1px solid #f3f4f6; margin-top: 5px; padding-top: 15px;
+            color: #ef4444;
+            border-top: 1px solid #f3f4f6;
+            margin-top: 5px;
+            padding-top: 15px;
         }
 
         /* --- 4. FOOTER KUNING UTUH --- */
         footer.site-footer {
-            background-color: #fcd34d; 
-            color: #1f2937; 
+            background-color: #fcd34d;
+            color: #1f2937;
             padding-top: 4rem;
             margin-top: auto;
             font-size: 0.95rem;
         }
+
         .footer-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 3rem;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 2rem 2rem; 
+            padding: 0 2rem 2rem;
         }
-        .footer-col h3 { 
-            font-weight: 800; font-size: 1.1rem; margin-bottom: 1.5rem; 
-            color: #111827; 
-            text-transform: uppercase; letter-spacing: 1px;
+
+        .footer-col h3 {
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: #111827;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .footer-col p { line-height: 1.6; color: #374151; margin-bottom: 1rem; }
-        .footer-col ul { list-style: none; padding: 0; }
-        .footer-col ul li { margin-bottom: 0.8rem; }
-        .footer-col a { 
-            text-decoration: none; color: #374151; transition: all 0.3s; 
-            display: inline-flex; align-items: center; gap: 8px; font-weight: 500;
+
+        .footer-col p {
+            line-height: 1.6;
+            color: #374151;
+            margin-bottom: 1rem;
         }
-        .footer-col a:hover { color: #000; transform: translateX(5px); }
+
+        .footer-col ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-col a {
+            text-decoration: none;
+            color: #374151;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .footer-col a:hover {
+            color: #000;
+            transform: translateX(5px);
+        }
+
         .contact-icon {
-            width: 24px; height: 24px; background: rgba(255,255,255,0.5);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 0.8rem; color: #1f2937;
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #1f2937;
         }
-        .socials { display: flex; gap: 12px; margin-top: 20px; }
+
+        .socials {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
         .socials a {
-            width: 38px; height: 38px; background: #ffffff; 
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 50%; transition: all 0.3s; color: #1f2937;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            width: 38px;
+            height: 38px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+            color: #1f2937;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
-        .socials a:hover { 
-            background: #1f2937; color: #fcd34d; transform: translateY(-3px); 
+
+        .socials a:hover {
+            background: #1f2937;
+            color: #fcd34d;
+            transform: translateY(-3px);
         }
+
         .footer-bottom {
-            text-align: center; padding: 2rem 0; background-color: transparent;
-            font-size: 0.85rem; color: #4b5563; border-top: 1px solid rgba(0,0,0,0.05);
-            width: 100%; margin-top: 1rem;
+            text-align: center;
+            padding: 2rem 0;
+            background-color: transparent;
+            font-size: 0.85rem;
+            color: #4b5563;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            width: 100%;
+            margin-top: 1rem;
         }
 
         /* --- 5. TOMBOL LOGIN --- */
         .btn-primary {
-            background-color: #f4b400; color: white; padding: 0.6rem 1.5rem;
-            border-radius: 50px; font-weight: 600; text-decoration: none;
-            transition: all 0.3s; display: inline-block;
+            background-color: #f4b400;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
         }
-        .btn-primary:hover { background-color: #d97706; transform: translateY(-2px); }
+
+        .btn-primary:hover {
+            background-color: #d97706;
+            transform: translateY(-2px);
+        }
 
         /* --- 6. TOMBOL BANTUAN MENGAMBANG (INTERAKTIF) --- */
         .floating-help-container {
@@ -259,16 +400,19 @@
         .help-trigger-btn {
             background-color: #1e293b;
             color: #fcd34d;
-            width: 60px; height: 60px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 24px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
             border: 2px solid #fcd34d;
         }
-        
+
         .help-trigger-btn.active {
             transform: rotate(45deg);
             background-color: #fcd34d;
@@ -289,7 +433,7 @@
             transition: all 0.3s ease;
         }
 
-        .help-trigger-btn.active ~ .help-options {
+        .help-trigger-btn.active~.help-options {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
@@ -302,7 +446,7 @@
             background: white;
             padding: 10px 20px;
             border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             text-decoration: none;
             color: #333;
             font-weight: 600;
@@ -310,13 +454,18 @@
             transition: transform 0.2s;
             white-space: nowrap;
         }
+
         .help-item:hover {
             transform: translateX(-5px);
             color: #d97706;
         }
+
         .help-item i {
-            width: 25px; height: 25px;
-            display: flex; align-items: center; justify-content: center;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background: #f3f4f6;
             border-radius: 50%;
             font-size: 0.8rem;
@@ -348,16 +497,20 @@
 
         <div class="header-center">
             <form class="search-bar" action="{{ route('search') }}" method="GET">
-                <input type="search" name="q" placeholder="Cari: judul, tokoh, kata kunci..." value="{{ request('q') }}">
+                <input type="search" name="q" placeholder="Cari: judul, tokoh, kata kunci..."
+                    value="{{ request('q') }}">
             </form>
         </div>
 
         <nav class="header-right main-nav">
             <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a>
-            <a href="{{ route('budaya') }}" class="nav-link {{ request()->routeIs('budaya') ? 'active' : '' }}">Budaya</a>
-            <a href="{{ route('pustaka') }}" class="nav-link {{ request()->routeIs('pustaka') ? 'active' : '' }}">Pustaka</a>
-            <a href="{{ route('tentang') }}" class="nav-link {{ request()->routeIs('tentang') ? 'active' : '' }}">Tentang</a>
-            
+            <a href="{{ route('budaya') }}"
+                class="nav-link {{ request()->routeIs('budaya') ? 'active' : '' }}">Budaya</a>
+            <a href="{{ route('pustaka') }}"
+                class="nav-link {{ request()->routeIs('pustaka') ? 'active' : '' }}">Pustaka</a>
+            <a href="{{ route('tentang') }}"
+                class="nav-link {{ request()->routeIs('tentang') ? 'active' : '' }}">Tentang</a>
+
             @guest
                 <a href="{{ route('login') }}" class="btn-primary">Login</a>
             @endguest
@@ -365,19 +518,32 @@
             @auth
                 <div class="user-menu">
                     <div class="user-toggle" id="user-menu-toggle">
-                        <img src="{{ asset('FOTO/avatar.png') }}" 
-                             onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=random'" 
-                             alt="Profil" class="profile-img">
+                        <img src="{{ asset('FOTO/avatar.png') }}"
+                            onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=random'"
+                            alt="Profil" class="profile-img">
                         <span>{{ explode(' ', Auth::user()->name)[0] }} ▼</span>
                     </div>
 
                     <div class="user-menu-dropdown" id="user-menu-dropdown">
                         @if (Auth::user()->role === 'admin')
-                            <a href="{{ route('admin.dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard Admin</a>
+                            <a href="{{ route('admin.dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard
+                                Admin</a>
                         @elseif (Auth::user()->role === 'kontributor')
-                            <a href="{{ route('kontributor.dashboard') }}"><i class="fas fa-pencil-alt"></i> Dashboard Kontributor</a>
+                            <a href="{{ route('kontributor.dashboard') }}"><i class="fas fa-pencil-alt"></i> Dashboard
+                                Kontributor</a>
                         @endif
-                        <a href="{{ route('kontributor.profil') }}"><i class="fas fa-user-circle"></i> Profil Saya</a>
+                        @if (Route::has('kontributor.profil'))
+                            <a href="{{ route('kontributor.profil') }}"><i class="fas fa-user-circle"></i> Profil Saya</a>
+                        @elseif(Route::has('kontributor.profile'))
+                            {{-- fallback bila kamu pakai bahasa / penamaan profile --}}
+                            <a href="{{ route('kontributor.profile') }}"><i class="fas fa-user-circle"></i> Profil Saya</a>
+                        @else
+                            {{-- tampilkan tanpa link agar UI tidak crash --}}
+                            <span class="flex items-center gap-2 text-gray-600">
+                                <i class="fas fa-user-circle"></i> Profil Saya
+                            </span>
+                        @endif
+
                         <form action="{{ route('logout') }}" method="POST" style="margin:0;">
                             @csrf
                             <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Keluar</button>
@@ -412,7 +578,7 @@
                 <span>Panduan Kontributor</span>
                 <i class="fas fa-user-edit"></i>
             </a>
-             <a href="https://wa.me/628123456789" target="_blank" class="help-item">
+            <a href="https://wa.me/628123456789" target="_blank" class="help-item">
                 <span>Chat WhatsApp</span>
                 <i class="fab fa-whatsapp"></i>
             </a>
@@ -423,9 +589,10 @@
     <footer class="site-footer">
         <div class="footer-container">
             <div class="footer-col brand">
-                <img src="{{ asset('images/Logo Header.png') }}" alt="Jejak Layar" style="height: 50px; margin-bottom: 15px;">
+                <img src="{{ asset('images/Logo Header.png') }}" alt="Jejak Layar"
+                    style="height: 50px; margin-bottom: 15px;">
                 <p>
-                    Melayu Bengkalis dalam satu portal digital untuk semua generasi. 
+                    Melayu Bengkalis dalam satu portal digital untuk semua generasi.
                     Kami berdedikasi menjaga warisan budaya dan mendekatkan generasi muda dengan sejarahnya.
                 </p>
             </div>
@@ -434,8 +601,10 @@
                 <ul>
                     <li><a href="{{ route('home') }}"><i class="fas fa-chevron-right text-xs"></i> Beranda</a></li>
                     <li><a href="{{ route('budaya') }}"><i class="fas fa-chevron-right text-xs"></i> Budaya</a></li>
-                    <li><a href="{{ route('pustaka') }}"><i class="fas fa-chevron-right text-xs"></i> Pustaka Digital</a></li>
-                    <li><a href="{{ route('tentang') }}"><i class="fas fa-chevron-right text-xs"></i> Tentang Kami</a></li>
+                    <li><a href="{{ route('pustaka') }}"><i class="fas fa-chevron-right text-xs"></i> Pustaka
+                            Digital</a></li>
+                    <li><a href="{{ route('tentang') }}"><i class="fas fa-chevron-right text-xs"></i> Tentang
+                            Kami</a></li>
                 </ul>
             </div>
             <div class="footer-col">
@@ -444,14 +613,16 @@
                     <li><a href="#"><i class="fas fa-question-circle"></i> FAQ / Pertanyaan</a></li>
                     <li><a href="#"><i class="fas fa-shield-alt"></i> Kebijakan Privasi</a></li>
                     <li><a href="#"><i class="fas fa-file-contract"></i> Syarat & Ketentuan</a></li>
-                    <li><a href="{{ route('register') }}"><i class="fas fa-user-plus"></i> Menjadi Kontributor</a></li>
+                    <li><a href="{{ route('register') }}"><i class="fas fa-user-plus"></i> Menjadi Kontributor</a>
+                    </li>
                 </ul>
             </div>
             <div class="footer-col">
                 <h3>KONTAK KAMI</h3>
-                <p class="flex items-center gap-2"><span class="contact-icon"><i class="fas fa-map-marker-alt"></i></span> Bengkalis, Riau, Indonesia</p>
-                <p class="flex items-center gap-2"><span class="contact-icon"><i class="fas fa-envelope"></i></span> admin@jejaklayar.com</p>
-                <p class="flex items-center gap-2"><span class="contact-icon"><i class="fas fa-phone"></i></span> </p>
+                <p class="flex items-center gap-2"><span class="contact-icon"><i
+                            class="fas fa-map-marker-alt"></i></span> Bengkalis, Riau, Indonesia</p>
+                <p class="flex items-center gap-2"><span class="contact-icon"><i class="fas fa-envelope"></i></span>
+                    admin@jejaklayar.com</p>
                 <div class="socials">
                     <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
                     <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -470,7 +641,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             // ===== 1. SPLASH SCREEN LOGO =====
             const splash = document.getElementById('logo-splash');
-            
+
             // Tampilkan splash selama 2.5 detik, lalu fade out
             setTimeout(() => {
                 splash.classList.add('fade-out');
@@ -486,7 +657,7 @@
                     this.canvas = canvas;
                     this.ctx = canvas.getContext('2d');
                     this.sparks = [];
-                    
+
                     // Konfigurasi
                     this.sparkColor = options.sparkColor || '#f4b400';
                     this.sparkSize = options.sparkSize || 10;
@@ -494,17 +665,17 @@
                     this.sparkCount = options.sparkCount || 8;
                     this.duration = options.duration || 400;
                     this.extraScale = options.extraScale || 1.0;
-                    
+
                     this.setupCanvas();
                     this.animate();
                 }
-                
+
                 setupCanvas() {
                     const parent = this.canvas.parentElement;
                     const rect = parent.getBoundingClientRect();
                     this.canvas.width = rect.width;
                     this.canvas.height = rect.height;
-                    
+
                     // Update canvas size on window resize
                     window.addEventListener('resize', () => {
                         const newRect = parent.getBoundingClientRect();
@@ -512,11 +683,11 @@
                         this.canvas.height = newRect.height;
                     });
                 }
-                
+
                 easeOutQuad(t) {
                     return t * (2 - t);
                 }
-                
+
                 createSparks(x, y) {
                     const now = performance.now();
                     for (let i = 0; i < this.sparkCount; i++) {
@@ -528,46 +699,46 @@
                         });
                     }
                 }
-                
+
                 animate() {
                     const draw = (timestamp) => {
                         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                        
+
                         this.sparks = this.sparks.filter(spark => {
                             const elapsed = timestamp - spark.startTime;
                             if (elapsed >= this.duration) return false;
-                            
+
                             const progress = elapsed / this.duration;
                             const eased = this.easeOutQuad(progress);
                             const distance = eased * this.sparkRadius * this.extraScale;
                             const lineLength = this.sparkSize * (1 - eased);
-                            
+
                             const x1 = spark.x + distance * Math.cos(spark.angle);
                             const y1 = spark.y + distance * Math.sin(spark.angle);
                             const x2 = spark.x + (distance + lineLength) * Math.cos(spark.angle);
                             const y2 = spark.y + (distance + lineLength) * Math.sin(spark.angle);
-                            
+
                             this.ctx.strokeStyle = this.sparkColor;
                             this.ctx.lineWidth = 2;
                             this.ctx.beginPath();
                             this.ctx.moveTo(x1, y1);
                             this.ctx.lineTo(x2, y2);
                             this.ctx.stroke();
-                            
+
                             return true;
                         });
-                        
+
                         requestAnimationFrame(draw);
                     };
-                    
+
                     requestAnimationFrame(draw);
                 }
             }
-            
+
             // Inisialisasi Click Spark pada Logo
             const logoCanvas = document.getElementById('logo-spark-canvas');
             const logoClickable = document.getElementById('logo-clickable');
-            
+
             if (logoCanvas && logoClickable) {
                 const sparkEffect = new ClickSparkEffect(logoCanvas, {
                     sparkColor: '#d97706',
@@ -577,14 +748,14 @@
                     duration: 600,
                     extraScale: 1.0
                 });
-                
+
                 logoClickable.addEventListener('click', (e) => {
                     e.preventDefault();
                     const rect = logoCanvas.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
                     sparkEffect.createSparks(x, y);
-                    
+
                     // Navigate after subtle delay
                     setTimeout(() => {
                         window.location.href = logoClickable.href;
@@ -595,7 +766,7 @@
             // ===== 3. DROPDOWN PROFIL =====
             const userToggle = document.getElementById('user-menu-toggle');
             const userDropdown = document.getElementById('user-menu-dropdown');
-            
+
             if (userToggle && userDropdown) {
                 userToggle.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -626,7 +797,8 @@
             }
         });
     </script>
-    
-    @stack('scripts') 
+
+    @stack('scripts')
 </body>
+
 </html>

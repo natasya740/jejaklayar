@@ -32,7 +32,7 @@
 
         /* Gambar Samping Login */
         .login-image-panel {
-            background-image: url('{{ asset('images/login.png') }}'); 
+            background-image: url('{{ asset('images/Login.png') }}'); 
             background-size: cover;
             background-position: center;
             position: relative;

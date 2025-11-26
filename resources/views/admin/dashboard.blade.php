@@ -1,9 +1,10 @@
-@extends('layouts.dashboard') <!-- Panggil Layout yang SAMA -->
+@extends('layouts.dashboard_admin')
 
 @section('title', 'Dashboard Admin')
+@section('page-title', 'Dashboard Admin')
+@section('page-subtitle', 'Apa kabar hari ini min?')
 
 @section('content')
-    
     <div class="mb-8">
         <h2 class="text-2xl font-bold text-gray-800">Panel Monitoring</h2>
         <p class="text-gray-500">Ringkasan aktivitas Jejak Layar hari ini.</p>
@@ -13,15 +14,15 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500">
             <p class="text-gray-500 text-sm uppercase font-bold">Total Pengguna</p>
-            <h3 class="text-3xl font-bold">{{ $totalUsers }}</h3>
+            <h3 class="text-3xl font-bold">{{ $totalUsers ?? 0 }}</h3>
         </div>
         <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-yellow-500">
             <p class="text-gray-500 text-sm uppercase font-bold">Menunggu Validasi</p>
-            <h3 class="text-3xl font-bold">{{ $pendingArtikel }}</h3>
+            <h3 class="text-3xl font-bold">{{ $pendingArtikel ?? 0 }}</h3>
         </div>
         <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-500">
             <p class="text-gray-500 text-sm uppercase font-bold">Artikel Tayang</p>
-            <h3 class="text-3xl font-bold">{{ $publishedArtikel }}</h3>
+            <h3 class="text-3xl font-bold">{{ $publishedArtikel ?? 0 }}</h3>
         </div>
     </div>
 
@@ -42,11 +43,11 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
-                    @forelse($pendingArtikelsList as $item)
+                    @forelse($pendingArtikelsList ?? [] as $item)
                     <tr>
-                        <td class="px-6 py-3 font-medium">{{ Str::limit($item->title, 30) }}</td>
-                        <td class="px-6 py-3">{{ $item->user->name }}</td>
-                        <td class="px-6 py-3">{{ $item->created_at->diffForHumans() }}</td>
+                        <td class="px-6 py-3 font-medium">{{ Str::limit($item->title, 50) }}</td>
+                        <td class="px-6 py-3">{{ $item->user->name ?? '—' }}</td>
+                        <td class="px-6 py-3">{{ $item->created_at ? $item->created_at->diffForHumans() : '-' }}</td>
                         <td class="px-6 py-3 text-center">
                             <a href="{{ route('admin.artikel.review', $item->id) }}" class="text-indigo-600 hover:text-indigo-800 font-bold">Review</a>
                         </td>
@@ -60,5 +61,4 @@
             </table>
         </div>
     </div>
-
 @endsection
