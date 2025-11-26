@@ -1,802 +1,535 @@
 {{-- resources/views/admin/artikel/create.blade.php --}}
 @extends('layouts.dashboard_admin')
 
-@section('title','Buat Artikel Baru')
+@section('title', 'Tulis Naskah Baru')
 
 @section('head')
+{{-- CKEditor 5 CDN --}}
 <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+{{-- FontAwesome --}}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
 <style>
-  /* (CSS persis seperti versi Anda — disingkat di sini untuk ringkasan) */
-  /* -- Animations, glow, inputs, buttons, tags, upload zone, thumbnails, ckeditor styles, tooltips, toasts, spinner, dsb -- */
-  @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes slideInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
-  @keyframes glow { 0%,100% { box-shadow: 0 0 5px rgba(217,119,6,0.3);} 50% { box-shadow: 0 0 25px rgba(217,119,6,0.6), 0 0 40px rgba(217,119,6,0.3);} }
-  @keyframes pulse { 0%,100% { transform: scale(1);} 50% { transform: scale(1.05); } }
-  .animate-fadeInUp { animation: fadeInUp 0.6s ease-out forwards; }
-  .animate-slideInRight { animation: slideInRight 0.6s ease-out forwards; }
-  .glow-card { transition: all .4s cubic-bezier(.4,0,.2,1); position: relative; }
-  .glow-card::before { content: ''; position: absolute; inset: -2px; border-radius: .75rem; background: linear-gradient(135deg,#f59e0b,#d97706,#f59e0b); opacity:0; transition:opacity .4s; z-index:-1; background-size:200% 200%; }
-  .glow-card:hover::before { opacity: .7; animation: glow 2s ease-in-out infinite; }
-  .input-glow { transition: all .3s ease; border: 2px solid #e5e7eb; }
-  .input-glow:focus { border-color:#f59e0b; box-shadow: 0 0 0 4px rgba(245,158,11,0.1), 0 0 20px rgba(245,158,11,0.2); outline:none; transform: translateY(-1px); }
-  .btn-glow { position: relative; overflow:hidden; transition: all .3s ease; }
-  .btn-glow::before { content:''; position:absolute; top:50%; left:50%; width:0; height:0; border-radius:50%; background: rgba(255,255,255,.3); transform: translate(-50%,-50%); transition: width .6s, height .6s; }
-  .btn-glow:hover::before { width:300px; height:300px; }
-  .tag-chip { animation: fadeInUp .3s ease; transition: all .2s ease; }
-  .upload-zone { border: 3px dashed #e5e7eb; transition: all .3s ease; background: linear-gradient(135deg,#ffffff 0%, #fffbeb 100%); }
-  .upload-zone:hover { border-color:#f59e0b; background: linear-gradient(135deg,#fffbeb 0%, #fef3c7 100%); box-shadow: 0 0 30px rgba(245,158,11,0.2); transform: scale(1.02); }
-  .upload-zone.drag-over { border-color:#d97706; background:#fef3c7; box-shadow: 0 0 40px rgba(217,119,6,0.3); transform: scale(1.05); }
-  .image-thumb { position: relative; overflow:hidden; transition: all .3s ease; border-radius: .75rem; background:#f9fafb; }
-  .image-overlay { position:absolute; inset:0; background: linear-gradient(to top, rgba(0,0,0,.8), rgba(0,0,0,.3)); opacity:0; transition: opacity .3s ease; display:flex; flex-direction:column; justify-content:space-between; padding:.75rem; }
-  .image-thumb:hover .image-overlay { opacity: 1; }
-  .ck-editor__editable_inline { min-height: 550px !important; font-size: 18px; line-height: 1.8; padding: 2rem; font-family: "Segoe UI", Roboto, system-ui, -apple-system, "Helvetica Neue", Arial; background:#fff; color:#111827; transition: all .3s ease; }
-  .ck-toolbar { border-radius: .75rem .75rem 0 0; padding:.75rem; border: 2px solid #e5e7eb; background: linear-gradient(135deg,#f9fafb 0%, #ffffff 100%); }
-  .spinner { border: 3px solid #f3f4f6; border-top: 3px solid #f59e0b; border-radius: 50%; width:24px; height:24px; animation: spin .8s linear infinite; }
-  @keyframes spin { 0% { transform: rotate(0deg);} 100% { transform: rotate(360deg);} }
-  .toast { animation: slideInRight .5s ease; }
-  /* scrollbar, tooltip, progress, etc... (retain your original rules) */
+    /* --- ANIMASI --- */
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    @keyframes checkmark { 0% { stroke-dashoffset: 50; } 100% { stroke-dashoffset: 0; } }
+    @keyframes checkmark-circle { 0% { stroke-dashoffset: 166; } 100% { stroke-dashoffset: 0; } }
+    @keyframes checkmark-fill { 0% { box-shadow: 0 0 0 0 #10b981; } 100% { box-shadow: 0 0 0 30px rgba(16, 185, 129, 0); } }
+
+    .animate-fadeInUp { animation: fadeInUp 0.6s ease-out forwards; }
+    .animate-zoomIn { animation: zoomIn 0.4s ease-out forwards; }
+
+    /* --- TEMA ADAT MELAYU (Songket & Warisan) --- */
+    :root {
+        --melayu-emerald: #064e3b; /* Hijau Zamrud Tua */
+        --melayu-gold: #d97706;    /* Emas Raja */
+        --melayu-gold-light: #fbbf24;
+        --melayu-maroon: #881337;  /* Merah Hati */
+        --melayu-cream: #fffbeb;   /* Warna Kertas Lama */
+    }
+
+    /* Motif Songket Halus */
+    .bg-songket {
+        background-color: var(--melayu-emerald);
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23fbbf24' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    /* Input Styling Modern tapi Klasik */
+    .input-melayu {
+        transition: all 0.3s ease;
+        border: 1px solid #d1d5db;
+        background-color: #fff;
+    }
+    .input-melayu:focus {
+        border-color: var(--melayu-gold);
+        box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.2);
+        outline: none;
+    }
+
+    /* --- EDITOR ALA MS WORD --- */
+    .document-editor {
+        background-color: #f3f4f6; /* Abu-abu meja */
+        padding: 40px;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+    }
+
+    /* Kertas Putih */
+    .ck-editor__editable_inline {
+        min-height: 800px !important; /* Panjang kertas A4 */
+        width: 100%;
+        max-width: 850px; /* Lebar kertas A4 proporsional */
+        margin: 0 auto;
+        background-color: #ffffff !important;
+        border: 1px solid #d1d5db !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        padding: 40px 50px !important; /* Margin kertas */
+        font-family: 'Georgia', 'Times New Roman', serif; /* Font Serif untuk kesan naskah */
+        font-size: 18px;
+        line-height: 1.8;
+        color: #1f2937;
+    }
+
+    .ck-editor__editable_inline:focus {
+        border-color: var(--melayu-gold) !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    /* Toolbar menempel di atas kertas */
+    .ck-toolbar {
+        border: 1px solid #d1d5db !important;
+        border-radius: 8px 8px 0 0 !important;
+        background: #f9fafb !important;
+        max-width: 850px;
+        margin: 0 auto !important;
+    }
+
+    .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
+        border-color: #d1d5db !important;
+    }
+
+    /* --- UPLOAD ZONE --- */
+    .upload-zone {
+        border: 2px dashed #d1d5db;
+        transition: all 0.3s ease;
+        background: #f9fafb;
+    }
+    .upload-zone:hover, .upload-zone.drag-over {
+        border-color: var(--melayu-gold);
+        background: #fffbeb; /* Cream */
+        transform: scale(1.01);
+    }
+
+    /* --- MODAL SUKSES --- */
+    .checkmark-svg {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        display: block;
+        stroke-width: 2;
+        stroke: #fff;
+        stroke-miterlimit: 10;
+        margin: 10% auto;
+        box-shadow: inset 0px 0px 0px #10b981;
+        animation: checkmark-fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+    }
+    .checkmark-circle {
+        stroke-dasharray: 166;
+        stroke-dashoffset: 166;
+        stroke-width: 2;
+        stroke-miterlimit: 10;
+        stroke: #10b981;
+        fill: none;
+        animation: checkmark-circle 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+    .checkmark-check {
+        transform-origin: 50% 50%;
+        stroke-dasharray: 48;
+        stroke-dashoffset: 48;
+        animation: checkmark 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+    }
+    
+    /* Tombol Aksi */
+    .btn-gold {
+        background: linear-gradient(to right, #d97706, #b45309);
+        color: white;
+    }
+    .btn-gold:hover {
+        background: linear-gradient(to right, #b45309, #92400e);
+        box-shadow: 0 10px 15px -3px rgba(217, 119, 6, 0.3);
+    }
 </style>
 @endsection
 
 @section('content')
-<div class="max-w-[1400px] mx-auto p-6">
+<div class="w-full max-w-7xl mx-auto p-6 min-h-screen">
 
-  {{-- Header Section (Hero + Preview) --}}
-  <div class="mb-8 animate-fadeInUp">
-    <div class="p-8 max-h-[75vh] overflow-y-auto">
-      <article class="max-w-4xl mx-auto">
-        <div class="mb-6">
-          <h1 id="previewTitle" class="text-4xl font-bold text-gray-900 mb-3"></h1>
-          <p id="previewMeta" class="text-sm text-gray-500 flex items-center gap-3">
-            <span><i class="fas fa-folder"></i> <span id="previewCategory"></span></span>
-            <span><i class="fas fa-tags"></i> <span id="previewTags"></span></span>
-          </p>
+    {{-- HEADER --}}
+    <div class="mb-8 bg-yellow-300 rounded-2xl p-9 text-black/75 shadow-xl relative overflow-hidden border-b-4 border-amber-400 animate-fadeInUp">
+        <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-serif font-bold flex items-center gap-3">
+                    <i class="fas fa-scroll text-amber-400"></i>
+                    Penulisan Naskah Budaya & Sejarah
+                </h1>
+                <p class="text-black/80 mt-2">Bagikan warisan, lestarikan budaya. Tulis dengan hati.</p>
+            </div>
+            <div class="flex gap-3">
+                <span class="px-4 py-2 bg-gray-500/10 rounded-lg text-sm border border-white/20 backdrop-blur-sm">
+                    <i class="fas fa-user-edit mr-2"></i> Mode Penulis
+                </span>
+            </div>
         </div>
-
-        <img id="previewHero" class="w-full rounded-2xl shadow-lg mb-6 hidden" src="" alt="Cover Image">
-
-        <div id="previewExcerpt" class="text-lg text-gray-600 italic border-l-4 border-amber-500 pl-4 mb-6"></div>
-
-        <div id="previewContent" class="prose prose-lg max-w-none"></div>
-      </article>
+        <div class="absolute -right-10 -bottom-20 w-64 h-64 bg-amber-400 opacity-10 rounded-full blur-3xl"></div>
     </div>
 
-    <div class="bg-gradient-to-r from-gray-50 to-amber-50 p-6 border-t flex justify-between items-center">
-      <div class="text-sm text-gray-600 flex items-center gap-2">
-        <i class="fas fa-info-circle text-blue-500"></i>
-        <span>Ini adalah preview. Klik <strong>Terbitkan Artikel</strong> untuk menyimpan.</span>
-      </div>
-      <div class="flex gap-3">
-        <button id="closePreview2" class="px-6 py-3 bg-white hover:bg-gray-100 text-gray-700 rounded-xl transition-all font-semibold border-2 border-gray-200">
-          Kembali ke Editor
-        </button>
-        <button id="publishFromPreview" class="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl transition-all font-bold btn-glow">
-          <i class="fas fa-paper-plane"></i>
-          Terbitkan Sekarang
-        </button>
-      </div>
-    </div>
-  </div>
+    <form id="articleForm" action="{{ route('admin.artikel.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <input type="hidden" id="statusField" name="status" value="draft">
+        <input type="hidden" id="bodyField" name="body_html">
+        <input type="hidden" id="images_meta" name="images_meta">
 
-  {{-- Success Toast --}}
-  <div id="successToast" class="fixed top-6 right-6 z-50 hidden toast">
-    <div class="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4">
-      <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-        <i class="fas fa-check-circle text-2xl"></i>
-      </div>
-      <div>
-        <p class="font-bold text-lg">Berhasil!</p>
-        <p class="text-sm text-white/90" id="toastMessage">Artikel telah disimpan</p>
-      </div>
-    </div>
-  </div>
+        <div class="grid grid-cols-12 gap-8">
+            
+            {{-- KOLOM KIRI: KONFIGURASI (Sticky) --}}
+            <div class="col-span-12 lg:col-span-4 space-y-6">
+                
+                {{-- CARD 1: KATEGORI (Wajib Diisi Dulu) --}}
+                <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay: 0.1s">
+                    <div class="bg-gradient-to-r from-emerald-800 to-emerald-700 p-4 text-white">
+                        <h3 class="font-bold flex items-center gap-2"><i class="fas fa-compass text-amber-400"></i> Langkah 1: Klasifikasi</h3>
+                    </div>
+                    <div class="p-6 space-y-5">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Pilih Ranah (Kategori) <span class="text-red-500">*</span></label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="top_category" value="Budaya" class="peer hidden" required>
+                                    <div class="p-4 rounded-lg border-2 border-gray-200 text-center hover:bg-emerald-50 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 peer-checked:text-emerald-800 transition-all">
+                                        <i class="fas fa-masks-theater text-2xl mb-2"></i>
+                                        <div class="font-bold">Budaya</div>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="top_category" value="Sejarah" class="peer hidden">
+                                    <div class="p-4 rounded-lg border-2 border-gray-200 text-center hover:bg-amber-50 peer-checked:border-amber-600 peer-checked:bg-amber-50 peer-checked:text-amber-800 transition-all">
+                                        <i class="fas fa-monument text-2xl mb-2"></i>
+                                        <div class="font-bold">Sejarah</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
 
-  {{-- Form --}}
-  <form id="articleForm" action="{{ route('admin.artikel.store') }}" method="POST" enctype="multipart/form-data">
-    @csrf
-    <input type="hidden" id="statusField" name="status" value="draft">
-    <input type="hidden" id="bodyField" name="body_html">
-    <input type="hidden" id="images_meta" name="images_meta">
-
-    <div class="grid grid-cols-12 gap-6">
-      {{-- Left Sidebar --}}
-      <div class="col-span-12 lg:col-span-4 space-y-6">
-        {{-- Kategori --}}
-        <div class="bg-white shadow-xl rounded-2xl overflow-hidden glow-card animate-fadeInUp" style="animation-delay: 0.1s">
-          <div class="bg-gradient-to-r from-amber-500 to-orange-500 p-5">
-            <h2 class="text-xl font-bold text-white flex items-center gap-3">
-              <i class="fas fa-folder-open category-icon"></i>
-              Kategori Artikel
-            </h2>
-          </div>
-          <div class="p-6 space-y-4">
-            <div class="helper-tooltip">
-              <label class="block text-sm font-bold text-gray-700 mb-2">Kategori Utama <span class="text-red-500">*</span></label>
-              <span class="tooltip-text">Pilih antara Budaya atau Pustaka</span>
-              <select id="topCategory" name="top_category" class="w-full p-4 input-glow rounded-xl font-semibold text-gray-700 bg-gradient-to-r from-white to-gray-50" required>
-                <option value="">Pilih Kategori...</option>
-                <option value="Budaya">🎭 Budaya</option>
-                <option value="Pustaka">📚 Pustaka</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-sm font-bold text-gray-700 mb-2">Sub Kategori <span class="text-red-500">*</span></label>
-              <select id="subcategory" name="subcategory" class="w-full p-4 input-glow rounded-xl font-semibold text-gray-700 bg-gradient-to-r from-white to-gray-50" required>
-                <option value="">Pilih Sub Kategori...</option>
-              </select>
-            </div>
-
-            <div id="suggestedTagsContainer" class="hidden">
-              <label class="block text-sm font-bold text-gray-700 mb-2"><i class="fas fa-lightbulb text-yellow-500"></i> Tag yang Disarankan</label>
-              <div id="suggestedTags" class="flex flex-wrap gap-2"></div>
-            </div>
-          </div>
-        </div>
-
-        {{-- Info Dasar --}}
-        <div class="bg-white shadow-xl rounded-2xl overflow-hidden glow-card animate-fadeInUp" style="animation-delay: 0.2s">
-          <div class="bg-gradient-to-r from-blue-500 to-indigo-500 p-5">
-            <h2 class="text-xl font-bold text-white flex items-center gap-3">
-              <i class="fas fa-info-circle category-icon"></i>
-              Informasi Dasar
-            </h2>
-          </div>
-          <div class="p-6 space-y-4">
-            <div class="helper-tooltip">
-              <label class="block text-sm font-bold text-gray-700 mb-2">Judul Artikel <span class="text-red-500">*</span></label>
-              <span class="tooltip-text">Buat judul yang menarik dan deskriptif</span>
-              <input id="title" name="title" type="text" class="w-full p-4 input-glow rounded-xl font-bold text-xl text-gray-800" placeholder="Contoh: Sejarah Batik Nusantara" required>
-              <div class="flex justify-between mt-2">
-                <p class="text-xs text-gray-500"><i class="fas fa-keyboard"></i> <span id="titleCount">0</span>/100 karakter</p>
-                <p class="text-xs text-green-600 hidden" id="titleOk"><i class="fas fa-check-circle"></i> Judul bagus!</p>
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-sm font-bold text-gray-700 mb-2">Slug URL <span class="text-red-500">*</span></label>
-              <div class="flex gap-2">
-                <input id="slug" name="slug" type="text" class="flex-1 p-3 input-glow rounded-xl text-sm text-gray-600 font-mono" placeholder="otomatis-dari-judul" required>
-                <button type="button" id="refreshSlug" class="px-4 py-3 bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 rounded-xl transition-all">
-                  <i class="fas fa-sync-alt text-gray-600"></i>
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-sm font-bold text-gray-700 mb-2">Ringkasan Singkat</label>
-              <textarea id="excerpt" name="excerpt" rows="4" class="w-full p-4 input-glow rounded-xl resize-none text-gray-700" placeholder="Tulis ringkasan singkat untuk menarik pembaca..."></textarea>
-              <p class="text-xs text-gray-500 mt-2"><span id="excerptCount">0</span>/200 karakter</p>
-            </div>
-
-            <div>
-              <label class="block text-sm font-bold text-gray-700 mb-2">Tags / Label</label>
-              <div id="tagContainer" class="flex flex-wrap gap-2 p-4 input-glow rounded-xl min-h-[80px] bg-gradient-to-r from-white to-amber-50">
-                <input id="tagInput" type="text" class="flex-1 min-w-[140px] p-2 focus:outline-none bg-transparent" placeholder="Ketik tag lalu Enter...">
-              </div>
-              <p class="text-xs text-gray-500 mt-2"><i class="fas fa-tag text-amber-500"></i> Contoh: batik, tradisional, jawa, seni</p>
-              <input type="hidden" id="tagsField" name="tags">
-            </div>
-          </div>
-        </div>
-
-        {{-- Media Upload --}}
-        <div class="bg-white shadow-xl rounded-2xl overflow-hidden glow-card animate-fadeInUp" style="animation-delay: 0.3s">
-          <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-5">
-            <h2 class="text-xl font-bold text-white flex items-center gap-3">
-              <i class="fas fa-images category-icon"></i>
-              Galeri Media
-            </h2>
-          </div>
-          <div class="p-6">
-            <div class="upload-zone text-center p-10 rounded-2xl cursor-pointer" id="uploadZone">
-              <input id="imageFiles" type="file" accept="image/*" multiple class="hidden">
-              <div class="text-amber-500 mb-4"><i class="fas fa-cloud-upload-alt text-6xl"></i></div>
-              <p class="font-bold text-gray-700 text-lg mb-2">Klik atau Drag & Drop</p>
-              <p class="text-sm text-gray-500">Format: JPG, PNG, WebP</p>
-              <p class="text-xs text-gray-400 mt-1">Maksimal 8 file • 5MB per file</p>
-            </div>
-
-            <div id="thumbsContainer" class="grid grid-cols-2 gap-4 mt-6"></div>
-
-            <input type="hidden" id="coverImage" name="cover_image">
-          </div>
-        </div>
-      </div>
-
-      {{-- Right Column: Editor --}}
-      <div class="col-span-12 lg:col-span-8 space-y-6">
-        <div class="bg-white shadow-xl rounded-2xl overflow-hidden glow-card animate-slideInRight" style="animation-delay: 0.2s">
-          <div class="bg-gradient-to-r from-teal-500 to-green-500 p-5">
-            <div class="flex items-center justify-between">
-              <h2 class="text-xl font-bold text-white flex items-center gap-3">
-                <i class="fas fa-pen-fancy category-icon"></i>
-                Editor Konten
-              </h2>
-              <div class="flex gap-3">
-                <button type="button" id="fullscreenBtn" class="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all backdrop-blur">
-                  <i class="fas fa-expand"></i>
-                </button>
-                <button type="button" id="openPreviewModal" class="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all backdrop-blur flex items-center gap-2">
-                  <i class="fas fa-eye"></i>
-                  Preview
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="p-6">
-            <textarea id="editor" name="body"></textarea>
-
-            {{-- Editor Stats --}}
-            <div class="mt-6 bg-gradient-to-r from-gray-50 to-blue-50 p-5 rounded-xl border-2 border-gray-100">
-              <div class="flex items-center justify-between">
-                <div class="flex gap-6">
-                  <div class="flex items-center gap-2 text-sm text-gray-600"><i class="fas fa-font text-blue-500"></i><span class="font-semibold"><span id="wordCount">0</span> kata</span></div>
-                  <div class="flex items-center gap-2 text-sm text-gray-600"><i class="fas fa-align-left text-green-500"></i><span class="font-semibold"><span id="charCount">0</span> karakter</span></div>
-                  <div class="flex items-center gap-2 text-sm text-gray-600"><i class="fas fa-clock text-purple-500"></i><span class="font-semibold"><span id="readTime">0</span> menit baca</span></div>
+                        <div id="subcatWrapper" class="opacity-50 pointer-events-none transition-all duration-300">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Spesifikasi (Sub-Kategori) <span class="text-red-500">*</span></label>
+                            <select id="subcategory" name="subcategory" class="w-full p-3 input-melayu rounded-lg" required>
+                                <option value="">-- Pilih Kategori Utama Dahulu --</option>
+                            </select>
+                            <p class="text-xs text-gray-500 mt-1">Wajib dipilih agar konten terorganisir.</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="save-indicator saved flex items-center gap-2 text-sm">
-                  <div class="spinner hidden"></div>
-                  <i class="fas fa-check-circle text-lg"></i>
-                  <span class="font-semibold" id="saveIndicator">Tersimpan</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        {{-- Action Buttons --}}
-        <div class="flex gap-4 justify-end animate-fadeInUp" style="animation-delay: 0.4s">
-          <button type="button" id="saveDraft" class="px-8 py-4 bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 text-gray-700 rounded-xl font-bold transition-all flex items-center gap-3 shadow-lg btn-glow">
-            <i class="fas fa-save text-xl"></i>
-            Simpan Draft
-          </button>
-          <button type="button" id="publishBtn" class="px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl font-bold transition-all flex items-center gap-3 shadow-lg btn-glow relative overflow-hidden">
-            <i class="fas fa-paper-plane text-xl"></i>
-            <span class="relative z-10">Terbitkan Artikel</span>
-          </button>
+                {{-- CARD 2: MEDIA GALLERY --}}
+                <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay: 0.2s">
+                    <div class="bg-gradient-to-r from-rose-800 to-rose-700 p-4 text-white flex justify-between items-center">
+                        <h3 class="font-bold flex items-center gap-2"><i class="fas fa-images text-amber-400"></i> Galeri Media</h3>
+                        <span class="text-xs bg-white/20 px-2 py-1 rounded">Klik foto untuk sisipkan</span>
+                    </div>
+                    <div class="p-4">
+                        <div id="uploadZone" class="upload-zone rounded-lg p-6 text-center cursor-pointer mb-4">
+                            <input type="file" id="imageFiles" multiple accept="image/*" class="hidden">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                            <p class="text-sm font-bold text-gray-600">Klik / Tarik Foto ke Sini</p>
+                            <p class="text-xs text-gray-400">Max 5MB per foto</p>
+                        </div>
+
+                        {{-- Area Thumbnail --}}
+                        <div id="thumbsContainer" class="grid grid-cols-2 gap-2 max-h-[300px] overflow-y-auto pr-1">
+                            <div class="col-span-2 text-center py-4 text-gray-400 text-sm italic border rounded bg-gray-50">
+                                Belum ada foto diunggah
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- CARD 3: META INFO --}}
+                <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay: 0.3s">
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Judul Naskah</label>
+                            <input type="text" id="title" name="title" class="w-full p-3 input-melayu rounded-lg font-serif font-bold text-lg" placeholder="Judul yang memikat..." required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Slug URL</label>
+                            <input type="text" id="slug" name="slug" class="w-full p-2 bg-gray-100 rounded text-sm text-gray-600 border border-gray-200" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Ringkasan Singkat</label>
+                            <textarea name="excerpt" rows="3" class="w-full p-3 input-melayu rounded-lg text-sm" placeholder="Untuk tampilan di kartu depan..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- TOMBOL AKSI --}}
+                <div class="flex flex-col gap-3 sticky top-6">
+                    <button type="button" id="publishBtn" class="w-full py-4 btn-gold rounded-xl font-bold text-lg shadow-lg transform transition hover:-translate-y-1 flex justify-center items-center gap-2">
+                        <i class="fas fa-paper-plane"></i> TERBITKAN SEKARANG
+                    </button>
+                    <button type="button" id="saveDraft" class="w-full py-3 bg-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-300 transition flex justify-center items-center gap-2">
+                        <i class="fas fa-save"></i> Simpan Draf
+                    </button>
+                </div>
+
+            </div>
+
+            {{-- KOLOM KANAN: EDITOR MS WORD (Utama) --}}
+            <div class="col-span-12 lg:col-span-8 animate-fadeInUp" style="animation-delay: 0.2s">
+                <div class="document-editor shadow-2xl">
+                    <div class="mb-4 flex justify-between items-center px-4">
+                        <span class="text-sm font-bold text-gray-500 uppercase tracking-widest">Halaman Editor</span>
+                        <div class="text-xs text-gray-400" id="editorStats">0 Kata | 0 Menit Baca</div>
+                    </div>
+                    
+                    {{-- AREA TEXTAREA CKEDITOR --}}
+                    <textarea id="editor" name="body">
+                        <h2>Pendahuluan</h2>
+                        <p>Mulai tuliskan kisah budaya atau sejarah di sini...</p>
+                    </textarea>
+
+                    <div class="mt-4 text-center text-gray-400 text-sm italic">
+                        <i class="fas fa-info-circle"></i> Tips: Taruh kursor di paragraf yang diinginkan, lalu klik foto di galeri kiri untuk menyisipkannya.
+                    </div>
+                </div>
+            </div>
+
         </div>
-      </div>
-    </div>
-  </form>
+    </form>
 </div>
 
-{{-- Preview Modal --}}
-<div id="previewModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 modal-backdrop">
-  <div class="w-[95%] max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden animate-fadeInUp">
-    <div class="bg-gradient-to-r from-amber-500 to-orange-500 p-6">
-      <div class="flex items-center justify-between">
-        <h3 class="text-3xl font-bold text-white flex items-center gap-3"><i class="fas fa-eye"></i> Preview Artikel</h3>
-        <button id="closePreview" class="text-white hover:bg-white/20 p-3 rounded-xl transition-all"><i class="fas fa-times text-2xl"></i></button>
-      </div>
-    </div>
-
-    <div class="p-8 max-h-[70vh] overflow-y-auto">
-      <article class="max-w-4xl mx-auto">
-        <div class="mb-6">
-          <h1 id="modalPreviewTitle" class="text-4xl font-bold text-gray-900 mb-3"></h1>
-          <p id="modalPreviewMeta" class="text-sm text-gray-500 flex items-center gap-3">
-            <span><i class="fas fa-folder"></i> <span id="modalPreviewCategory"></span></span>
-            <span><i class="fas fa-tags"></i> <span id="modalPreviewTags"></span></span>
-          </p>
+{{-- MODAL SUKSES (Overlay) --}}
+<div id="successModal" class="fixed inset-0 z-[9999] hidden items-center justify-center bg-emerald-900/90 backdrop-blur-md">
+    <div class="text-center text-white animate-zoomIn p-8">
+        <div class="checkmark-svg">
+            <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
         </div>
-
-        <img id="modalPreviewHero" class="w-full rounded-2xl shadow-lg mb-6 hidden" src="" alt="Cover Image">
-
-        <div id="modalPreviewExcerpt" class="text-lg text-gray-600 italic border-l-4 border-amber-500 pl-4 mb-6"></div>
-
-        <div id="modalPreviewContent" class="prose prose-lg max-w-none"></div>
-      </article>
+        <h2 class="text-4xl font-serif font-bold mb-2 text-amber-400 mt-6">Terima Kasih</h2>
+        <p class="text-xl text-emerald-100">Kontribusi Anda sangat berharga bagi budaya kita.</p>
+        <div class="mt-8">
+            <div class="w-64 h-2 bg-emerald-800 rounded-full mx-auto overflow-hidden">
+                <div class="h-full bg-amber-400 animate-[shimmer_2s_infinite]" style="width: 100%"></div>
+            </div>
+            <p class="text-sm mt-2 opacity-70">Sedang menerbitkan...</p>
+        </div>
     </div>
-
-    <div class="bg-gradient-to-r from-gray-50 to-amber-50 p-6 border-t flex justify-between items-center">
-      <div class="text-sm text-gray-600 flex items-center gap-2">
-        <i class="fas fa-info-circle text-blue-500"></i>
-        <span>Periksa kembali sebelum menerbitkan.</span>
-      </div>
-      <div class="flex gap-3">
-        <button id="modalBackToEditor" class="px-6 py-3 bg-white hover:bg-gray-100 text-gray-700 rounded-xl transition-all font-semibold border-2 border-gray-200">
-          Kembali ke Editor
-        </button>
-        <button id="modalPublishBtn" class="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl font-bold btn-glow">
-          Terbitkan
-        </button>
-      </div>
-    </div>
-  </div>
 </div>
+
 @endsection
 
 @section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-
 <script>
-/* ============================
-   Variables & Config
-   ============================ */
-let editorInstance;
-let tags = [];
-let uploadedImages = [];
-let autoSaveTimer;
-
-const subcatsTop = {
-  "Budaya": ["Seni", "Adat & Tradisi", "Pakaian", "Rumah Adat", "Makanan & Minuman Tradisional", "Tokoh Budaya"],
-  "Pustaka": ["Cerita Rakyat", "Kamus Melayu", "Sejarah", "Dokumen", "Esai & Artikel"]
-};
-
-const suggestedBySub = {
-  "Seni": ["musik","tari","teater","batik","kerajinan","ukiran","lukisan"],
-  "Adat & Tradisi": ["upacara","ritual","festival","pernikahan","adat-istiadat"],
-  "Pakaian": ["tenun","songket","batik","kebaya","sarung"],
-  "Rumah Adat": ["arsitektur","rumah-tradisional","konstruksi","ornamen"],
-  "Makanan & Minuman Tradisional": ["resep","jajanan","hidangan","kuliner","warisan"],
-  "Tokoh Budaya": ["pejabat","budayawan","penggiat","seniman","maestro"],
-  "Cerita Rakyat": ["legenda","mitos","narasi","dongeng","folklore"],
-  "Kamus Melayu": ["definisi","istilah","bahasa","kosakata","etimologi"],
-  "Sejarah": ["periode","kolonial","arsip","peristiwa","kemerdekaan"],
-  "Dokumen": ["manuskrip","naskah","scan","arsip","koleksi"],
-  "Esai & Artikel": ["opini","analisis","kritik","ulasan","kajian"]
-};
-
-/* ========== DOM elements ========== */
-const topCategoryEl = document.getElementById('topCategory');
-const subcatEl = document.getElementById('subcategory');
-const titleEl = document.getElementById('title');
-const slugEl = document.getElementById('slug');
-const excerptEl = document.getElementById('excerpt');
-const excerptCount = document.getElementById('excerptCount');
-const titleCount = document.getElementById('titleCount');
-const tagInput = document.getElementById('tagInput');
-const tagContainer = document.getElementById('tagContainer');
-const tagsField = document.getElementById('tagsField');
-const statusField = document.getElementById('statusField');
-const saveIndicator = document.getElementById('saveIndicator');
-
-/* ========== Initialize CKEditor ========== */
-ClassicEditor.create(document.querySelector('#editor'), {
-  toolbar: {
-    items: [
-      'heading','|','bold','italic','underline','strikethrough','|',
-      'fontFamily','fontSize','fontColor','fontBackground','|',
-      'alignment','bulletedList','numberedList','outdent','indent','|',
-      'blockQuote','insertTable','mediaEmbed','link','imageUpload','|',
-      'undo','redo','|','removeFormat'
-    ]
-  },
-  heading: {
-    options: [
-      { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-      { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-      { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-      { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
-    ]
-  },
-  image: { toolbar: ['imageTextAlternative','imageStyle:full','imageStyle:side'] },
-  table: { contentToolbar: ['tableColumn','tableRow','mergeTableCells'] },
-  fontSize: { options: [9,11,13,'default',17,19,21] },
-  fontFamily: {
-    options: ['default','Arial, Helvetica, sans-serif','Georgia, serif','Times New Roman, Times, serif','Courier New, Courier, monospace','Verdana, Geneva, sans-serif']
-  }
-})
-.then(editor => {
-  editorInstance = editor;
-
-  // load draft body if exists
-  const draftHtml = localStorage.getItem('artikel_body');
-  if (draftHtml) editor.setData(draftHtml);
-
-  editor.model.document.on('change:data', () => {
-    const html = editor.getData();
-    document.getElementById('bodyField').value = html;
-    updateSaveIndicator('saving');
-    clearTimeout(autoSaveTimer);
-    autoSaveTimer = setTimeout(() => {
-      localStorage.setItem('artikel_body', html);
-      updateSaveIndicator('saved');
-      updateStats(html);
-    }, 1500);
-  });
-})
-.catch(err => console.error('CKEditor init error', err));
-
-/* ========== Helpers ========== */
-function updateSaveIndicator(status) {
-  const indicatorText = document.getElementById('saveIndicator');
-  const spinner = document.querySelector('.save-indicator .spinner');
-  if (status === 'saving') {
-    indicatorText.textContent = 'Menyimpan...';
-    if (spinner) spinner.classList.remove('hidden');
-  } else {
-    indicatorText.textContent = 'Tersimpan';
-    if (spinner) spinner.classList.add('hidden');
-  }
-}
-
-function stripHtml(html) {
-  const tmp = document.createElement('div'); tmp.innerHTML = html; return tmp.textContent || tmp.innerText || '';
-}
-
-function updateStats(html) {
-  const text = stripHtml(html).trim();
-  const words = text ? text.split(/\s+/).filter(w => w.length>0).length : 0;
-  const chars = text.length;
-  const readTime = Math.max(1, Math.ceil(words / 200));
-  document.getElementById('wordCount').textContent = words;
-  document.getElementById('charCount').textContent = chars;
-  document.getElementById('readTime').textContent = readTime;
-}
-
-/* ========== Category & Suggested Tags ========== */
-topCategoryEl.addEventListener('change', function() {
-  const val = this.value;
-  subcatEl.innerHTML = '<option value="">Pilih Sub Kategori...</option>';
-  if (subcatsTop[val]) {
-    subcatsTop[val].forEach(sub => {
-      const opt = document.createElement('option'); opt.value=sub; opt.textContent=sub; subcatEl.appendChild(opt);
+    /* 1. INISIALISASI CKEDITOR SUPER BUILD (FITUR LENGKAP) */
+    CKEDITOR.ClassicEditor.create(document.querySelector('#editor'), {
+        // --- Toolbar Lengkap (Seperti MS Word) ---
+        toolbar: {
+            items: [
+                'findAndReplace', 'selectAll', '|',
+                'heading', '|',
+                'bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', 'removeFormat', '|',
+                'bulletedList', 'numberedList', 'todoList', '|',
+                'outdent', 'indent', '|',
+                'undo', 'redo',
+                '-', // Baris Baru
+                'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'highlight', '|',
+                'alignment', '|',
+                'link', 'insertImage', 'blockQuote', 'insertTable', 'mediaEmbed', 'codeBlock', 'horizontalLine', '|',
+                'specialCharacters', 'pageBreak'
+            ],
+            shouldNotGroupWhenFull: true
+        },
+        // --- Konfigurasi Heading ---
+        heading: {
+            options: [
+                { model: 'paragraph', title: 'Paragraf Normal', class: 'ck-heading_paragraph' },
+                { model: 'heading1', view: 'h1', title: 'Judul Besar (H1)', class: 'ck-heading_heading1' },
+                { model: 'heading2', view: 'h2', title: 'Sub Judul (H2)', class: 'ck-heading_heading2' },
+                { model: 'heading3', view: 'h3', title: 'Sub Bab (H3)', class: 'ck-heading_heading3' }
+            ]
+        },
+        // --- Konfigurasi Font ---
+        fontFamily: {
+            options: [
+                'default',
+                'Times New Roman, Times, serif',
+                'Arial, Helvetica, sans-serif',
+                'Courier New, Courier, monospace',
+                'Georgia, serif',
+                'Lucida Sans Unicode, Lucida Grande, sans-serif',
+                'Tahoma, Geneva, sans-serif',
+                'Trebuchet MS, Helvetica, sans-serif',
+                'Verdana, Geneva, sans-serif'
+            ],
+            supportAllValues: true
+        },
+        fontSize: {
+            options: [ 10, 12, 14, 'default', 18, 20, 22, 24, 28, 30, 36 ],
+            supportAllValues: true
+        },
+        // --- Menghapus Plugin yang tidak perlu/berbayar agar tidak error ---
+        removePlugins: [
+            'CKBox', 'CKFinder', 'EasyImage', 'RealTimeCollaborativeComments', 
+            'RealTimeCollaborativeTrackChanges', 'RealTimeCollaborativeRevisionHistory', 
+            'PresenceList', 'Comments', 'TrackChanges', 'TrackChangesData', 
+            'RevisionHistory', 'Pagination', 'WProofreader', 'MathType'
+        ],
+        placeholder: 'Mulai ketik naskah di sini...'
+    }).then(editor => {
+        window.editor = editor; // Simpan ke window agar bisa diakses fungsi insert gambar
+        
+        // Hitung kata realtime
+        editor.model.document.on('change:data', () => {
+            const data = editor.getData();
+            const text = data.replace(/<[^>]*>/g, '').trim();
+            const words = text ? text.split(/\s+/).length : 0;
+            document.getElementById('editorStats').innerText = `${words} Kata | Estimasi ${Math.ceil(words/200)} Menit Baca`;
+        });
+    }).catch(err => {
+        console.error('Gagal memuat editor:', err);
     });
-  }
-  document.getElementById('suggestedTagsContainer').classList.add('hidden');
-  updateProgress();
-});
 
-subcatEl.addEventListener('change', () => renderSuggestedTags());
 
-function renderSuggestedTags(){
-  const container = document.getElementById('suggestedTagsContainer');
-  const suggestedTags = document.getElementById('suggestedTags');
-  const subcatValue = subcatEl.value;
-  if (!subcatValue || !suggestedBySub[subcatValue]) {
-    container.classList.add('hidden');
-    return;
-  }
-  container.classList.remove('hidden');
-  suggestedTags.innerHTML = '';
-  suggestedBySub[subcatValue].forEach(tag => {
-    const btn = document.createElement('button');
-    btn.type='button';
-    btn.className='suggested-tag px-3 py-2 rounded-lg bg-amber-100 text-amber-700 text-sm font-semibold hover:bg-amber-500 hover:text-white transition-all';
-    btn.textContent = tag;
-    btn.addEventListener('click', ()=> addTag(tag));
-    suggestedTags.appendChild(btn);
-  });
-}
-
-/* ========== Title & Slug ========== */
-titleEl.addEventListener('input', function() {
-  const val = this.value;
-  titleCount.textContent = val.length;
-  const titleOk = document.getElementById('titleOk');
-  if (val.length >= 20 && val.length <= 80) titleOk.classList.remove('hidden'); else titleOk.classList.add('hidden');
-  slugEl.value = slugify(val);
-  localStorage.setItem('artikel_title', val);
-  updateProgress();
-});
-
-document.getElementById('refreshSlug').addEventListener('click', function() {
-  slugEl.value = slugify(titleEl.value || Date.now().toString());
-});
-
-function slugify(text) {
-  return text.toString().normalize('NFKD').toLowerCase().trim()
-    .replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
-}
-
-/* ========== Excerpt ========== */
-excerptEl.addEventListener('input', function(){ excerptCount.textContent = this.value.length; updateProgress(); });
-
-/* ========== Tags ========== */
-tagInput.addEventListener('keydown', function(e){
-  if (e.key === 'Enter') { e.preventDefault(); addTag(this.value); }
-});
-
-function addTag(value) {
-  value = (value||'').trim().toLowerCase();
-  if (!value || tags.includes(value)) { tagInput.value=''; return; }
-  tags.push(value);
-  renderTags();
-  tagInput.value='';
-  updateProgress();
-  localStorage.setItem('artikel_tags', JSON.stringify(tags));
-}
-
-function removeTag(index) {
-  tags.splice(index,1); renderTags(); localStorage.setItem('artikel_tags', JSON.stringify(tags));
-}
-
-function renderTags() {
-  Array.from(tagContainer.querySelectorAll('.tag-chip')).forEach(el => el.remove());
-  tags.forEach((tag, index) => {
-    const chip = document.createElement('div');
-    chip.className = 'tag-chip inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-100 to-orange-100 text-amber-700 rounded-full text-sm font-semibold border-2 border-amber-200';
-    chip.innerHTML = `<i class="fas fa-tag"></i><span>${tag}</span><button type="button" onclick="removeTag(${index})" class="hover:text-amber-900 transition-colors"><i class="fas fa-times"></i></button>`;
-    tagContainer.insertBefore(chip, tagInput);
-  });
-  tagsField.value = tags.join(',');
-}
-
-/* ========== Image Upload & Thumbs ========== */
-const uploadZone = document.getElementById('uploadZone');
-const imageFiles = document.getElementById('imageFiles');
-const thumbsContainer = document.getElementById('thumbsContainer');
-
-uploadZone.addEventListener('click', () => imageFiles.click());
-uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
-uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
-uploadZone.addEventListener('drop', async (e) => { e.preventDefault(); uploadZone.classList.remove('drag-over'); const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')); await processImages(files); });
-
-imageFiles.addEventListener('change', async function(){ await processImages(Array.from(this.files)); this.value=''; });
-
-async function processImages(files) {
-  const maxFiles = 8 - uploadedImages.length;
-  for (const file of files.slice(0, maxFiles)) {
-    if (file.size > 5 * 1024 * 1024) { showToast(`File ${file.name} terlalu besar (max 5MB)`, 'error'); continue; }
-    const dataUrl = await readFileAsDataURL(file);
-    const resized = await resizeImage(dataUrl, 1200, 0.85);
-    uploadedImages.push({
-      id: Date.now() + Math.random(),
-      name: file.name,
-      dataUrl: resized.dataUrl,
-      sizeKB: Math.round(resized.size / 1024),
-      caption: '',
-      alt: '',
-      cover: uploadedImages.length === 0,
-      order: uploadedImages.length
-    });
-  }
-  renderThumbs(); syncImagesMeta(); updateProgress();
-}
-
-function readFileAsDataURL(file) {
-  return new Promise(resolve => { const reader = new FileReader(); reader.onload = e => resolve(e.target.result); reader.readAsDataURL(file); });
-}
-
-function resizeImage(dataUrl, maxWidth = 1200, quality = 0.85) {
-  return new Promise(resolve => {
-    const img = new Image();
-    img.onload = () => {
-      const scale = Math.min(1, maxWidth / img.width);
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.round(img.width * scale);
-      canvas.height = Math.round(img.height * scale);
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      canvas.toBlob(blob => {
-        const reader = new FileReader();
-        reader.onload = () => resolve({ dataUrl: reader.result, size: blob.size });
-        reader.readAsDataURL(blob);
-      }, 'image/jpeg', quality);
+    /* 2. DATA KATEGORI (Budaya & Sejarah) */
+    const categoriesData = {
+        "Budaya": ["Seni Tari", "Seni Musik", "Adat Istiadat", "Pakaian Adat", "Kuliner Tradisional", "Senjata Tradisional"],
+        "Sejarah": ["Kerajaan Hindu-Buddha", "Kerajaan Islam", "Masa Kolonial", "Perjuangan Kemerdekaan", "Biografi Tokoh"]
     };
-    img.src = dataUrl;
-  });
-}
 
-function renderThumbs() {
-  thumbsContainer.innerHTML = '';
-  uploadedImages.forEach((img, index) => {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'image-thumb';
-    wrapper.dataset.id = img.id;
-    wrapper.innerHTML = `
-      <img src="${img.dataUrl}" alt="${img.alt || img.name}" class="w-full h-40 object-cover rounded-lg">
-      <div class="image-overlay p-3 rounded-lg flex flex-col justify-between">
-        <div class="flex justify-between items-start mb-2">
-          <button type="button" class="cover-btn px-3 py-1 rounded-lg text-xs font-bold ${img.cover ? 'bg-amber-500 text-white cover-badge' : 'bg-white text-gray-700'}" title="Set sebagai cover">
-            ${img.cover ? '<i class="fas fa-star"></i> Cover' : '<i class="far fa-star"></i> Set Cover'}
-          </button>
-          <button type="button" class="delete-btn px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-bold" title="Hapus">
-            <i class="fas fa-trash"></i>
-          </button>
-        </div>
-        <div class="space-y-2">
-          <input type="text" class="caption-input w-full p-2 rounded-lg text-xs bg-white/90" placeholder="Caption..." value="${img.caption}">
-          <input type="text" class="alt-input w-full p-2 rounded-lg text-xs bg-white/90" placeholder="Alt text..." value="${img.alt}">
-          <p class="text-xs text-white font-semibold"><i class="fas fa-file-image"></i> ${img.sizeKB} KB</p>
-        </div>
-      </div>
-    `;
-    thumbsContainer.appendChild(wrapper);
-
-    wrapper.querySelector('.cover-btn').addEventListener('click', () => {
-      uploadedImages.forEach(u => u.cover = false); img.cover = true; renderThumbs(); syncImagesMeta();
+    /* 3. LOGIKA FORM DINAMIS */
+    document.querySelectorAll('input[name="top_category"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const subWrapper = document.getElementById('subcatWrapper');
+            const subSelect = document.getElementById('subcategory');
+            
+            subWrapper.classList.remove('opacity-50', 'pointer-events-none');
+            subSelect.innerHTML = '<option value="">-- Pilih Spesifikasi --</option>';
+            
+            const list = categoriesData[this.value];
+            if(list) {
+                list.forEach(item => {
+                    const opt = document.createElement('option');
+                    opt.value = item;
+                    opt.innerText = item;
+                    subSelect.appendChild(opt);
+                });
+            }
+        });
     });
-    wrapper.querySelector('.delete-btn').addEventListener('click', () => {
-      uploadedImages = uploadedImages.filter(u => u.id !== img.id);
-      if (!uploadedImages.some(u => u.cover) && uploadedImages.length > 0) uploadedImages[0].cover = true;
-      renderThumbs(); syncImagesMeta(); updateProgress();
+
+    // Auto Slug dari Judul
+    document.getElementById('title').addEventListener('input', function() {
+        const slug = this.value.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-');
+        document.getElementById('slug').value = slug;
     });
-    wrapper.querySelector('.caption-input').addEventListener('input', (e) => { img.caption = e.target.value; syncImagesMeta(); });
-    wrapper.querySelector('.alt-input').addEventListener('input', (e) => { img.alt = e.target.value; syncImagesMeta(); });
-  });
 
-  if (thumbsContainer.children.length > 0) {
-    Sortable.create(thumbsContainer, {
-      animation: 150,
-      ghostClass: 'opacity-50',
-      onEnd: function(evt) {
-        const moved = uploadedImages.splice(evt.oldIndex,1)[0];
-        uploadedImages.splice(evt.newIndex,0,moved);
-        uploadedImages.forEach((u,i) => u.order = i);
-        renderThumbs();
-        syncImagesMeta();
-      }
+    /* 4. LOGIKA GAMBAR (UPLOAD & SISIP) */
+    let uploadedImages = [];
+    const imageInput = document.getElementById('imageFiles');
+    const thumbsContainer = document.getElementById('thumbsContainer');
+    const uploadZone = document.getElementById('uploadZone');
+
+    // Klik zona upload untuk buka file manager
+    uploadZone.addEventListener('click', () => imageInput.click());
+
+    // Saat file dipilih
+    imageInput.addEventListener('change', function() {
+        Array.from(this.files).forEach(file => {
+            if(file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = { id: Date.now() + Math.random(), src: e.target.result, name: file.name };
+                    uploadedImages.push(img);
+                    renderImages();
+                    // Simpan data gambar ke input hidden agar terkirim ke server
+                    document.getElementById('images_meta').value = JSON.stringify(uploadedImages);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
     });
-  }
-}
 
-function syncImagesMeta() {
-  const meta = uploadedImages.map((u,i)=>({ id:u.id, name:u.name, dataUrl:u.dataUrl, caption:u.caption, alt:u.alt, cover:!!u.cover, order:u.order ?? i }));
-  document.getElementById('images_meta').value = JSON.stringify(meta);
-  localStorage.setItem('artikel_images', JSON.stringify(meta));
-}
-
-/* ========== Preview Modal & Publish ========== */
-document.getElementById('openPreviewModal').addEventListener('click', openPreview);
-document.getElementById('closePreview').addEventListener('click', closePreview);
-document.getElementById('closePreview2').addEventListener('click', closePreview);
-document.getElementById('modalBackToEditor').addEventListener('click', closePreview);
-document.getElementById('modalPublishBtn').addEventListener('click', () => { closePreview(); publishArticle(); });
-document.getElementById('publishFromPreview').addEventListener('click', () => { closePreview(); publishArticle(); });
-
-function openPreview() {
-  const title = titleEl.value || 'Judul belum diisi';
-  const excerpt = excerptEl.value || 'Tidak ada ringkasan';
-  const topCat = topCategoryEl.value || '';
-  const subCat = subcatEl.value || '';
-  const body = editorInstance ? editorInstance.getData() : '';
-
-  // main hero preview (top)
-  document.getElementById('previewTitle').textContent = title;
-  document.getElementById('previewCategory').textContent = topCat + (subCat ? ' › ' + subCat : '');
-  document.getElementById('previewTags').textContent = tags.length > 0 ? tags.join(', ') : 'Belum ada tag';
-  document.getElementById('previewExcerpt').textContent = excerpt;
-  document.getElementById('previewContent').innerHTML = body || '<p class="text-gray-400">Belum ada konten...</p>';
-
-  // modal preview fields
-  document.getElementById('modalPreviewTitle').textContent = title;
-  document.getElementById('modalPreviewCategory').textContent = topCat + (subCat ? ' › ' + subCat : '');
-  document.getElementById('modalPreviewTags').textContent = tags.length > 0 ? tags.join(', ') : 'Belum ada tag';
-  document.getElementById('modalPreviewExcerpt').textContent = excerpt;
-  document.getElementById('modalPreviewContent').innerHTML = body || '<p class="text-gray-400">Belum ada konten...</p>';
-
-  const cover = uploadedImages.find(i => i.cover) || uploadedImages[0];
-  const heroImg = document.getElementById('modalPreviewHero');
-  const heroImgTop = document.getElementById('previewHero');
-  if (cover) {
-    heroImg.src = cover.dataUrl; heroImg.classList.remove('hidden');
-    heroImgTop.src = cover.dataUrl; heroImgTop.classList.remove('hidden');
-  } else {
-    heroImg.classList.add('hidden'); heroImgTop.classList.add('hidden');
-  }
-
-  document.getElementById('previewModal').classList.remove('hidden');
-  document.getElementById('previewModal').classList.add('flex');
-}
-
-function closePreview() {
-  document.getElementById('previewModal').classList.add('hidden');
-  document.getElementById('previewModal').classList.remove('flex');
-}
-
-/* ========== Save & Publish ========== */
-document.getElementById('saveDraft').addEventListener('click', saveDraft);
-document.getElementById('publishBtn').addEventListener('click', publishArticle);
-
-function saveDraft() {
-  const draft = {
-    top_category: topCategoryEl.value,
-    subcategory: subcatEl.value,
-    title: titleEl.value,
-    slug: slugEl.value,
-    excerpt: excerptEl.value,
-    tags: tags,
-    body: editorInstance ? editorInstance.getData() : '',
-    images: uploadedImages
-  };
-  localStorage.setItem('artikel_draft', JSON.stringify(draft));
-  showToast('Draft berhasil disimpan!', 'success');
-}
-
-function publishArticle() {
-  if (!validateForm()) return;
-  statusField.value = 'published';
-  document.getElementById('bodyField').value = editorInstance ? editorInstance.getData() : '';
-  syncImagesMeta();
-  document.getElementById('articleForm').submit();
-}
-
-function validateForm() {
-  if (!topCategoryEl.value) { alert('Kategori utama wajib diisi!'); topCategoryEl.focus(); return false; }
-  if (!subcatEl.value) { alert('Sub kategori wajib diisi!'); subcatEl.focus(); return false; }
-  if (!titleEl.value.trim()) { alert('Judul artikel wajib diisi!'); titleEl.focus(); return false; }
-  if (!slugEl.value.trim()) { alert('Slug URL wajib diisi!'); slugEl.focus(); return false; }
-  const body = editorInstance ? editorInstance.getData() : '';
-  if (!body || stripHtml(body).trim().length < 50) { alert('Konten artikel terlalu pendek! Minimal 50 karakter.'); return false; }
-  return true;
-}
-
-/* ========== Progress (visual) ========== */
-function updateProgress() {
-  const steps = document.querySelectorAll('.step-indicator');
-  const progressBars = document.querySelectorAll('.flex-1.h-1 > div');
-
-  if (topCategoryEl.value && subcatEl.value) {
-    if (steps[0]) steps[0].classList.add('completed');
-    if (progressBars[0]) progressBars[0].style.width = '100%';
-    if (steps[1]) steps[1].classList.add('active');
-  }
-  if (titleEl.value && slugEl.value && excerptEl.value) {
-    if (steps[1]) steps[1].classList.add('completed');
-    if (progressBars[1]) progressBars[1].style.width = '100%';
-    if (steps[2]) steps[2].classList.add('active');
-  }
-  const body = editorInstance ? editorInstance.getData() : '';
-  if (body && stripHtml(body).trim().length > 50) {
-    if (steps[2]) steps[2].classList.add('completed');
-    if (progressBars[2]) progressBars[2].style.width = '100%';
-    if (steps[3]) steps[3].classList.add('active');
-  }
-  if (uploadedImages.length > 0) {
-    if (steps[3]) steps[3].classList.add('completed');
-  }
-}
-
-/* ========== Toast ========= */
-function showToast(message, type='success') {
-  const toast = document.getElementById('successToast');
-  const toastMessage = document.getElementById('toastMessage');
-  const toastBg = toast.querySelector('div');
-
-  toastMessage.textContent = message;
-  if (type === 'error') {
-    toastBg.className = 'bg-gradient-to-r from-red-500 to-pink-500 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4';
-  } else {
-    toastBg.className = 'bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4';
-  }
-  toast.classList.remove('hidden');
-  setTimeout(() => toast.classList.add('hidden'), 3000);
-}
-
-/* ========== Fullscreen Editor ========= */
-document.getElementById('fullscreenBtn').addEventListener('click', () => {
-  if (!editorInstance) return;
-  const editable = editorInstance.ui.view.editable.element;
-  const toolbar = document.querySelector('.ck-toolbar');
-  if (!editable.classList.contains('fullscreen-mode')) {
-    editable.classList.add('fullscreen-mode');
-    editable.style.position = 'fixed'; editable.style.inset = '80px 20px 20px 20px'; editable.style.zIndex = '9999'; editable.style.background = '#fff';
-    if (toolbar) { toolbar.style.position = 'fixed'; toolbar.style.top = '20px'; toolbar.style.left = '20px'; toolbar.style.right = '20px'; toolbar.style.zIndex = '10000'; }
-    document.getElementById('fullscreenBtn').innerHTML = '<i class="fas fa-compress"></i>';
-  } else {
-    editable.classList.remove('fullscreen-mode');
-    editable.style.position = ''; editable.style.inset = ''; editable.style.zIndex = '';
-    if (toolbar) { toolbar.style.position = ''; toolbar.style.top = ''; toolbar.style.left = ''; toolbar.style.right = ''; toolbar.style.zIndex = ''; }
-    document.getElementById('fullscreenBtn').innerHTML = '<i class="fas fa-expand"></i>';
-  }
-});
-
-/* ========== Load Draft on Page Load ========== */
-window.addEventListener('DOMContentLoaded', () => {
-  const raw = localStorage.getItem('artikel_draft');
-  if (raw) {
-    try {
-      const draft = JSON.parse(raw);
-      if (draft.top_category) {
-        topCategoryEl.value = draft.top_category;
-        topCategoryEl.dispatchEvent(new Event('change'));
-        setTimeout(() => { if (draft.subcategory) { subcatEl.value = draft.subcategory; subcatEl.dispatchEvent(new Event('change')); } }, 100);
-      }
-      if (draft.title) titleEl.value = draft.title;
-      if (draft.slug) slugEl.value = draft.slug;
-      if (draft.excerpt) excerptEl.value = draft.excerpt;
-      if (draft.tags) { tags = draft.tags; renderTags(); }
-      if (draft.images) { uploadedImages = draft.images; renderThumbs(); syncImagesMeta(); }
-      updateProgress();
-    } catch (e) {
-      console.warn('Tidak dapat memuat draft:', e);
+    // Render Thumbnail di Sidebar
+    function renderImages() {
+        if(uploadedImages.length === 0) {
+            thumbsContainer.innerHTML = '<div class="col-span-2 text-center py-6 text-gray-400 text-xs italic bg-gray-50 rounded border border-dashed">Belum ada foto</div>';
+            return;
+        }
+        thumbsContainer.innerHTML = '';
+        uploadedImages.forEach(img => {
+            const div = document.createElement('div');
+            div.className = 'relative group h-24 border rounded-lg overflow-hidden cursor-pointer shadow-sm';
+            div.innerHTML = `
+                <img src="${img.src}" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-black/60 hidden group-hover:flex flex-col items-center justify-center gap-2 transition">
+                    <button type="button" class="bg-emerald-500 hover:bg-emerald-600 text-white px-2 py-1 rounded text-[10px] font-bold" onclick="insertImageToEditor('${img.id}')">
+                        <i class="fas fa-plus"></i> SISIPKAN
+                    </button>
+                    <button type="button" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-[10px]" onclick="removeImage('${img.id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            thumbsContainer.appendChild(div);
+        });
     }
-  }
-});
+
+    // Fungsi: Sisipkan Gambar ke Editor (Posisi Kursor)
+    window.insertImageToEditor = function(id) {
+        const img = uploadedImages.find(i => i.id == id);
+        if (window.editor && img) {
+            // Template HTML Gambar yang rapi
+            const content = `
+                <figure class="image" style="display:block; margin: 20px auto; text-align:center;">
+                    <img src="${img.src}" alt="${img.name}" style="max-width:100%; height:auto; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+                    <figcaption style="text-align:center; color:#666; font-style:italic; font-size:14px; margin-top:5px;">${img.name}</figcaption>
+                </figure>
+                <p>&nbsp;</p>
+            `;
+            // Masukkan ke editor
+            const viewFragment = window.editor.data.processor.toView(content);
+            const modelFragment = window.editor.data.toModel(viewFragment);
+            window.editor.model.insertContent(modelFragment);
+        }
+    };
+
+    // Hapus Gambar dari Galeri
+    window.removeImage = function(id) {
+        if(confirm('Hapus foto ini dari galeri?')) {
+            uploadedImages = uploadedImages.filter(i => i.id != id);
+            renderImages();
+            document.getElementById('images_meta').value = JSON.stringify(uploadedImages);
+        }
+    };
+
+    /* 5. SUBMIT & ANIMASI */
+    document.getElementById('publishBtn').addEventListener('click', function() {
+        const form = document.getElementById('articleForm');
+        
+        // Validasi HTML5
+        if(!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+        
+        // Cek Konten Editor
+        const content = window.editor.getData();
+        if(!content) {
+            alert('Isi konten naskah terlebih dahulu!');
+            return;
+        }
+
+        // Masukkan data ke input hidden
+        document.getElementById('bodyField').value = content;
+        document.getElementById('statusField').value = 'published';
+
+        // Tampilkan Modal Animasi Sukses
+        const modal = document.getElementById('successModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+        // Submit form setelah animasi selesai (2 detik)
+        setTimeout(() => {
+            form.submit();
+        }, 2000);
+    });
+
+    // Simpan Draf
+    document.getElementById('saveDraft').addEventListener('click', function() {
+        document.getElementById('bodyField').value = window.editor.getData();
+        document.getElementById('articleForm').submit();
+    });
 </script>
 @endsection

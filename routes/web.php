@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 use App\Http\Controllers\Admin\PageController as AdminPageController;
 use App\Http\Controllers\Admin\TagController as AdminTagController;
+use App\Http\Controllers\Admin\UploadImageController; // <- added
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BudayaController;
@@ -26,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
-    return view('home');   // pastikan resources/views/home.blade.php ada
+    return view('home');
 })->name('home');
 
 Route::get('/search',   [SearchController::class, 'index'])->name('search');
@@ -75,9 +76,6 @@ Route::post('/team', [AuthController::class, 'loginAdmin'])->name('login.admin.p
 |--------------------------------------------------------------------------
 | Kontributor Area
 |--------------------------------------------------------------------------
-|
-| Pastikan middleware 'checkrole:kontributor' terdaftar. Jika middleware
-| kamu bernama 'role', ubah sesuai implementasimu.
 */
 Route::middleware(['auth', 'checkrole:kontributor'])
     ->prefix('kontributor')
@@ -93,10 +91,10 @@ Route::middleware(['auth', 'checkrole:kontributor'])
         Route::prefix('artikel')->name('artikel.')->group(function () {
             Route::get('/', [KontributorController::class, 'indexArticles'])->name('index');
 
-            // form create
+            // form create (kontributor)
             Route::get('/baru', [KontributorController::class, 'showArticleForm'])->name('create');
 
-            // store artikel
+            // store artikel (kontributor)
             Route::post('/store', [KontributorController::class, 'storeContent'])->name('store');
 
             // show article (by id)
@@ -122,6 +120,10 @@ Route::middleware(['auth', 'checkrole:admin'])
             // create & store
             Route::get('/create', [AdminController::class, 'createArtikel'])->name('create');
             Route::post('/store', [AdminController::class, 'storeArtikel'])->name('store');
+
+            // *** Upload image endpoint untuk editor/tombol "Sisipkan Foto" ***
+            // Ini akan men-define nama route -> admin.artikel.upload_image
+            Route::post('/upload-image', [UploadImageController::class, 'upload'])->name('upload_image');
 
             Route::get('/show', [AdminController::class, 'indexArtikel'])->name('show');
             Route::get('/pending', [AdminController::class, 'pendingArtikel'])->name('pending');
