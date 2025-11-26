@@ -1,4 +1,4 @@
-@extends('layouts.kontributor')
+@extends('layouts.dashboard_kontributor')
 
 @section('title', 'Profil Saya')
 

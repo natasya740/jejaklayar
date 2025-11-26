@@ -18,20 +18,29 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next, ...$roles)
     {
-        // 1. Cek apakah pengguna sudah login
+        // 1. Jika belum login -> redirect ke route login (jika request AJAX kembalikan JSON)
         if (!Auth::check()) {
-            return redirect('login');
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Unauthenticated.'], 401);
+            }
+            // jika ada route bernama 'login' gunakan itu, fallback ke '/login'
+            return redirect()->guest(route('login', [], false) ?: '/login');
         }
 
-        // 2. Cek apakah peran pengguna diizinkan
+        $user = Auth::user();
+
+        // 2. Jika role cocok salah satu roles -> lanjut
         foreach ($roles as $role) {
-            if (Auth::user()->role == $role) {
-                // Jika diizinkan, lanjutkan ke Controller
+            if ($user->role === $role) {
                 return $next($request);
             }
         }
 
-        // 3. Jika tidak diizinkan, tampilkan halaman error
+        // 3. Jika role tidak cocok -> abort 403 atau kembalikan JSON jika AJAX
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Forbidden. You do not have access.'], 403);
+        }
+
         abort(403, 'ANDA TIDAK MEMILIKI HAK AKSES.');
     }
 }

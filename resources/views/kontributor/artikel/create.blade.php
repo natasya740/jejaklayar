@@ -1,146 +1,328 @@
-@extends('layouts.dashboard') <!-- Menggunakan Layout Dashboard (Ada Sidebar) -->
+{{-- resources/views/articles/create.blade.php --}}
+@extends('layouts.dashboard_kontributor') {{-- ganti layout jika beda --}}
 
-@section('title', 'Tulis Artikel Baru')
+@section('title','Buat Artikel Baru')
 
 @section('content')
+<div class="max-w-7xl mx-auto p-6">
+  <div class="bg-white shadow rounded-lg overflow-hidden grid grid-cols-12">
+    {{-- kiri: form --}}
+    <div class="col-span-5 p-6 border-r">
+      <h2 class="text-2xl font-bold mb-4">Buat Artikel Baru</h2>
 
-<!-- Header Halaman -->
-<div class="mb-8 flex justify-between items-end">
-    <div>
-        <h2 class="text-2xl font-bold text-gray-800">Tulis Artikel Baru</h2>
-        <p class="text-gray-500 text-sm mt-1">Bagikan cerita budaya dan sejarah Bengkalis.</p>
+      <form id="articleForm" action="#" method="POST" enctype="multipart/form-data">
+        @csrf
+
+        {{-- Judul --}}
+        <label class="block text-sm font-medium text-gray-700">Judul</label>
+        <input id="title" name="title" type="text" class="mt-2 w-full p-3 border rounded" placeholder="Masukkan judul..." required>
+
+        {{-- Slug --}}
+        <label class="block text-sm font-medium text-gray-700 mt-4">Slug</label>
+        <input id="slug" name="slug" type="text" class="mt-2 w-full p-2 border rounded text-sm" placeholder="slug-otomatis-atau-edit" required>
+
+        {{-- Kategori & Subkategori --}}
+        <div class="flex gap-3 mt-4">
+          <div class="w-1/2">
+            <label class="text-sm font-medium">Kategori</label>
+            <select id="category" name="category" class="mt-2 w-full p-2 border rounded">
+              <option value="">-- Pilih Kategori --</option>
+              {{-- contoh statik. Ganti dengan loop dari backend --}}
+              <option value="Sejarah">Sejarah</option>
+              <option value="Seni & Budaya">Seni & Budaya</option>
+              <option value="Arsitektur">Arsitektur</option>
+            </select>
+          </div>
+          <div class="w-1/2">
+            <label class="text-sm font-medium">Sub Kategori</label>
+            <select id="subcategory" name="subcategory" class="mt-2 w-full p-2 border rounded">
+              <option value="">-- Pilih Subkategori --</option>
+            </select>
+          </div>
+        </div>
+
+        {{-- Tags --}}
+        <label class="block text-sm font-medium text-gray-700 mt-4">Tags</label>
+        <div class="mt-2 flex gap-2 flex-wrap items-center" id="tagContainer">
+          <input id="tagInput" type="text" class="p-2 rounded border" placeholder="Tuliskan tag lalu Enter" />
+        </div>
+        <input type="hidden" id="tagsField" name="tags" value="">
+
+        {{-- Gambar upload --}}
+        <label class="block text-sm font-medium text-gray-700 mt-4">Gambar (pilih beberapa)</label>
+        <div class="mt-2 p-3 border-dashed border rounded text-sm">
+          <input id="imageFiles" type="file" accept="image/*" multiple class="hidden">
+          <button type="button" id="pickImages" class="px-4 py-2 bg-amber-600 text-white rounded">Pilih / Upload</button>
+          <p class="text-xs text-gray-500 mt-2">Preview & compress otomatis, klik image untuk masukkan ke konten. Pilih salah satu sebagai cover.</p>
+
+          <div id="thumbs" class="grid grid-cols-3 gap-3 mt-3"></div>
+        </div>
+
+        {{-- Buttons --}}
+        <div class="mt-6 flex gap-2">
+          <button id="saveDraft" type="button" class="px-4 py-2 bg-gray-100 rounded border">Simpan Draft</button>
+          <button id="publish" type="button" class="px-4 py-2 bg-amber-600 text-white rounded">Terbitkan</button>
+        </div>
+
+        {{-- hidden input untuk konten HTML --}}
+        <input type="hidden" id="bodyField" name="body">
+        <input type="hidden" id="coverImage" name="cover_image">
+      </form>
     </div>
-    <a href="{{ route('kontributor.artikel.saya') }}" class="text-sm text-indigo-600 hover:underline font-medium flex items-center gap-1">
-        <i class="fas fa-arrow-left"></i> Kembali
-    </a>
+
+    {{-- kanan: editor & preview --}}
+    <div class="col-span-7 p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex gap-2 items-center">
+          <button type="button" class="px-3 py-2 border rounded" onclick="exec('bold')"><strong>B</strong></button>
+          <button type="button" class="px-3 py-2 border rounded" onclick="exec('italic')"><em>I</em></button>
+          <button type="button" class="px-3 py-2 border rounded" onclick="exec('underline')"><u>U</u></button>
+          <button type="button" class="px-3 py-2 border rounded" onclick="insertLink()">Link</button>
+          <button type="button" class="px-3 py-2 border rounded" onclick="document.getElementById('imageFiles').click()">Gambar</button>
+        </div>
+
+        <div class="text-sm text-gray-500">Status: <strong id="statusLabel">Draft</strong></div>
+      </div>
+
+      <div id="editor" contenteditable="true" class="min-h-[420px] p-4 border rounded prose" style="outline:none;">
+        <h2>Mulai menulis...</h2>
+        <p></p>
+      </div>
+
+      <div class="mt-6">
+        <label class="block text-sm font-medium text-gray-700">Preview</label>
+        <div id="preview" class="mt-3 p-4 border rounded bg-white">
+          <h1 id="previewTitle" class="text-2xl font-bold mb-2">Judul Artikel</h1>
+          <div id="previewBody" class="prose"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-xs text-gray-400 mt-3">Placeholder image (contoh): <code>/mnt/data/b2891f9d-6a0d-427e-84de-628e14e34475.png</code></div>
 </div>
 
-<!-- CDN CKEditor 5 (Classic) -->
-<script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
+{{-- Styles minimal (tailwind assumed), jika belum pakai tailwind, sesuaikan CSS --}}
+@endsection
 
-<!-- Form Wrapper -->
-<form action="{{ route('kontributor.artikel.store') }}" method="POST" enctype="multipart/form-data">
-    @csrf
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        <!-- KOLOM KIRI: EDITOR UTAMA (70%) -->
-        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            
-            <!-- Judul -->
-            <div class="mb-6">
-                <label class="block text-gray-700 text-xs font-bold uppercase mb-2 tracking-wide">Judul Artikel</label>
-                <input type="text" 
-                       name="judul" 
-                       value="{{ old('judul') }}"
-                       class="w-full text-2xl font-bold text-gray-800 border-b-2 border-gray-200 focus:border-indigo-500 focus:outline-none py-2 transition placeholder-gray-300" 
-                       placeholder="Tulis judul yang menarik..." 
-                       required>
-                @error('judul') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-            </div>
-
-            <!-- Editor -->
-            <div class="prose max-w-none">
-                <textarea name="isi" id="editor" placeholder="Mulai menulis ceritamu di sini...">{{ old('isi') }}</textarea>
-            </div>
-            @error('isi') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-        </div>
-
-        <!-- KOLOM KANAN: PENGATURAN (30%) -->
-        <div class="lg:col-span-1 space-y-6">
-            
-            <!-- Card Publish -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-                <h3 class="font-bold text-gray-700 mb-4 border-b pb-2 text-sm">Publikasi</h3>
-                
-                <!-- Kategori -->
-                <div class="mb-4">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Kategori</label>
-                    <select name="kategori_id" class="w-full border-gray-300 rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500 py-2.5" required>
-                        <option value="">-- Pilih Kategori --</option>
-                        @foreach($kategoris as $kategori)
-                            <option value="{{ $kategori->id }}">{{ $kategori->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Cover Image Upload -->
-                <div class="mb-6">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Gambar Sampul</label>
-                    
-                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:bg-gray-50 transition cursor-pointer relative" id="upload-container">
-                        <input type="file" name="image" id="image-input" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" onchange="previewImage(event)">
-                        
-                        <div id="placeholder-content">
-                            <i class="fas fa-cloud-upload-alt text-2xl text-gray-400 mb-2"></i>
-                            <p class="text-xs text-gray-500">Klik untuk upload</p>
-                            <p class="text-[10px] text-gray-400 mt-1">JPG/PNG Max 2MB</p>
-                        </div>
-                        
-                        <!-- Preview Image -->
-                        <img id="preview-img" src="" class="hidden w-full h-32 object-cover rounded-md mt-2">
-                    </div>
-                </div>
-
-                <!-- Tombol Aksi -->
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg transition shadow-md flex justify-center items-center gap-2 text-sm">
-                    <i class="fas fa-paper-plane"></i> Kirim Artikel
-                </button>
-                
-                <a href="{{ route('kontributor.dashboard') }}" class="block text-center text-xs text-gray-500 mt-3 hover:underline">Batal</a>
-            </div>
-
-            <!-- Tips Penulisan (Opsional) -->
-            <div class="bg-blue-50 rounded-xl p-5 border border-blue-100">
-                <h4 class="font-bold text-blue-700 text-xs mb-2 uppercase"><i class="fas fa-lightbulb mr-1"></i> Tips Penulis</h4>
-                <ul class="text-xs text-blue-600 space-y-1 list-disc list-inside">
-                    <li>Gunakan judul yang singkat & padat.</li>
-                    <li>Tambahkan gambar sampul agar menarik.</li>
-                    <li>Cek ejaan sebelum mengirim.</li>
-                </ul>
-            </div>
-
-        </div>
-    </div>
-</form>
-
-<!-- STYLE KHUSUS CKEDITOR (Agar Rapi) -->
-<style>
-    .ck-editor__editable_inline {
-        min-height: 400px;
-        border: 1px solid #e5e7eb !important;
-        border-radius: 0 0 8px 8px !important;
-        padding: 1rem !important;
-    }
-    .ck-toolbar {
-        border: 1px solid #e5e7eb !important;
-        border-radius: 8px 8px 0 0 !important;
-        background-color: #f9fafb !important;
-    }
-</style>
-
-<!-- SCRIPT -->
+@section('scripts')
 <script>
-    // CKEditor
-    ClassicEditor
-        .create(document.querySelector('#editor'), {
-            toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', '|', 'undo', 'redo'],
-            placeholder: 'Tulis ceritamu...'
-        })
-        .catch(error => console.error(error));
-
-    // Preview Image
-    function previewImage(event) {
-        var reader = new FileReader();
-        reader.onload = function(){
-            var output = document.getElementById('preview-img');
-            var placeholder = document.getElementById('placeholder-content');
-            output.src = reader.result;
-            output.classList.remove('hidden');
-            placeholder.classList.add('hidden');
-        };
-        reader.readAsDataURL(event.target.files[0]);
+/* ========== kategori -> subkategori statik contoh ========== */
+const subcats = {
+  "Sejarah": ["Perang & Konflik","Periode Kolonial","Tokoh"],
+  "Seni & Budaya": ["Tari","Musik","Pakaian"],
+  "Arsitektur": ["Rumah Adat","Candi","Kota"]
+};
+const categoryEl = document.getElementById('category');
+const subcatEl = document.getElementById('subcategory');
+categoryEl?.addEventListener('change', e => {
+  const val = e.target.value;
+  subcatEl.innerHTML = '<option value=\"\">-- Pilih Subkategori --</option>';
+  if (subcats[val]) {
+    for (const s of subcats[val]) {
+      const opt = document.createElement('option'); opt.value = s; opt.textContent = s;
+      subcatEl.appendChild(opt);
     }
-</script>
+  }
+});
 
+/* ========== slug otomatis ========== */
+const titleEl = document.getElementById('title');
+const slugEl = document.getElementById('slug');
+titleEl?.addEventListener('input', e => {
+  const v = e.target.value;
+  slugEl.value = slugify(v);
+  document.getElementById('previewTitle').textContent = v || 'Judul Artikel';
+});
+function slugify(text){ return text.toString().normalize('NFKD').toLowerCase().trim().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'').replace(/\-+/g,'-'); }
+
+/* ========== tags chips ========== */
+const tagInput = document.getElementById('tagInput');
+const tagContainer = document.getElementById('tagContainer');
+const tagsField = document.getElementById('tagsField');
+let tags = [];
+tagInput?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    addTag(tagInput.value);
+  }
+});
+function addTag(v){
+  v = v.trim(); if(!v) return;
+  if (!tags.includes(v)) {
+    tags.push(v);
+    renderTags();
+  }
+  tagInput.value='';
+}
+function removeTag(idx){
+  tags.splice(idx,1); renderTags();
+}
+function renderTags(){
+  tagContainer.innerHTML = '';
+  for (let i=0;i<tags.length;i++){
+    const span = document.createElement('span');
+    span.className = 'bg-amber-100 text-amber-700 px-3 py-1 rounded-full flex items-center gap-2 text-sm';
+    span.innerHTML = `${tags[i]} <button onclick="removeTag(${i})" class="ml-1 text-amber-600">✕</button>`;
+    tagContainer.appendChild(span);
+  }
+  tagContainer.appendChild(tagInput);
+  tagsField.value = tags.join(',');
+}
+
+/* ========== image upload, preview + compress via canvas ========== */
+const pickBtn = document.getElementById('pickImages');
+const fileInput = document.getElementById('imageFiles');
+const thumbs = document.getElementById('thumbs');
+const coverImage = document.getElementById('coverImage');
+let uploadedImages = []; // {id, dataUrl, sizeKB, cover}
+
+pickBtn?.addEventListener('click', ()=> fileInput.click());
+fileInput?.addEventListener('change', async (e)=>{
+  const files = Array.from(e.target.files || []);
+  for (const f of files) {
+    const dataUrl = await readFileAsDataURL(f);
+    const resized = await resizeDataUrl(dataUrl, 1200, 0.8);
+    const id = Date.now() + Math.random();
+    uploadedImages.push({ id, dataUrl: resized.dataUrl, sizeKB: Math.round(resized.size/1024), cover: uploadedImages.length === 0 });
+    renderThumbs();
+  }
+  // clear input
+  fileInput.value = '';
+});
+
+function readFileAsDataURL(file){ return new Promise(res => { const r = new FileReader(); r.onload = e=>res(e.target.result); r.readAsDataURL(file); }); }
+function resizeDataUrl(dataUrl, maxWidth=1200, quality=0.8){
+  return new Promise(res=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const scale = Math.min(1, maxWidth / img.width);
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+      const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d'); ctx.drawImage(img,0,0,w,h);
+      canvas.toBlob(blob=>{
+        const reader = new FileReader();
+        reader.onload = ()=> res({ dataUrl: reader.result, size: blob.size });
+        reader.readAsDataURL(blob);
+      }, 'image/jpeg', quality);
+    };
+    img.src = dataUrl;
+  });
+}
+
+function renderThumbs(){
+  thumbs.innerHTML = '';
+  for (const img of uploadedImages){
+    const wrapper = document.createElement('div');
+    wrapper.className = 'relative border rounded overflow-hidden';
+    wrapper.innerHTML = `
+      <img src="${img.dataUrl}" class="w-full h-28 object-cover cursor-pointer" onclick="insertImageToEditor('${img.dataUrl}')">
+      <div class="absolute top-2 right-2 flex gap-1">
+        <button onclick="setCoverImage('${img.id}')" class="px-2 py-1 text-xs rounded ${img.cover? 'bg-amber-600 text-white': 'bg-white text-gray-700'}">Cover</button>
+        <button onclick="removeUploadedImage('${img.id}')" class="px-2 py-1 bg-white text-red-600 rounded">Hapus</button>
+      </div>
+      <div class="p-2 text-xs text-gray-600">${img.sizeKB} KB</div>
+    `;
+    thumbs.appendChild(wrapper);
+  }
+  // update hidden cover if set
+  const cov = uploadedImages.find(i=>i.cover);
+  coverImage.value = cov ? cov.dataUrl : '';
+}
+
+/* image helpers */
+function setCoverImage(id){
+  uploadedImages = uploadedImages.map(i=> ({ ...i, cover: i.id==id }));
+  renderThumbs();
+}
+function removeUploadedImage(id){
+  uploadedImages = uploadedImages.filter(i=> i.id != id);
+  renderThumbs();
+}
+
+/* insert image to editor at caret */
+function insertImageToEditor(src){
+  const editor = document.getElementById('editor');
+  editor.focus();
+  const sel = window.getSelection();
+  if (!sel || sel.rangeCount===0){
+    editor.insertAdjacentHTML('beforeend', `<p><img src="${src}" class="max-w-full rounded"></p>`);
+    updatePreview();
+    return;
+  }
+  const range = sel.getRangeAt(0);
+  const imgNode = document.createElement('img'); imgNode.src = src; imgNode.className='max-w-full rounded';
+  range.insertNode(imgNode);
+  range.setStartAfter(imgNode);
+  range.collapse(true);
+  sel.removeAllRanges(); sel.addRange(range);
+  updatePreview();
+}
+
+/* editor command wrappers */
+function exec(command, val=null){ document.execCommand(command,false,val); updatePreview(); }
+function insertLink(){ const url = prompt('Masukkan URL (https://...)'); if(!url) return; exec('createLink', url); }
+
+/* updatePreview */
+const editorEl = document.getElementById('editor');
+editorEl?.addEventListener('input', ()=> updatePreview());
+function updatePreview(){
+  document.getElementById('previewBody').innerHTML = editorEl.innerHTML;
+  document.getElementById('bodyField').value = editorEl.innerHTML;
+}
+
+/* save draft / publish (AJAX examples) */
+document.getElementById('saveDraft')?.addEventListener('click', ()=> submitArticle('draft'));
+document.getElementById('publish')?.addEventListener('click', ()=> submitArticle('publish'));
+
+async function submitArticle(mode){
+  updatePreview();
+  const formData = new FormData();
+  formData.append('title', document.getElementById('title').value);
+  formData.append('slug', document.getElementById('slug').value);
+  formData.append('category', document.getElementById('category').value);
+  formData.append('subcategory', document.getElementById('subcategory').value);
+  formData.append('tags', document.getElementById('tagsField').value);
+  formData.append('body', document.getElementById('bodyField').value);
+  formData.append('mode', mode);
+  // images: append dataUrls as files (optional: send raw blobs)
+  uploadedImages.forEach((img, idx) => {
+    // convert dataUrl to blob
+    const blob = dataURLtoBlob(img.dataUrl);
+    formData.append('images[]', blob, `img_${idx}.jpg`);
+    if (img.cover) formData.append('cover_index', idx);
+  });
+
+  // example: POST to /articles/store (ganti sesuai)
+  const token = document.querySelector('meta[name=\"csrf-token\"]')?.getAttribute('content') || '{{ csrf_token() }}';
+  const resp = await fetch('{{ url('/articles/store') }}', {
+    method: 'POST',
+    headers: { 'X-CSRF-TOKEN': token },
+    body: formData
+  });
+
+  if (!resp.ok){
+    alert('Gagal menyimpan — periksa console / network.');
+    console.error(await resp.text());
+    return;
+  }
+  const data = await resp.json();
+  if (data.success) {
+    document.getElementById('statusLabel').textContent = mode === 'publish' ? 'Published' : 'Draft';
+    alert('Sukses: ' + (data.message || 'Disimpan'));
+    if (mode==='publish' && data.redirect) window.location.href = data.redirect;
+  } else {
+    alert('Terjadi masalah: ' + (data.message || 'unknown'));
+  }
+}
+
+/* helpers */
+function dataURLtoBlob(dataurl) {
+  var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+      bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+  while(n--){ u8arr[n] = bstr.charCodeAt(n); }
+  return new Blob([u8arr], {type:mime});
+}
+</script>
 @endsection
