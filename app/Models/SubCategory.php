@@ -1,5 +1,5 @@
 <?php
-// app/Models/Category.php
+// app/Models/SubCategory.php
 
 namespace App\Models;
 
@@ -7,20 +7,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class Category extends Model
+class SubCategory extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'category_id',
         'name',
         'slug',
         'description'
     ];
 
-    // Relasi ke SubCategories
-    public function subCategories()
+    // Relasi ke Category
+    public function category()
     {
-        return $this->hasMany(SubCategory::class);
+        return $this->belongsTo(Category::class);
     }
 
     // Relasi ke Articles
@@ -34,15 +35,15 @@ class Category extends Model
     {
         parent::boot();
 
-        static::creating(function ($category) {
-            if (empty($category->slug)) {
-                $category->slug = Str::slug($category->name);
+        static::creating(function ($subCategory) {
+            if (empty($subCategory->slug)) {
+                $subCategory->slug = Str::slug($subCategory->name);
             }
         });
 
-        static::updating(function ($category) {
-            if ($category->isDirty('name')) {
-                $category->slug = Str::slug($category->name);
+        static::updating(function ($subCategory) {
+            if ($subCategory->isDirty('name')) {
+                $subCategory->slug = Str::slug($subCategory->name);
             }
         });
     }

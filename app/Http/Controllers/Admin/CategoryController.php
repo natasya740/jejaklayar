@@ -1,98 +1,82 @@
 <?php
+// app/Http/Controllers/Admin/CategoryController.php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\MiniAudit;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::latest()->paginate(15);
-        return view('admin.kategori.index', compact('categories'));
+        $categories = Category::withCount('subCategories', 'articles')
+            ->latest()
+            ->paginate(10);
+        
+        return view('admin.categories.index', compact('categories'));
     }
 
     public function create()
     {
-        $parents = Category::orderBy('name')->get();
-        return view('admin.kategori.create', compact('parents'));
+        return view('admin.categories.create');
     }
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:191',
-            'description' => 'nullable|string',
-            'parent_id' => 'nullable|exists:categories,id',
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name',
+            'description' => 'nullable|string'
         ]);
 
-        $data['slug'] = Str::slug($data['name']);
+        Category::create($validated);
 
-        $category = Category::create($data);
-
-        MiniAudit::create([
-            'user_id'=>auth()->id(),
-            'action'=>'create_category',
-            'meta'=>$category->id,
-            'ip_address'=>$request->ip()
-        ]);
-
-        return redirect()->route('admin.kategori.index')->with('success','Kategori berhasil dibuat.');
+        return redirect()
+            ->route('admin.categories.index')
+            ->with('success', 'Kategori berhasil ditambahkan!');
     }
 
-    public function edit(Category $kategori)
+    public function show(Category $category)
     {
-        $parents = Category::where('id','!=',$kategori->id)->orderBy('name')->get();
-        return view('admin.kategori.edit', compact('kategori','parents'));
+        $category->load(['subCategories', 'articles']);
+        return view('admin.categories.show', compact('category'));
     }
 
-    public function update(Request $request, Category $kategori)
+    public function edit(Category $category)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:191',
-            'description' => 'nullable|string',
-            'parent_id' => 'nullable|exists:categories,id',
+        return view('admin.categories.edit', compact('category'));
+    }
+
+    public function update(Request $request, Category $category)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+            'description' => 'nullable|string'
         ]);
 
-        // mencegah circular parent
-        if (!empty($data['parent_id'])) {
-            $newParent = Category::find($data['parent_id']);
-            if ($newParent && ($newParent->id == $kategori->id || $newParent->isDescendantOf($kategori))) {
-                return back()->withErrors([
-                    'parent_id' => 'Parent tidak valid (membuat siklus).'
-                ]);
-            }
+        $category->update($validated);
+
+        return redirect()
+            ->route('admin.categories.index')
+            ->with('success', 'Kategori berhasil diperbarui!');
+    }
+
+    public function destroy(Category $category)
+    {
+        // Cek apakah ada sub kategori atau artikel
+        if ($category->subCategories()->count() > 0) {
+            return back()->with('error', 'Tidak dapat menghapus kategori yang masih memiliki sub kategori!');
         }
 
-        $data['slug'] = Str::slug($data['name']);
-        $kategori->update($data);
+        if ($category->articles()->count() > 0) {
+            return back()->with('error', 'Tidak dapat menghapus kategori yang masih memiliki artikel!');
+        }
 
-        MiniAudit::create([
-            'user_id'=>auth()->id(),
-            'action'=>'update_category',
-            'meta'=>$kategori->id,
-            'ip_address'=>$request->ip()
-        ]);
+        $category->delete();
 
-        return redirect()->route('admin.kategori.index')->with('success','Kategori berhasil diperbarui.');
-    }
-
-    public function destroy(Request $request, Category $kategori)
-    {
-        $name = $kategori->name;
-        $kategori->delete();
-
-        MiniAudit::create([
-            'user_id'=>auth()->id(),
-            'action'=>'delete_category',
-            'meta'=>$name,
-            'ip_address'=>$request->ip()
-        ]);
-
-        return redirect()->route('admin.kategori.index')->with('success','Kategori berhasil dihapus.');
+        return redirect()
+            ->route('admin.categories.index')
+            ->with('success', 'Kategori berhasil dihapus!');
     }
 }

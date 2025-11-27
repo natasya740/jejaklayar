@@ -6,8 +6,9 @@ use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 use App\Http\Controllers\Admin\PageController as AdminPageController;
-use App\Http\Controllers\Admin\TagController as AdminTagController;
-use App\Http\Controllers\Admin\UploadImageController; // <- added
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\SubCategoryController;
+use App\Http\Controllers\Admin\ArticleController;
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BudayaController;
@@ -26,6 +27,7 @@ use Illuminate\Support\Facades\Route;
 | Halaman Umum (Publik)
 |--------------------------------------------------------------------------
 */
+
 Route::get('/', function () {
     return view('home');
 })->name('home');
@@ -115,40 +117,20 @@ Route::middleware(['auth', 'checkrole:admin'])
 
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-        // Artikel Admin
-        Route::prefix('artikel')->name('artikel.')->group(function () {
-            // create & store
-            Route::get('/create', [AdminController::class, 'createArtikel'])->name('create');
-            Route::post('/store', [AdminController::class, 'storeArtikel'])->name('store');
+        // Categories Routes
+        Route::resource('categories', CategoryController::class);
 
-            // *** Upload image endpoint untuk editor/tombol "Sisipkan Foto" ***
-            // Ini akan men-define nama route -> admin.artikel.upload_image
-            Route::post('/upload-image', [UploadImageController::class, 'upload'])->name('upload_image');
+        // Sub Categories Routes
+        Route::resource('sub-categories', SubCategoryController::class);
+        Route::get('sub-categories-by-category/{category}', [SubCategoryController::class, 'getByCategory'])
+            ->name('sub-categories.by-category');
 
-            Route::get('/show', [AdminController::class, 'indexArtikel'])->name('show');
-            Route::get('/pending', [AdminController::class, 'pendingArtikel'])->name('pending');
-
-            // actions on a specific artikel
-            Route::get('/{artikel}/review', [AdminController::class, 'reviewArtikel'])->name('review')
-                ->whereNumber('artikel');
-
-            Route::get('/{artikel}/edit', [AdminController::class, 'editArtikel'])->name('edit')
-                ->whereNumber('artikel');
-            Route::put('/{artikel}', [AdminController::class, 'updateArtikel'])->name('update')
-                ->whereNumber('artikel');
-
-            Route::delete('/{artikel}', [AdminController::class, 'destroyArtikel'])->name('destroy')
-                ->whereNumber('artikel');
-
-            Route::patch('/{artikel}/approve', [AdminController::class, 'approveArtikel'])->name('approve')
-                ->whereNumber('artikel');
-            Route::patch('/{artikel}/reject', [AdminController::class, 'rejectArtikel'])->name('reject')
-                ->whereNumber('artikel');
-        });
-
-        // Kategori & Tag
-        Route::resource('kategori', AdminCategoryController::class)->except(['show']);
-        Route::resource('tag', AdminTagController::class)->except(['show']);
+        // Articles Routes (RESOURCE - UTAMA)
+        Route::resource('articles', ArticleController::class);
+        
+        // CKEditor Image Upload untuk Articles
+        Route::post('articles/upload-image', [ArticleController::class, 'uploadImage'])
+            ->name('articles.uploadImage');
 
         // Media
         Route::get('media', [AdminMediaController::class, 'index'])->name('media.index');
@@ -158,13 +140,22 @@ Route::middleware(['auth', 'checkrole:admin'])
         // Pages
         Route::resource('pages', AdminPageController::class)->except(['show']);
 
-        // Mini audit
+        // Audit
         Route::get('audit', [AuditController::class, 'index'])->name('audit.index');
 
-        // Pengguna & Logs
+        // Pengguna & Log
         Route::get('/users', [AdminController::class, 'users'])->name('users.index');
         Route::get('/logs', [AdminController::class, 'logs'])->name('logs.index');
+
+        // Legacy Routes untuk Validasi Artikel (jika masih dibutuhkan)
+        Route::prefix('artikel')->name('artikel.')->group(function () {
+            Route::get('/pending', [AdminController::class, 'pendingArtikel'])->name('pending');
+            Route::get('/{artikel}/review', [AdminController::class, 'reviewArtikel'])->name('review');
+            Route::patch('/{artikel}/approve', [AdminController::class, 'approveArtikel'])->name('approve');
+            Route::patch('/{artikel}/reject', [AdminController::class, 'rejectArtikel'])->name('reject');
+        });
     });
+
 
 /*
 |--------------------------------------------------------------------------
