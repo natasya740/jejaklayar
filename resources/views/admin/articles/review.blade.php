@@ -27,7 +27,7 @@
       <button class="px-4 py-2 rounded bg-rose-600 text-white">Reject</button>
     </form>
 
-    <a href="{{ route('admin.artikel.edit', $artikel->id) }}" class="px-4 py-2 rounded bg-yellow-500 text-white">Edit</a>
+    <a href="{{ route('admin.articles.edit', $artikel->id) }}" class="px-4 py-2 rounded bg-yellow-500 text-white">Edit</a>
   </div>
 </div>
 @endsection

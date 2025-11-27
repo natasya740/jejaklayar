@@ -1,25 +1,22 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\AuditController;
-use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 use App\Http\Controllers\Admin\PageController as AdminPageController;
-use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SubCategoryController;
-use App\Http\Controllers\Admin\ArticleController;
-
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BudayaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\Kontributor\ProfileController;
 use App\Http\Controllers\KontributorController;
 use App\Http\Controllers\PustakaController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TentangController;
-use App\Http\Controllers\Kontributor\ProfileController;
-
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,10 +29,10 @@ Route::get('/', function () {
     return view('home');
 })->name('home');
 
-Route::get('/search',   [SearchController::class, 'index'])->name('search');
-Route::get('/budaya',   [BudayaController::class, 'index'])->name('budaya');
-Route::get('/pustaka',  [PustakaController::class, 'index'])->name('pustaka');
-Route::get('/tentang',  [TentangController::class, 'index'])->name('tentang');
+Route::get('/search', [SearchController::class, 'index'])->name('search');
+Route::get('/budaya', [BudayaController::class, 'index'])->name('budaya');
+Route::get('/pustaka', [PustakaController::class, 'index'])->name('pustaka');
+Route::get('/tentang', [TentangController::class, 'index'])->name('tentang');
 
 /*
 |--------------------------------------------------------------------------
@@ -86,20 +83,13 @@ Route::middleware(['auth', 'checkrole:kontributor'])
 
         Route::get('/dashboard', [KontributorController::class, 'index'])->name('dashboard');
 
-        // Profil kontributor (show + update)
         Route::get('/profil', [ProfileController::class, 'show'])->name('profil');
         Route::post('/profil/update', [ProfileController::class, 'update'])->name('profil.update');
 
         Route::prefix('artikel')->name('artikel.')->group(function () {
             Route::get('/', [KontributorController::class, 'indexArticles'])->name('index');
-
-            // form create (kontributor)
             Route::get('/baru', [KontributorController::class, 'showArticleForm'])->name('create');
-
-            // store artikel (kontributor)
             Route::post('/store', [KontributorController::class, 'storeContent'])->name('store');
-
-            // show article (by id)
             Route::get('/{artikel}', [KontributorController::class, 'showArticle'])->name('show')
                 ->whereNumber('artikel');
         });
@@ -127,7 +117,7 @@ Route::middleware(['auth', 'checkrole:admin'])
 
         // Articles Routes (RESOURCE - UTAMA)
         Route::resource('articles', ArticleController::class);
-        
+
         // CKEditor Image Upload untuk Articles
         Route::post('articles/upload-image', [ArticleController::class, 'uploadImage'])
             ->name('articles.uploadImage');
@@ -147,15 +137,14 @@ Route::middleware(['auth', 'checkrole:admin'])
         Route::get('/users', [AdminController::class, 'users'])->name('users.index');
         Route::get('/logs', [AdminController::class, 'logs'])->name('logs.index');
 
-        // Legacy Routes untuk Validasi Artikel (jika masih dibutuhkan)
+        // Routes untuk Validasi Artikel
         Route::prefix('artikel')->name('artikel.')->group(function () {
             Route::get('/pending', [AdminController::class, 'pendingArtikel'])->name('pending');
             Route::get('/{artikel}/review', [AdminController::class, 'reviewArtikel'])->name('review');
-            Route::patch('/{artikel}/approve', [AdminController::class, 'approveArtikel'])->name('approve');
-            Route::patch('/{artikel}/reject', [AdminController::class, 'rejectArtikel'])->name('reject');
+            Route::post('/{artikel}/approve', [AdminController::class, 'approveArtikel'])->name('approve');
+            Route::post('/{artikel}/reject', [AdminController::class, 'rejectArtikel'])->name('reject');
         });
     });
-
 
 /*
 |--------------------------------------------------------------------------

@@ -7,7 +7,6 @@
 
 @section('content')
 <div class="max-w-6xl mx-auto">
-    <!-- Breadcrumb -->
     <nav class="flex mb-6" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-2 text-sm">
             <li class="inline-flex items-center">
@@ -24,7 +23,6 @@
         </ol>
     </nav>
 
-    <!-- Header Card -->
     <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg p-6 mb-6">
         <div class="flex items-center gap-4">
             <div class="w-16 h-16 bg-white bg-opacity-20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
@@ -60,9 +58,7 @@
         @method('PUT')
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Main Content (Left - 2 columns) -->
             <div class="lg:col-span-2 space-y-6">
-                <!-- Basic Information Card -->
                 <div class="bg-white rounded-xl shadow-[var(--shadow-sm)] overflow-hidden">
                     <div class="px-6 py-4 bg-gray-50 border-b border-gray-100">
                         <h3 class="text-lg font-semibold text-[color:var(--text-dark)] flex items-center gap-2">
@@ -71,16 +67,15 @@
                         </h3>
                     </div>
                     <div class="p-6 space-y-5">
-                        <!-- Title -->
                         <div>
                             <label for="title" class="block text-sm font-semibold text-[color:var(--text-dark)] mb-2">
                                 Judul Artikel <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" 
-                                   class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @error('title') border-red-500 @enderror" 
-                                   id="title" 
-                                   name="title" 
-                                   value="{{ old('title', $article->title) }}" 
+                            <input type="text"
+                                   class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @error('title') border-red-500 @enderror"
+                                   id="title"
+                                   name="title"
+                                   value="{{ old('title', $article->title) }}"
                                    placeholder="Masukkan judul artikel..."
                                    required
                                    autofocus>
@@ -95,16 +90,15 @@
                             </p>
                         </div>
 
-                        <!-- Excerpt -->
                         <div>
                             <label for="excerpt" class="block text-sm font-semibold text-[color:var(--text-dark)] mb-2">
                                 Ringkasan <span class="text-[color:var(--muted)] font-normal">(Opsional)</span>
                             </label>
                             <div class="relative">
-                                <textarea 
-                                    class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none @error('excerpt') border-red-500 @enderror" 
-                                    id="excerpt" 
-                                    name="excerpt" 
+                                <textarea
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none @error('excerpt') border-red-500 @enderror"
+                                    id="excerpt"
+                                    name="excerpt"
                                     rows="3"
                                     maxlength="500"
                                     placeholder="Ringkasan singkat artikel (max 500 karakter)...">{{ old('excerpt', $article->excerpt) }}</textarea>
@@ -121,7 +115,6 @@
                     </div>
                 </div>
 
-                <!-- Content Card with CKEditor -->
                 <div class="bg-white rounded-xl shadow-[var(--shadow-sm)] overflow-hidden">
                     <div class="px-6 py-4 bg-gray-50 border-b border-gray-100">
                         <h3 class="text-lg font-semibold text-[color:var(--text-dark)] flex items-center gap-2">
@@ -133,7 +126,7 @@
                         <label for="editor" class="block text-sm font-semibold text-[color:var(--text-dark)] mb-2">
                             Konten <span class="text-red-500">*</span>
                         </label>
-                        <textarea id="editor" name="content" class="w-full border border-gray-200 rounded-lg" 
+                        <textarea id="editor" name="content" class="w-full border border-gray-200 rounded-lg"
                                   placeholder="Tulis konten artikel di sini...">{{ old('content', $article->content) }}</textarea>
                         @error('content')
                             <p class="mt-2 text-sm text-red-600">
@@ -146,7 +139,6 @@
                     </div>
                 </div>
 
-                <!-- Featured Image Card -->
                 <div class="bg-white rounded-xl shadow-[var(--shadow-sm)] overflow-hidden">
                     <div class="px-6 py-4 bg-gray-50 border-b border-gray-100">
                         <h3 class="text-lg font-semibold text-[color:var(--text-dark)] flex items-center gap-2">
@@ -155,12 +147,11 @@
                         </h3>
                     </div>
                     <div class="p-6">
-                        <!-- Current Image Preview -->
                         @if($article->featured_image)
                         <div class="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
                             <p class="text-sm font-semibold text-[color:var(--text-dark)] mb-2">Gambar Saat Ini:</p>
-                            <img src="{{ asset('storage/' . $article->featured_image) }}" 
-                                 alt="Current Featured Image" 
+                            <img src="{{ asset('storage/' . $article->featured_image) }}"
+                                 alt="Current Featured Image"
                                  class="h-48 rounded-lg shadow-md object-cover">
                             <p class="text-xs text-[color:var(--muted)] mt-2">
                                 <i class="fa fa-info-circle"></i> Upload gambar baru untuk mengganti
@@ -174,7 +165,7 @@
                         <div class="mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-500 transition-colors">
                             <div class="space-y-2 text-center">
                                 <div id="imagePreview" class="hidden mb-4">
-                                    <img src="" alt="Preview" class="mx-auto h-48 rounded-lg shadow-md">
+                                    <img src="" alt="Preview" class="mx-auto h-48 rounded-lg shadow-md object-contain">
                                     <button type="button" onclick="removePreview()" class="mt-2 text-sm text-red-600 hover:text-red-800">
                                         <i class="fa fa-times-circle"></i> Hapus Preview
                                     </button>
@@ -182,12 +173,12 @@
                                 <div id="uploadPrompt">
                                     <i class="fa fa-cloud-upload-alt text-4xl text-gray-400"></i>
                                     <div class="flex text-sm text-gray-600 justify-center">
-                                        <label for="featured_image" 
+                                        <label for="featured_image"
                                                class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
                                             <span>Upload file</span>
-                                            <input id="featured_image" 
-                                                   name="featured_image" 
-                                                   type="file" 
+                                            <input id="featured_image"
+                                                   name="featured_image"
+                                                   type="file"
                                                    class="sr-only"
                                                    accept="image/*">
                                         </label>
@@ -205,10 +196,9 @@
                     </div>
                 </div>
 
-                <!-- Preview Section -->
                 <div class="bg-white rounded-xl shadow-[var(--shadow-sm)] overflow-hidden">
                     <div class="px-6 py-4 bg-gray-50 border-b border-gray-100">
-                        <button type="button" onclick="togglePreview()" 
+                        <button type="button" onclick="togglePreview()"
                                 class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all">
                             <i class="fa fa-eye"></i>
                             <span>👁️ Preview Artikel</span>
@@ -219,11 +209,7 @@
                         <div id="previewContent" class="prose max-w-none bg-white p-6 rounded-lg"></div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Sidebar (Right - 1 column) -->
-            <div class="space-y-6">
-                <!-- Article Info -->
+            </div> <div class="space-y-6">
                 <div class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl shadow-[var(--shadow-sm)] p-5">
                     <h4 class="font-semibold text-[color:var(--text-dark)] mb-3 flex items-center gap-2">
                         <i class="fa fa-info-circle text-blue-600"></i>
@@ -256,7 +242,6 @@
                     </div>
                 </div>
 
-                <!-- Publish Settings Card -->
                 <div class="bg-white rounded-xl shadow-[var(--shadow-sm)] overflow-hidden">
                     <div class="px-6 py-4 bg-gray-50 border-b border-gray-100">
                         <h3 class="text-lg font-semibold text-[color:var(--text-dark)] flex items-center gap-2">
@@ -265,14 +250,13 @@
                         </h3>
                     </div>
                     <div class="p-6 space-y-4">
-                        <!-- Status -->
                         <div>
                             <label for="status" class="block text-sm font-semibold text-[color:var(--text-dark)] mb-2">
                                 Status <span class="text-red-500">*</span>
                             </label>
-                            <select class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none bg-white @error('status') border-red-500 @enderror" 
-                                    id="status" 
-                                    name="status" 
+                            <select class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none bg-white @error('status') border-red-500 @enderror"
+                                    id="status"
+                                    name="status"
                                     required>
                                 <option value="draft" {{ old('status', $article->status) === 'draft' ? 'selected' : '' }}>📝 Draft</option>
                                 <option value="pending" {{ old('status', $article->status) === 'pending' ? 'selected' : '' }}>⏳ Pending Review</option>
@@ -286,15 +270,14 @@
                             @enderror
                         </div>
 
-                        <!-- Published Date -->
                         <div>
                             <label for="published_at" class="block text-sm font-semibold text-[color:var(--text-dark)] mb-2">
                                 Tanggal Publikasi <span class="text-[color:var(--muted)] font-normal">(Opsional)</span>
                             </label>
-                            <input type="datetime-local" 
-                                   class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @error('published_at') border-red-500 @enderror" 
-                                   id="published_at" 
-                                   name="published_at" 
+                            <input type="datetime-local"
+                                   class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all @error('published_at') border-red-500 @enderror"
+                                   id="published_at"
+                                   name="published_at"
                                    value="{{ old('published_at', $article->published_at ? $article->published_at->format('Y-m-d\TH:i') : '') }}">
                             @error('published_at')
                                 <p class="mt-2 text-sm text-red-600">
@@ -308,7 +291,6 @@
                     </div>
                 </div>
 
-                <!-- Category Card -->
                 <div class="bg-white rounded-xl shadow-[var(--shadow-sm)] overflow-hidden">
                     <div class="px-6 py-4 bg-gray-50 border-b border-gray-100">
                         <h3 class="text-lg font-semibold text-[color:var(--text-dark)] flex items-center gap-2">
@@ -317,14 +299,13 @@
                         </h3>
                     </div>
                     <div class="p-6 space-y-4">
-                        <!-- Category -->
                         <div>
                             <label for="category_id" class="block text-sm font-semibold text-[color:var(--text-dark)] mb-2">
                                 Kategori <span class="text-red-500">*</span>
                             </label>
-                            <select class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none bg-white @error('category_id') border-red-500 @enderror" 
-                                    id="category_id" 
-                                    name="category_id" 
+                            <select class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none bg-white @error('category_id') border-red-500 @enderror"
+                                    id="category_id"
+                                    name="category_id"
                                     required>
                                 <option value="">-- Pilih Kategori --</option>
                                 @foreach($categories as $category)
@@ -340,20 +321,18 @@
                             @enderror
                         </div>
 
-                        <!-- Sub Category -->
                         <div>
                             <label for="sub_category_id" class="block text-sm font-semibold text-[color:var(--text-dark)] mb-2">
                                 Sub Kategori <span class="text-[color:var(--muted)] font-normal">(Opsional)</span>
                             </label>
-                            <select class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none bg-white @error('sub_category_id') border-red-500 @enderror" 
-                                    id="sub_category_id" 
+                            <select class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none bg-white @error('sub_category_id') border-red-500 @enderror"
+                                    id="sub_category_id"
                                     name="sub_category_id">
                                 <option value="">-- Pilih Sub Kategori --</option>
                                 @foreach($subCategories as $subCategory)
-                                    <option value="{{ $subCategory->id }}" 
+                                    <option value="{{ $subCategory->id }}"
                                             data-category="{{ $subCategory->category_id }}"
-                                            {{ old('sub_category_id', $article->sub_category_id) == $subCategory->id ? 'selected' : '' }}
-                                            style="display: none;">
+                                            {{ old('sub_category_id', $article->sub_category_id) == $subCategory->id ? 'selected' : '' }}>
                                         {{ $subCategory->name }}
                                     </option>
                                 @endforeach
@@ -367,30 +346,27 @@
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
                 <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-[var(--shadow-sm)] p-5 space-y-3">
                     <button type="submit" id="submitBtn"
                             class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
                         <i class="fa fa-save"></i>
                         <span>💾 Update Artikel</span>
                     </button>
-                    <a href="{{ route('admin.articles.index') }}" 
+                    <a href="{{ route('admin.articles.index') }}"
                        class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-300 text-[color:var(--text-dark)] font-semibold rounded-lg hover:bg-gray-50 transition-all duration-200">
                         <i class="fa fa-times-circle"></i>
                         <span>Batal</span>
                     </a>
-                    <button type="button" 
+                    <button type="button"
                             onclick="if(confirm('Yakin ingin menghapus artikel ini?')) document.getElementById('deleteForm').submit();"
                             class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition-all duration-200">
                         <i class="fa fa-trash"></i>
                         <span>Hapus Artikel</span>
                     </button>
                 </div>
-            </div>
-        </div>
+            </div> </div>
     </form>
 
-    <!-- Delete Form -->
     <form id="deleteForm" action="{{ route('admin.articles.destroy', $article) }}" method="POST" class="hidden">
         @csrf
         @method('DELETE')
@@ -556,36 +532,138 @@ function MyCustomUploadAdapterPlugin(editor) {
     };
 }
 
-// Initialize CKEditor dengan Custom Upload Adapter
-ClassicEditor
-    .create(document.querySelector('#editor'), {
-        extraPlugins: [MyCustomUploadAdapterPlugin],
-        
-        toolbar: {
-            items: [
-                'heading', '|',
-                'bold', 'italic', 'underline', 'strikethrough', '|',
-                'link', 'bulletedList', 'numberedList', '|',
-                'outdent', 'indent', '|',
-                'uploadImage', 'blockQuote', 'insertTable', '|',
-                'undo', 'redo'
-            ],
-            shouldNotGroupWhenFull: true
-        },
-        
-        image: {
-            toolbar: [
-                'imageTextAlternative', '|',
-                'imageStyle:inline', 'imageStyle:block', 'imageStyle:side'
-            ]
-        },
-        
-        table: {
-            contentToolbar: [
-                'tableColumn', 'tableRow', 'mergeTableCells',
-                'tableCellProperties', 'tableProperties'
-            ]
-        },
-        
-        heading: {
-            options: [
+document.addEventListener("DOMContentLoaded", function() {
+    // Initialize CKEditor dengan Custom Upload Adapter
+    ClassicEditor
+        .create(document.querySelector('#editor'), {
+            extraPlugins: [MyCustomUploadAdapterPlugin],
+
+            toolbar: {
+                items: [
+                    'heading', '|',
+                    'bold', 'italic', 'underline', 'strikethrough', '|',
+                    'link', 'bulletedList', 'numberedList', '|',
+                    'outdent', 'indent', '|',
+                    'uploadImage', 'blockQuote', 'insertTable', '|',
+                    'undo', 'redo'
+                ],
+                shouldNotGroupWhenFull: true
+            },
+
+            image: {
+                toolbar: [
+                    'imageTextAlternative', '|',
+                    'imageStyle:inline', 'imageStyle:block', 'imageStyle:side'
+                ]
+            },
+
+            table: {
+                contentToolbar: [
+                    'tableColumn', 'tableRow', 'mergeTableCells',
+                    'tableCellProperties', 'tableProperties'
+                ]
+            },
+
+            heading: {
+                options: [
+                    { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                    { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                    { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                    { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
+                ]
+            }
+        })
+        .then(editor => {
+            editorInstance = editor;
+        })
+        .catch(error => {
+            console.error('CKEditor Error:', error);
+        });
+
+    // Excerpt Character Count
+    const excerptInput = document.getElementById('excerpt');
+    const excerptCount = document.getElementById('excerptCount');
+    if(excerptInput && excerptCount) {
+        excerptInput.addEventListener('input', function() {
+            excerptCount.textContent = this.value.length;
+        });
+    }
+
+    // Dynamic Sub-Category Filtering
+    const categorySelect = document.getElementById('category_id');
+    const subCategorySelect = document.getElementById('sub_category_id');
+    
+    if (categorySelect && subCategorySelect) {
+        const subCategoryOptions = Array.from(subCategorySelect.querySelectorAll('option:not([value=""])'));
+
+        function filterSubCategories() {
+            const selectedCategory = categorySelect.value;
+            let firstVisible = null;
+            
+            // Hide all first
+            subCategoryOptions.forEach(option => {
+                option.style.display = 'none';
+                if(option.dataset.category === selectedCategory) {
+                    option.style.display = 'block';
+                    if(!firstVisible) firstVisible = option;
+                }
+            });
+
+            // Jika sub kategori yang dipilih sekarang tidak valid untuk kategori baru, reset
+            const currentSelected = subCategorySelect.options[subCategorySelect.selectedIndex];
+            if (currentSelected && currentSelected.value !== "" && currentSelected.dataset.category !== selectedCategory) {
+                subCategorySelect.value = "";
+            }
+        }
+
+        categorySelect.addEventListener('change', filterSubCategories);
+        // Trigger saat load (untuk mode edit)
+        filterSubCategories();
+    }
+
+    // Image Upload Preview
+    const imageInput = document.getElementById('featured_image');
+    if(imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewImg = document.querySelector('#imagePreview img');
+                    if(previewImg) {
+                        previewImg.src = e.target.result;
+                        document.getElementById('imagePreview').classList.remove('hidden');
+                        document.getElementById('uploadPrompt').classList.add('hidden');
+                    }
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+
+// Global functions for inline onclick events
+function removePreview() {
+    const input = document.getElementById('featured_image');
+    input.value = '';
+    document.getElementById('imagePreview').classList.add('hidden');
+    document.getElementById('uploadPrompt').classList.remove('hidden');
+}
+
+function togglePreview() {
+    const previewSection = document.getElementById('previewSection');
+    const previewContent = document.getElementById('previewContent');
+
+    if (editorInstance) {
+        if (previewSection.classList.contains('hidden')) {
+            const data = editorInstance.getData();
+            previewContent.innerHTML = data || '<p class="text-gray-500 italic">Belum ada konten...</p>';
+            previewSection.classList.remove('hidden');
+            previewSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            previewSection.classList.add('hidden');
+        }
+    }
+}
+</script>
+@endsection

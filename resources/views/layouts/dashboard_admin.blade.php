@@ -148,9 +148,17 @@
         }
 
         @keyframes iconPop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.25); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.25);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         aside#sidebar nav a.sidebar-active {
@@ -174,9 +182,17 @@
         }
 
         @keyframes activePulse {
-            0% { box-shadow: 0 12px 32px rgba(255, 220, 80, 0.35), 0 0 12px rgba(255, 200, 0, 0.2); }
-            50% { box-shadow: 0 14px 40px rgba(255, 220, 80, 0.45), 0 0 20px rgba(255, 200, 0, 0.35); }
-            100% { box-shadow: 0 12px 32px rgba(255, 220, 80, 0.35), 0 0 12px rgba(255, 200, 0, 0.2); }
+            0% {
+                box-shadow: 0 12px 32px rgba(255, 220, 80, 0.35), 0 0 12px rgba(255, 200, 0, 0.2);
+            }
+
+            50% {
+                box-shadow: 0 14px 40px rgba(255, 220, 80, 0.45), 0 0 20px rgba(255, 200, 0, 0.35);
+            }
+
+            100% {
+                box-shadow: 0 12px 32px rgba(255, 220, 80, 0.35), 0 0 12px rgba(255, 200, 0, 0.2);
+            }
         }
 
         .sidebar-section-title {
@@ -249,6 +265,7 @@
             aside#sidebar {
                 display: none;
             }
+
             .sidebar-brand img {
                 width: 56px;
                 height: 56px;
@@ -420,7 +437,8 @@
     {{-- MOBILE DRAWER --}}
     <div id="mobile-drawer" class="fixed inset-0 z-50 md:hidden hidden" aria-hidden="true">
         <div id="drawer-backdrop" class="absolute inset-0 bg-black/40"></div>
-        <div class="absolute left-0 top-0 bottom-0 w-64 bg-gradient-to-b from-yellow-300 to-yellow-400 text-slate-900 p-4 overflow-y-auto">
+        <div
+            class="absolute left-0 top-0 bottom-0 w-64 bg-gradient-to-b from-yellow-300 to-yellow-400 text-slate-900 p-4 overflow-y-auto">
             <div class="flex items-center gap-3 mb-6">
                 <img src="{{ asset('images/Logo Header.png') }}" alt="logo" class="h-8 w-8">
                 <span class="font-semibold">Jejak Layar</span>
@@ -429,19 +447,19 @@
             <nav class="space-y-1">
                 <a href="{{ route('admin.dashboard') }}"
                     class="block px-3 py-2 rounded bg-white/5 hover:bg-white/8">Dashboard</a>
-                <a href="{{ route('admin.articles.index') }}" 
-                    class="block px-3 py-2 rounded hover:bg-white/6">Kelola Artikel</a>
+                <a href="{{ route('admin.articles.index') }}" class="block px-3 py-2 rounded hover:bg-white/6">Kelola
+                    Artikel</a>
                 <a href="{{ route('admin.artikel.pending') }}"
                     class="block px-3 py-2 rounded hover:bg-white/6">Validasi Artikel</a>
                 <a href="{{ route('admin.categories.index') }}"
                     class="block px-3 py-2 rounded hover:bg-white/6">Kategori</a>
                 <a href="{{ route('admin.sub-categories.index') }}"
                     class="block px-3 py-2 rounded hover:bg-white/6">Sub Kategori</a>
-                <a href="{{ route('admin.media.index') }}"
-                    class="block px-3 py-2 rounded hover:bg-white/6">Media</a>
+                <a href="{{ route('admin.media.index') }}" class="block px-3 py-2 rounded hover:bg-white/6">Media</a>
                 <a href="{{ route('admin.pages.index') }}"
                     class="block px-3 py-2 rounded hover:bg-white/6">Halaman</a>
-                <a href="{{ route('admin.users.index') }}" class="block px-3 py-2 rounded hover:bg-white/6">Pengguna</a>
+                <a href="{{ route('admin.users.index') }}"
+                    class="block px-3 py-2 rounded hover:bg-white/6">Pengguna</a>
                 <a href="{{ route('admin.audit.index') }}" class="block px-3 py-2 rounded hover:bg-white/6">Audit</a>
                 <form action="{{ route('logout') }}" method="POST" class="mt-4">
                     @csrf
@@ -467,4 +485,5 @@
         });
     </script>
 </body>
+
 </html>

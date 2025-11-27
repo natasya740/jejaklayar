@@ -21,7 +21,7 @@ class AdminArtikelController extends Controller
     public function index()
     {
         $artikels = Artikel::latest()->paginate(15);
-        return view('admin.artikel.index', compact('artikels'));
+        return view('admin.articles.index', compact('artikels'));
     }
 
 
@@ -31,7 +31,7 @@ class AdminArtikelController extends Controller
     public function pending()
     {
         $artikels = Artikel::where('status', 'pending')->paginate(15);
-        return view('admin.artikel.pending', compact('artikels'));
+        return view('admin.articles.pending', compact('artikels'));
     }
 
 
@@ -43,7 +43,7 @@ class AdminArtikelController extends Controller
         $categories = Category::orderBy('name')->get();
         $tags       = Tag::orderBy('name')->get();
 
-        return view('admin.artikel.create', compact('categories', 'tags'));
+        return view('admin.articles.create', compact('categories', 'tags'));
     }
 
 
@@ -102,7 +102,7 @@ class AdminArtikelController extends Controller
         $this->attachTemporaryFiles($request, $artikel);
 
         return redirect()
-            ->route('admin.artikel.index')
+            ->route('admin.articles.index')
             ->with('success', 'Artikel berhasil dibuat.');
     }
 
@@ -117,7 +117,7 @@ class AdminArtikelController extends Controller
                 ->with('error', 'Artikel ini bukan pending.');
         }
 
-        return view('admin.artikel.review', compact('artikel'));
+        return view('admin.articles.review', compact('artikel'));
     }
 
 
@@ -157,7 +157,7 @@ class AdminArtikelController extends Controller
         $categories = Category::orderBy('name')->get();
         $tags       = Tag::orderBy('name')->get();
 
-        return view('admin.artikel.edit', compact('artikel', 'categories', 'tags'));
+        return view('admin.articles.edit', compact('artikel', 'categories', 'tags'));
     }
 
 
@@ -195,7 +195,7 @@ class AdminArtikelController extends Controller
         $this->attachTemporaryFiles($request, $artikel);
 
         return redirect()
-            ->route('admin.artikel.index')
+            ->route('admin.articles.index')
             ->with('success', 'Artikel berhasil diperbarui.');
     }
 
@@ -220,7 +220,7 @@ class AdminArtikelController extends Controller
 
         $artikel->delete();
 
-        return redirect()->route('admin.artikel.index')
+        return redirect()->route('admin.articles.index')
             ->with('success', 'Artikel berhasil dihapus.');
     }
 

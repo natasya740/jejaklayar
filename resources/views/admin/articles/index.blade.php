@@ -217,18 +217,23 @@
                                        title="Edit">
                                         <i class="fa fa-edit text-sm"></i>
                                     </a>
-                                    <form action="{{ route('admin.articles.destroy', $article) }}" 
+                                    
+                                    {{-- Form Hidden untuk Delete --}}
+                                    <form id="delete-form-{{ $article->id }}" 
+                                          action="{{ route('admin.articles.destroy', $article) }}" 
                                           method="POST" 
-                                          onsubmit="return confirm('Yakin ingin menghapus artikel ini?')"
-                                          class="inline-block">
+                                          style="display: none;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" 
-                                                class="w-8 h-8 flex items-center justify-center bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-all duration-200 hover:scale-110"
-                                                title="Hapus">
-                                            <i class="fa fa-trash text-sm"></i>
-                                        </button>
                                     </form>
+                                    
+                                    {{-- Tombol Hapus dengan Pop-up --}}
+                                    <button type="button"
+                                            onclick="showDeleteModal('{{ $article->title }}', {{ $article->id }})"
+                                            class="w-8 h-8 flex items-center justify-center bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-all duration-200 hover:scale-110"
+                                            title="Hapus">
+                                        <i class="fa fa-trash text-sm"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -269,6 +274,60 @@
                 </div>
             </div>
         @endif
+    </div>
+</div>
+
+{{-- MODAL POP-UP KONFIRMASI HAPUS --}}
+<div id="deleteModal" class="fixed inset-0 z-50 hidden">
+    <!-- Backdrop Blur -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300" onclick="closeDeleteModal()"></div>
+    
+    <!-- Modal Content -->
+    <div class="fixed inset-0 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative transform transition-all duration-300 scale-95 opacity-0" id="modalContent">
+            <!-- Icon Warning dengan Animasi -->
+            <div class="flex justify-center mb-6">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-red-400 rounded-full animate-ping opacity-75"></div>
+                    <div class="relative bg-gradient-to-br from-red-500 to-red-600 rounded-full p-4 shadow-lg">
+                        <i class="fa fa-exclamation-triangle text-4xl text-white"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Title -->
+            <h3 class="text-2xl font-bold text-gray-800 text-center mb-4">
+                Yakin Ingin Menghapus?
+            </h3>
+
+            <!-- Message -->
+            <p class="text-gray-600 text-center mb-2">
+                Anda akan menghapus artikel:
+            </p>
+            <div class="bg-gray-50 rounded-lg p-3 mb-4">
+                <p class="text-lg font-semibold text-gray-800 text-center" id="articleTitle">
+                    <!-- Nama artikel akan muncul disini -->
+                </p>
+            </div>
+            <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
+                <p class="text-sm text-red-600 text-center flex items-center justify-center gap-2">
+                    <i class="fa fa-exclamation-circle"></i>
+                    <span>Tindakan ini tidak dapat dibatalkan!</span>
+                </p>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex gap-3">
+                <button onclick="closeDeleteModal()" 
+                        class="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-all duration-200 hover:shadow-md">
+                    <i class="fa fa-times mr-2"></i>Batal
+                </button>
+                <button onclick="confirmDelete()" 
+                        class="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-200 hover:shadow-lg">
+                    <i class="fa fa-trash mr-2"></i>Hapus
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -337,11 +396,80 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
+
+    /* Modal Animation */
+    #deleteModal.show #modalContent {
+        animation: modalSlideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    }
+
+    @keyframes modalSlideIn {
+        0% {
+            opacity: 0;
+            transform: scale(0.8) translateY(-50px);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
 </style>
 @endpush
 
 @push('scripts')
 <script>
+    let selectedArticleId = null;
+
+    // Fungsi untuk menampilkan modal delete
+    function showDeleteModal(articleTitle, articleId) {
+        selectedArticleId = articleId;
+        document.getElementById('articleTitle').textContent = articleTitle;
+        const modal = document.getElementById('deleteModal');
+        const modalContent = document.getElementById('modalContent');
+        
+        modal.classList.remove('hidden');
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden'; // Prevent scrolling
+        
+        // Trigger animation
+        setTimeout(() => {
+            modalContent.style.opacity = '1';
+            modalContent.style.transform = 'scale(1) translateY(0)';
+        }, 10);
+    }
+
+    // Fungsi untuk menutup modal
+    function closeDeleteModal() {
+        const modal = document.getElementById('deleteModal');
+        const modalContent = document.getElementById('modalContent');
+        
+        modalContent.style.opacity = '0';
+        modalContent.style.transform = 'scale(0.95) translateY(-20px)';
+        
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto'; // Enable scrolling
+            selectedArticleId = null;
+        }, 300);
+    }
+
+    // Fungsi untuk konfirmasi hapus
+    function confirmDelete() {
+        if(selectedArticleId) {
+            document.getElementById('delete-form-' + selectedArticleId).submit();
+        }
+    }
+
+    // Close modal dengan tombol ESC
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const modal = document.getElementById('deleteModal');
+            if (!modal.classList.contains('hidden')) {
+                closeDeleteModal();
+            }
+        }
+    });
+
     // Search Filter
     document.getElementById('searchInput').addEventListener('input', function(e) {
         filterArticles();

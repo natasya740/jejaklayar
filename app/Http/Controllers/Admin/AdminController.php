@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\Artikel;
+use App\Models\Article;
 use App\Models\Category;
 use App\Models\Tag;
 use Illuminate\Http\Request;
@@ -20,8 +20,8 @@ class AdminController extends Controller
     {
         return view('admin.dashboard', [
             'totalUsers'      => User::count(),
-            'totalArtikel'    => Artikel::count(),
-            'pendingArtikel'  => Artikel::where('status', 'pending')->count(),
+            'totalArtikel'    => Article::count(),
+            'pendingArtikel'  => Article::where('status', 'pending')->count(),
         ]);
     }
 
@@ -31,21 +31,21 @@ class AdminController extends Controller
      * ============================================================ */
     public function indexArtikel()
     {
-        $artikels = Artikel::latest()->paginate(15);
-        return view('admin.artikel.index', compact('artikels'));
+        $artikels = Article::latest()->paginate(15);
+        return view('admin.articles.index', compact('artikels'));
     }
 
 
     public function pendingArtikel()
     {
-        $artikels = Artikel::where('status', 'pending')->latest()->paginate(15);
-        return view('admin.artikel.pending', compact('artikels'));
+        $artikels = Article::where('status', 'pending')->latest()->paginate(15);
+        return view('admin.articles.pending', compact('artikels'));
     }
 
 
-    public function reviewArtikel(Artikel $artikel)
+    public function reviewArtikel(Article $artikel)
     {
-        return view('admin.artikel.show', compact('artikel'));
+        return view('admin.articles.show', compact('artikel'));
     }
 
 
@@ -57,7 +57,7 @@ class AdminController extends Controller
         $categories = Category::orderBy('name')->get();
         $tags = Tag::orderBy('name')->get();
 
-        return view('admin.artikel.create', compact('categories', 'tags'));
+        return view('admin.articles.create', compact('categories', 'tags'));
     }
 
 
@@ -82,10 +82,10 @@ class AdminController extends Controller
         $data['user_id'] = auth()->id();
         $data['status'] = $data['status'] ?? 'published';
 
-        $artikel = Artikel::create($data);
+        $artikel = Article::create($data);
 
         // TAGS (optional)
-        if (!empty($data['tags']) && method_exists(Artikel::class, 'tags')) {
+        if (!empty($data['tags']) && method_exists(Article::class, 'tags')) {
             $tagList = array_filter(array_map('trim', explode(',', $data['tags'])));
             $tagIds = [];
 
@@ -97,23 +97,23 @@ class AdminController extends Controller
             $artikel->tags()->sync($tagIds);
         }
 
-        return redirect()->route('admin.artikel.show')->with('success', 'Artikel berhasil dibuat!');
+        return redirect()->route('admin.articles.show')->with('success', 'Artikel berhasil dibuat!');
     }
 
 
     /* ============================================================
      *  EDIT ARTIKEL
      * ============================================================ */
-    public function editArtikel(Artikel $artikel)
+    public function editArtikel(Article $artikel)
     {
         $categories = Category::orderBy('name')->get();
         $tags = Tag::orderBy('name')->get();
 
-        return view('admin.artikel.edit', compact('artikel', 'categories', 'tags'));
+        return view('admin.articles.edit', compact('artikel', 'categories', 'tags'));
     }
 
 
-    public function updateArtikel(Request $request, Artikel $artikel)
+    public function updateArtikel(Request $request, Article $artikel)
     {
         $data = $request->validate([
             'title'    => 'required|string|max:255',
@@ -131,14 +131,14 @@ class AdminController extends Controller
 
         $artikel->update($data);
 
-        return redirect()->route('admin.artikel.show')->with('success', 'Artikel berhasil diperbarui.');
+        return redirect()->route('admin.articles.show')->with('success', 'Artikel berhasil diperbarui.');
     }
 
 
     /* ============================================================
      *  DELETE ARTIKEL
      * ============================================================ */
-    public function destroyArtikel(Artikel $artikel)
+    public function destroyArtikel(Article $artikel)
     {
         if ($artikel->image) {
             Storage::disk('public')->delete($artikel->image);
@@ -146,21 +146,21 @@ class AdminController extends Controller
 
         $artikel->delete();
 
-        return redirect()->route('admin.artikel.show')->with('success', 'Artikel berhasil dihapus.');
+        return redirect()->route('admin.articles.show')->with('success', 'Artikel berhasil dihapus.');
     }
 
 
     /* ============================================================
      *  VALIDASI ARTIKEL
      * ============================================================ */
-    public function approveArtikel(Artikel $artikel)
+    public function approveArtikel(Article $artikel)
     {
         $artikel->update(['status' => 'published']);
-        return back()->with('success', 'Artikel diterbitkan.');
+        return back()->with('success', 'Article diterbitkan.');
     }
 
 
-    public function rejectArtikel(Request $request, Artikel $artikel)
+    public function rejectArtikel(Request $request, Article $artikel)
     {
         $request->validate(['feedback' => 'required|string']);
 
@@ -169,7 +169,7 @@ class AdminController extends Controller
             'feedback' => $request->feedback,
         ]);
 
-        return back()->with('success', 'Artikel ditolak.');
+        return back()->with('success', 'Article ditolak.');
     }
 
 
