@@ -27,7 +27,7 @@
             position: absolute;
             inset: 0;
             background: rgba(0, 0, 0, 0.4); /* Gelapkan background agar kartu menonjol */
-            backdrop-filter: blur(3px); /* Efek blur dikit biar estetik */
+            backdrop-filter: blur(10px); /* Efek blur dikit biar estetik */
         }
 
         /* Gambar Samping Login */

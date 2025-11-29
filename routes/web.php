@@ -1,22 +1,24 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\AuditController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\SubCategoryController;
+use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 use App\Http\Controllers\Admin\PageController as AdminPageController;
-use App\Http\Controllers\Admin\SubCategoryController;
+
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BudayaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KategoriController;
-use App\Http\Controllers\Kontributor\ProfileController;
 use App\Http\Controllers\KontributorController;
 use App\Http\Controllers\PustakaController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TentangController;
+use App\Http\Controllers\Kontributor\ProfileController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,10 +31,10 @@ Route::get('/', function () {
     return view('home');
 })->name('home');
 
-Route::get('/search', [SearchController::class, 'index'])->name('search');
-Route::get('/budaya', [BudayaController::class, 'index'])->name('budaya');
-Route::get('/pustaka', [PustakaController::class, 'index'])->name('pustaka');
-Route::get('/tentang', [TentangController::class, 'index'])->name('tentang');
+Route::get('/search',   [SearchController::class, 'index'])->name('search');
+Route::get('/budaya',   [BudayaController::class, 'index'])->name('budaya');
+Route::get('/pustaka',  [PustakaController::class, 'index'])->name('pustaka');
+Route::get('/tentang',  [TentangController::class, 'index'])->name('tentang');
 
 /*
 |--------------------------------------------------------------------------
@@ -83,9 +85,11 @@ Route::middleware(['auth', 'checkrole:kontributor'])
 
         Route::get('/dashboard', [KontributorController::class, 'index'])->name('dashboard');
 
+        // Profil kontributor
         Route::get('/profil', [ProfileController::class, 'show'])->name('profil');
         Route::post('/profil/update', [ProfileController::class, 'update'])->name('profil.update');
 
+        // Artikel kontributor
         Route::prefix('artikel')->name('artikel.')->group(function () {
             Route::get('/', [KontributorController::class, 'indexArticles'])->name('index');
             Route::get('/baru', [KontributorController::class, 'showArticleForm'])->name('create');
@@ -105,6 +109,7 @@ Route::middleware(['auth', 'checkrole:admin'])
     ->name('admin.')
     ->group(function () {
 
+        // Dashboard
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
         // Categories Routes
@@ -115,19 +120,19 @@ Route::middleware(['auth', 'checkrole:admin'])
         Route::get('sub-categories-by-category/{category}', [SubCategoryController::class, 'getByCategory'])
             ->name('sub-categories.by-category');
 
-        // Articles Routes (RESOURCE - UTAMA)
+        // Articles Routes (RESOURCE - UTAMA untuk CRUD)
         Route::resource('articles', ArticleController::class);
-
+        
         // CKEditor Image Upload untuk Articles
         Route::post('articles/upload-image', [ArticleController::class, 'uploadImage'])
             ->name('articles.uploadImage');
 
-        // Media
+        // Media Manager
         Route::get('media', [AdminMediaController::class, 'index'])->name('media.index');
         Route::post('media/upload', [AdminMediaController::class, 'upload'])->name('media.upload');
         Route::delete('media/{media}', [AdminMediaController::class, 'destroy'])->name('media.destroy');
 
-        // Pages
+        // Pages (Halaman Statis)
         Route::resource('pages', AdminPageController::class)->except(['show']);
 
         // Audit
@@ -137,11 +142,18 @@ Route::middleware(['auth', 'checkrole:admin'])
         Route::get('/users', [AdminController::class, 'users'])->name('users.index');
         Route::get('/logs', [AdminController::class, 'logs'])->name('logs.index');
 
-        // Routes untuk Validasi Artikel
+        // Routes untuk Validasi Artikel (GUNAKAN AdminController)
         Route::prefix('artikel')->name('artikel.')->group(function () {
+            // Halaman daftar artikel pending
             Route::get('/pending', [AdminController::class, 'pendingArtikel'])->name('pending');
+            
+            // Halaman review artikel
             Route::get('/{artikel}/review', [AdminController::class, 'reviewArtikel'])->name('review');
+            
+            // Approve artikel (POST method)
             Route::post('/{artikel}/approve', [AdminController::class, 'approveArtikel'])->name('approve');
+            
+            // Reject artikel (POST method)
             Route::post('/{artikel}/reject', [AdminController::class, 'rejectArtikel'])->name('reject');
         });
     });
