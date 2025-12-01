@@ -1,25 +1,24 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\AuditController;
 use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\SubCategoryController;
-use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 use App\Http\Controllers\Admin\PageController as AdminPageController;
-
+use App\Http\Controllers\Admin\SubCategoryController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BudayaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\Kontributor\ProfileController;
 use App\Http\Controllers\KontributorController;
 use App\Http\Controllers\PustakaController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TentangController;
-use App\Http\Controllers\Kontributor\ProfileController;
-
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,10 +30,10 @@ Route::get('/', function () {
     return view('home');
 })->name('home');
 
-Route::get('/search',   [SearchController::class, 'index'])->name('search');
-Route::get('/budaya',   [BudayaController::class, 'index'])->name('budaya');
-Route::get('/pustaka',  [PustakaController::class, 'index'])->name('pustaka');
-Route::get('/tentang',  [TentangController::class, 'index'])->name('tentang');
+Route::get('/search', [SearchController::class, 'index'])->name('search');
+Route::get('/budaya', [BudayaController::class, 'index'])->name('budaya');
+Route::get('/pustaka', [PustakaController::class, 'index'])->name('pustaka');
+Route::get('/tentang', [TentangController::class, 'index'])->name('tentang');
 
 /*
 |--------------------------------------------------------------------------
@@ -104,6 +103,11 @@ Route::middleware(['auth', 'checkrole:kontributor'])
 | Admin Area
 |--------------------------------------------------------------------------
 */
+/*
+|--------------------------------------------------------------------------
+| Admin Area
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth', 'checkrole:admin'])
     ->prefix('admin')
     ->name('admin.')
@@ -122,7 +126,7 @@ Route::middleware(['auth', 'checkrole:admin'])
 
         // Articles Routes (RESOURCE - UTAMA untuk CRUD)
         Route::resource('articles', ArticleController::class);
-        
+
         // CKEditor Image Upload untuk Articles
         Route::post('articles/upload-image', [ArticleController::class, 'uploadImage'])
             ->name('articles.uploadImage');
@@ -138,24 +142,40 @@ Route::middleware(['auth', 'checkrole:admin'])
         // Audit
         Route::get('audit', [AuditController::class, 'index'])->name('audit.index');
 
-        // Pengguna & Log
-        Route::get('/users', [AdminController::class, 'users'])->name('users.index');
-        Route::get('/logs', [AdminController::class, 'logs'])->name('logs.index');
-
-        // Routes untuk Validasi Artikel (GUNAKAN AdminController)
+        /*
+        |--------------------------------------------------------------------------
+        | Validasi Artikel (GUNAKAN AdminController)
+        |--------------------------------------------------------------------------
+        */
         Route::prefix('artikel')->name('artikel.')->group(function () {
             // Halaman daftar artikel pending
             Route::get('/pending', [AdminController::class, 'pendingArtikel'])->name('pending');
-            
+
             // Halaman review artikel
             Route::get('/{artikel}/review', [AdminController::class, 'reviewArtikel'])->name('review');
-            
+
             // Approve artikel (POST method)
             Route::post('/{artikel}/approve', [AdminController::class, 'approveArtikel'])->name('approve');
-            
+
             // Reject artikel (POST method)
             Route::post('/{artikel}/reject', [AdminController::class, 'rejectArtikel'])->name('reject');
-        });
+        }); // <- pastikan grup artikel ditutup DI SINI
+
+        /*
+        |--------------------------------------------------------------------------
+        | Admin User Management (CRUD + Toggle)
+        |--------------------------------------------------------------------------
+        |
+        | Resource routes untuk users diletakkan di luar group artikel.
+        */
+        Route::resource('users', UserController::class)->except(['show']);
+
+        // Toggle aktif/nonaktif
+        Route::post('users/{user}/toggle', [UserController::class, 'toggle'])
+            ->name('users.toggle');
+
+        // Jika Anda masih membutuhkan route logs di AdminController:
+        Route::get('/logs', [AdminController::class, 'logs'])->name('logs.index');
     });
 
 /*
