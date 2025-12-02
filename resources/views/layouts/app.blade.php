@@ -264,17 +264,39 @@
         @yield('content')
     </main>
 
-    {{-- FLOATING HELP --}}
+    {{-- FLOATING HELP - UPDATED WITH ACTIVE LINKS --}}
     <div class="floating-help-container">
         <div class="help-trigger-btn" id="help-btn" aria-label="Bantuan">
             <i class="fas fa-question"></i>
         </div>
 
         <div class="help-options" id="help-options" aria-hidden="true">
-            <a href="#" class="help-item"><span>FAQ / Pertanyaan</span><i class="fas fa-book-open"></i></a>
-            <a href="mailto:admin@jejaklayar.com" class="help-item"><span>Email Admin</span><i class="fas fa-envelope"></i></a>
-            <a href="#" class="help-item"><span>Panduan Kontributor</span><i class="fas fa-user-edit"></i></a>
-            <a href="https://wa.me/628123456789" target="_blank" class="help-item"><span>Chat WhatsApp</span><i class="fab fa-whatsapp"></i></a>
+            <!-- FAQ - Halaman Pertanyaan -->
+            <a href="{{ route('faq') }}" class="help-item">
+                <span>FAQ / Pertanyaan</span>
+                <i class="fas fa-book-open"></i>
+            </a>
+
+            <!-- Email Admin -->
+            <a href="mailto:admin@jejaklayar.com" class="help-item">
+                <span>Email Admin</span>
+                <i class="fas fa-envelope"></i>
+            </a>
+
+            <!-- Panduan Kontributor -->
+            <a href="{{ route('panduan') }}" class="help-item">
+                <span>Panduan Kontributor</span>
+                <i class="fas fa-user-edit"></i>
+            </a>
+
+            <!-- WhatsApp Admin - GANTI NOMOR INI! -->
+            <a href="https://wa.me/6281234567890?text=Halo%20Admin%20Jejak%20Layar%2C%20saya%20butuh%20bantuan" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="help-item">
+                <span>Chat WhatsApp</span>
+                <i class="fab fa-whatsapp"></i>
+            </a>
         </div>
     </div>
 
@@ -299,7 +321,7 @@
             <div class="footer-col">
                 <h3>BANTUAN</h3>
                 <ul>
-                    <li><a href="#"><i class="fas fa-question-circle"></i> FAQ / Pertanyaan</a></li>
+                    <li><a href="{{ route('faq') }}"><i class="fas fa-question-circle"></i> FAQ / Pertanyaan</a></li>
                     <li><a href="#"><i class="fas fa-shield-alt"></i> Kebijakan Privasi</a></li>
                     <li><a href="#"><i class="fas fa-file-contract"></i> Syarat & Ketentuan</a></li>
                     <li><a href="{{ route('register') }}"><i class="fas fa-user-plus"></i> Menjadi Kontributor</a></li>

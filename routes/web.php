@@ -19,6 +19,10 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TentangController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\HelpController;
+
+Route::get('/faq', [HelpController::class, 'faq'])->name('faq');
+Route::get('/panduan', [HelpController::class, 'panduan'])->name('panduan');
 
 /*
 |--------------------------------------------------------------------------
