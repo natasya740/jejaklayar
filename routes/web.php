@@ -85,7 +85,7 @@ Route::middleware(['auth', 'checkrole:kontributor'])
         Route::get('/dashboard', [KontributorController::class, 'index'])->name('dashboard');
 
         // Profil kontributor
-        Route::get('/profil', [ProfileController::class, 'show'])->name('profil');
+        Route::get('/profil', [ProfileController::class, 'index'])->name('profil');
         Route::post('/profil/update', [ProfileController::class, 'update'])->name('profil.update');
 
         // Artikel kontributor
