@@ -573,114 +573,273 @@ main {
 }
 
 /* =====================
-   Team
+   Team Section - Improved
    ===================== */
 #team {
-  padding: 80px 20px 120px 20px;
+  padding: 80px 20px;
   text-align: center;
-  background: transparent;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.95));
   position: relative;
   overflow: visible;
 }
 
 #team h2 {
   font-size: 2.2em;
-  color: #b58800;
-  margin-bottom: -100px;
-  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 16px;
+  font-weight: 700;
+  position: relative;
+}
+
+/* Underline untuk section title */
+#team h2::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--yellow), var(--yellow-dark));
+  border-radius: 2px;
+}
+
+/* Slogan di bawah judul Our Team */
+.team-slogan {
+  font-size: 1.1rem;
+  color: var(--muted);
+  margin: 40px auto 60px auto;
+  max-width: 720px;
+  line-height: 1.6;
+  font-style: italic;
+  opacity: 0;
+  animation: fadeIn 1.2s ease-in-out forwards;
+  animation-delay: 0.3s;
 }
 
 .team-grid {
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 60px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 20px;
 }
 
 .member {
-  width: 250px;
-  height: 400px;
   position: relative;
   text-align: center;
-  overflow: visible;
+  transition: transform 0.3s ease;
 }
 
-/* Shape kuning sebagai background */
+.member:hover {
+  transform: translateY(-10px);
+}
+
+/* Container untuk foto */
 .member .photo {
-  position: absolute;
+  position: relative;
   width: 100%;
-  height: 100%;
+  height: 320px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  overflow: visible;
+  margin-bottom: 20px;
 }
 
+/* Background shape kuning - diperbaiki posisinya */
 .member .photo::before {
   content: "";
   position: absolute;
-  bottom: 100px;
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 180px;
-  height: 160px;
-  background: #ffd95a96;
-  border-radius: 25px;
+  width: 220px;
+  height: 180px;
+  background: linear-gradient(135deg, rgba(255, 217, 90, 0.6), rgba(251, 192, 45, 0.5));
+  border-radius: 20px;
   z-index: 1;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
+.member:hover .photo::before {
+  transform: translateX(-50%) scale(1.05);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
+}
+
+/* Foto anggota tim */
 .member .photo img {
   position: relative;
   z-index: 10;
-  width: 320px;
+  width: 280px;
   height: auto;
+  max-height: 340px;
   object-fit: contain;
-  filter: drop-shadow(0 12px 25px rgba(0, 0, 0, 0.25));
-  transform: translateY(-100px);
+  filter: drop-shadow(0 12px 25px rgba(0, 0, 0, 0.2));
+  transition: transform 0.3s ease;
 }
 
+.member:hover .photo img {
+  transform: scale(1.05);
+}
+
+/* Info anggota */
 .member h3 {
   color: var(--text);
-  font-size: 1.2rem;
-  margin: 300px 0 8px 0;
-  font-weight: 600;
+  font-size: 1.3rem;
+  margin: 12px 0 6px 0;
+  font-weight: 700;
   position: relative;
   z-index: 10;
 }
 
 .member p {
-  color: #666;
-  font-size: 0.9rem;
+  color: var(--muted);
+  font-size: 0.95rem;
   margin: 0;
   position: relative;
   z-index: 10;
-  font-weight: 400;
+  font-weight: 500;
 }
 
-/* Slogan di bawah judul Our Team */
-.team-slogan {
-  font-size: 1.2rem;
+/* Social links untuk member (optional) */
+.member-social {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.member:hover .member-social {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.member-social a {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--yellow), var(--yellow-dark));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--text);
-  margin: 100px auto -50px auto;
-  max-width: 720px;
-  line-height: 1.6;
-  font-style: italic;
-  opacity: 0.9;
-  animation: fadeIn 1.2s ease-in-out;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 1.1rem;
 }
 
-/* Efek masuk pelan */
+.member-social a:hover {
+  transform: translateY(-5px) rotate(10deg);
+  box-shadow: 0 8px 20px rgba(251, 192, 45, 0.4);
+}
+
+/* Animasi fade in */
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(20px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Stagger animation untuk member cards */
+.member:nth-child(1) {
+  animation: fadeIn 0.6s ease-out forwards;
+  animation-delay: 0.2s;
+  opacity: 0;
+}
+
+.member:nth-child(2) {
+  animation: fadeIn 0.6s ease-out forwards;
+  animation-delay: 0.4s;
+  opacity: 0;
+}
+
+.member:nth-child(3) {
+  animation: fadeIn 0.6s ease-out forwards;
+  animation-delay: 0.6s;
+  opacity: 0;
+}
+
+/* =====================
+   Responsive Team Section
+   ===================== */
+@media (max-width: 768px) {
+  #team {
+    padding: 60px 16px;
+  }
+
+  #team h2 {
+    font-size: 1.8em;
+  }
+
+  .team-slogan {
+    font-size: 0.95rem;
+    margin: 30px auto 40px auto;
+    padding: 0 12px;
+  }
+
+  .team-grid {
+    grid-template-columns: 1fr;
+    gap: 50px;
+  }
+
+  .member .photo {
+    height: 280px;
+  }
+
+  .member .photo::before {
+    width: 200px;
+    height: 160px;
+  }
+
+  .member .photo img {
+    width: 240px;
+    max-height: 300px;
+  }
+}
+
+@media (max-width: 520px) {
+  .member .photo {
+    height: 260px;
+  }
+
+  .member .photo::before {
+    width: 180px;
+    height: 140px;
+  }
+
+  .member .photo img {
+    width: 220px;
+    max-height: 280px;
+  }
+
+  .member h3 {
+    font-size: 1.1rem;
+  }
+
+  .member p {
+    font-size: 0.85rem;
+  }
+}
+
+/* Tablet landscape */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .member .photo img {
+    width: 260px;
   }
 }
 

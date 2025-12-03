@@ -1,92 +1,353 @@
+/* ========================================
+   PUSTAKA DIGITAL - JEJAK LAYAR
+   Desain Minimalis dengan Nilai Budaya Melayu
+   ======================================== */
+
+/* ✅ RESET & BASE */
 body {
     margin: 0;
     padding: 0;
     font-family: "Poppins", sans-serif;
+    background: linear-gradient(135deg, #faf8f3 0%, #f0ebe0 100%);
+    color: #3a2100;
+    overflow-x: hidden;
 }
 
-/* ✅ HERO */
+/* ✅ HERO SECTION */
 .hero {
-    background-color: #e3b933;
+    background: url('../images/Pustaka.jpeg') no-repeat center center/cover;
     width: 100%;
-    height: 10px;
+    min-height: 400px;
     display: flex;
     justify-content: center;
-    
+    align-items: center;
     text-align: center;
-}
-
-.hero-content h1 {
-    font-size: 50px;
-    font-weight: 700;
-    color: #3a2100;
-    line-height: 1.2;
-}
-
-.hero-content h1 span {
-    color: #7a4a0c;
-}
-
-.hero-content p {
-    margin-top: 15px;
-    font-size: 18px;
-    color: #3a2100;
-}
-
-/* ✅ SEARCH & FILTER */
-.filter-section {
-    background: #fff;
-    text-align: center;
-    padding: 25px 0;
-}
-
-.filter-section input {
-    width: 45%;
-    padding: 12px;
-    border-radius: 30px;
-    border: 1px solid #bbb;
-    margin-bottom: 10px;
-    outline: none;
-}
-
-.filter-btn button {
-    border: 1px solid #ccc;
-    background: #fff;
-    border-radius: 18px;
-    margin: 6px;
-    padding: 8px 20px;
-    cursor: pointer;
-}
-
-.filter-btn button.active,
-.filter-btn button:hover {
-    background: #f0d79c;
-    border-color: #c4962e;
-}
-
-/* ✅ CARD */
-.cards {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    background: #efefef;
-    padding: 35px 0;
-}
-
-.card {
-    width: 280px;
-    background: #fff;
-    border-radius: 12px;
-    text-align: center;
+    padding: 60px 20px;
+    position: relative;
     overflow: hidden;
 }
 
-.card img {
-    width: 100%;
-    height: 200px;
-    background: #d5d5d5;
+/* Motif Dekoratif Melayu */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 35px,
+            rgba(255, 255, 255, 0.03) 35px,
+            rgba(255, 255, 255, 0.03) 70px
+        );
+    pointer-events: none;
 }
 
-.card p {
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+}
+
+.hero-content h1 {
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.3;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.hero-content h1 span {
+    color: #ffd95a;
+    display: block;
+    font-style: italic;
     font-weight: 600;
-    padding: 15px;
+    margin-top: 10px;
+}
+
+.hero-content p {
+    margin-top: 20px;
+    font-size: clamp(16px, 2vw, 20px);
+    color: #2a1800;
+    line-height: 1.6;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ✅ SEARCH & FILTER SECTION */
+.filter-section {
+    background: #ffffff;
+    text-align: center;
+    padding: 40px 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Search Input */
+.filter-section input {
+    width: 90%;
+    max-width: 600px;
+    padding: 15px 25px;
+    border-radius: 50px;
+    border: 2px solid #d4a744;
+    margin-bottom: 25px;
+    outline: none;
+    font-size: 16px;
+    font-family: "Poppins", sans-serif;
+    transition: all 0.3s ease;
+    background: #fafafa;
+}
+
+.filter-section input:focus {
+    border-color: #c4962e;
+    background: #ffffff;
+    box-shadow: 0 4px 15px rgba(212, 167, 68, 0.2);
+}
+
+.filter-section input::placeholder {
+    color: #999;
+}
+
+/* Filter Buttons */
+.filter-btn {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.filter-btn button {
+    border: 2px solid #d4a744;
+    background: #ffffff;
+    border-radius: 25px;
+    padding: 12px 28px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    color: #7a4a0c;
+    transition: all 0.3s ease;
+    font-family: "Poppins", sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+.filter-btn button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(212, 167, 68, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.4s, height 0.4s;
+}
+
+.filter-btn button:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.filter-btn button:hover {
+    background: #faf6ed;
+    border-color: #c4962e;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 167, 68, 0.3);
+}
+
+.filter-btn button.active {
+    background: linear-gradient(135deg, #d4a744 0%, #c4962e 100%);
+    border-color: #c4962e;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(196, 150, 46, 0.4);
+}
+
+.filter-btn button.active::before {
+    display: none;
+}
+
+/* ✅ CARDS SECTION */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    justify-items: center;
+    gap: 35px;
+    background: transparent;
+    padding: 60px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Card Styling */
+.card {
+    width: 100%;
+    max-width: 320px;
+    background: #ffffff;
+    border-radius: 16px;
+    text-align: center;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    border-color: #d4a744;
+}
+
+/* Card Images */
+.card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+}
+
+/* Placeholder backgrounds untuk card tanpa gambar */
+.card-cerita img {
+    background: linear-gradient(135deg, #8b6f47 0%, #a58860 100%);
+}
+
+.card-kamus img {
+    background: linear-gradient(135deg, #6b8e7d 0%, #85a896 100%);
+}
+
+.card-sejarah img {
+    background: linear-gradient(135deg, #8b5a3c 0%, #a67356 100%);
+}
+
+/* Card Content */
+.card-content {
+    padding: 20px;
+}
+
+.card-content p {
+    font-weight: 600;
+    font-size: 18px;
+    color: #3a2100;
+    margin: 0 0 10px 0;
+}
+
+/* Card Badge */
+.card-badge {
+    display: inline-block;
+    background: #f0ebe0;
+    color: #7a4a0c;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* ✅ RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+    .hero {
+        min-height: 300px;
+        padding: 40px 20px;
+    }
+
+    .hero-content h1 {
+        font-size: 32px;
+    }
+
+    .hero-content p {
+        font-size: 16px;
+    }
+
+    .filter-section {
+        padding: 30px 15px;
+    }
+
+    .filter-section input {
+        width: 95%;
+        padding: 12px 20px;
+    }
+
+    .filter-btn button {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+        padding: 40px 15px;
+        gap: 25px;
+    }
+
+    .card {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-content h1 {
+        font-size: 28px;
+    }
+
+    .filter-btn {
+        gap: 8px;
+    }
+
+    .filter-btn button {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+
+    .card-content p {
+        font-size: 16px;
+    }
+}
+
+/* ✅ ACCESSIBILITY IMPROVEMENTS */
+.card:focus-visible,
+.filter-btn button:focus-visible {
+    outline: 3px solid #d4a744;
+    outline-offset: 3px;
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Selection Color */
+::selection {
+    background: #d4a744;
+    color: #ffffff;
+}
+
+::-moz-selection {
+    background: #d4a744;
+    color: #ffffff;
+}
+
+/* ✅ LOADING STATE (Optional) */
+.card.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* ✅ EMPTY STATE (Optional) */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+}
+
+.empty-state h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #7a4a0c;
+}
+
+.empty-state p {
+    font-size: 16px;
 }

@@ -1,328 +1,691 @@
-{{-- resources/views/articles/create.blade.php --}}
-@extends('layouts.dashboard_kontributor') {{-- ganti layout jika beda --}}
+{{-- resources/views/kontributor/artikel/create.blade.php --}}
+@extends('layouts.dashboard_kontributor')
 
-@section('title','Buat Artikel Baru')
+@section('title', 'Tambah Artikel')
+@section('page-title', 'Tambah Artikel')
+@section('page-subtitle', 'Buat artikel baru dengan editor lengkap')
 
 @section('content')
-<div class="max-w-7xl mx-auto p-6">
-  <div class="bg-white shadow rounded-lg overflow-hidden grid grid-cols-12">
-    {{-- kiri: form --}}
-    <div class="col-span-5 p-6 border-r">
-      <h2 class="text-2xl font-bold mb-4">Buat Artikel Baru</h2>
+    <div class="max-w-6xl mx-auto">
+        <!-- Breadcrumb -->
+        <nav class="flex mb-6" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-2 text-sm">
+                <li class="inline-flex items-center">
+                    <a href="{{ route('kontributor.artikel.index') }}"
+                        class="text-[color:var(--muted)] hover:text-[color:var(--yellow-2)] transition-colors">
+                        <i class="fa fa-newspaper mr-1"></i>Artikel
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fa fa-chevron-right text-gray-400 mx-2 text-xs"></i>
+                        <span class="text-[color:var(--text-dark)] font-medium">Tambah Baru</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
 
-      <form id="articleForm" action="#" method="POST" enctype="multipart/form-data">
-        @csrf
-
-        {{-- Judul --}}
-        <label class="block text-sm font-medium text-gray-700">Judul</label>
-        <input id="title" name="title" type="text" class="mt-2 w-full p-3 border rounded" placeholder="Masukkan judul..." required>
-
-        {{-- Slug --}}
-        <label class="block text-sm font-medium text-gray-700 mt-4">Slug</label>
-        <input id="slug" name="slug" type="text" class="mt-2 w-full p-2 border rounded text-sm" placeholder="slug-otomatis-atau-edit" required>
-
-        {{-- Kategori & Subkategori --}}
-        <div class="flex gap-3 mt-4">
-          <div class="w-1/2">
-            <label class="text-sm font-medium">Kategori</label>
-            <select id="category" name="category" class="mt-2 w-full p-2 border rounded">
-              <option value="">-- Pilih Kategori --</option>
-              {{-- contoh statik. Ganti dengan loop dari backend --}}
-              <option value="Sejarah">Sejarah</option>
-              <option value="Seni & Budaya">Seni & Budaya</option>
-              <option value="Arsitektur">Arsitektur</option>
-            </select>
-          </div>
-          <div class="w-1/2">
-            <label class="text-sm font-medium">Sub Kategori</label>
-            <select id="subcategory" name="subcategory" class="mt-2 w-full p-2 border rounded">
-              <option value="">-- Pilih Subkategori --</option>
-            </select>
-          </div>
+        <!-- Header Card -->
+        <div class="bg-gradient-to-r from-[color:var(--yellow-1)] to-[color:var(--yellow-2)] rounded-xl shadow-lg p-6 mb-6">
+            <div class="flex items-center gap-4">
+                <div
+                    class="w-16 h-16 bg-white bg-opacity-20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
+                    <i class="fa fa-plus-circle text-3xl text-white"></i>
+                </div>
+                <div class="text-white">
+                    <h2 class="text-2xl font-bold mb-1">Tambah Artikel Baru</h2>
+                    <p class="text-white/80">Buat artikel budaya lokal baru dengan editor lengkap</p>
+                </div>
+            </div>
         </div>
 
-        {{-- Tags --}}
-        <label class="block text-sm font-medium text-gray-700 mt-4">Tags</label>
-        <div class="mt-2 flex gap-2 flex-wrap items-center" id="tagContainer">
-          <input id="tagInput" type="text" class="p-2 rounded border" placeholder="Tuliskan tag lalu Enter" />
-        </div>
-        <input type="hidden" id="tagsField" name="tags" value="">
+        {{-- Error Messages --}}
+        @if ($errors->any())
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+                <ul class="list-disc pl-6 space-y-1">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-        {{-- Gambar upload --}}
-        <label class="block text-sm font-medium text-gray-700 mt-4">Gambar (pilih beberapa)</label>
-        <div class="mt-2 p-3 border-dashed border rounded text-sm">
-          <input id="imageFiles" type="file" accept="image/*" multiple class="hidden">
-          <button type="button" id="pickImages" class="px-4 py-2 bg-amber-600 text-white rounded">Pilih / Upload</button>
-          <p class="text-xs text-gray-500 mt-2">Preview & compress otomatis, klik image untuk masukkan ke konten. Pilih salah satu sebagai cover.</p>
+        <form action="{{ route('kontributor.artikel.store') }}" method="POST" enctype="multipart/form-data" id="articleForm">
+            @csrf
 
-          <div id="thumbs" class="grid grid-cols-3 gap-3 mt-3"></div>
-        </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Main Content (Left - 2 columns) -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Basic Information Card -->
+                    <div class="bg-white rounded-xl shadow-[var(--shadow-sm)] overflow-hidden">
+                        <div class="px-6 py-4 bg-gray-50 border-b border-gray-100">
+                            <h3 class="text-lg font-semibold text-[color:var(--text-dark)] flex items-center gap-2">
+                                <i class="fa fa-file-alt text-[color:var(--yellow-2)]"></i>
+                                Informasi Dasar
+                            </h3>
+                        </div>
+                        <div class="p-6 space-y-5">
+                            <!-- Title -->
+                            <div>
+                                <label for="title"
+                                    class="block text-sm font-semibold text-[color:var(--text-dark)] mb-2">
+                                    Judul Artikel <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text"
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[color:var(--yellow-2)] focus:border-transparent transition-all @error('title') border-red-500 @enderror"
+                                    id="title" name="title" value="{{ old('title') }}"
+                                    placeholder="Masukkan judul artikel..." required autofocus>
+                                @error('title')
+                                    <p class="mt-2 text-sm text-red-600">
+                                        <i class="fa fa-exclamation-circle mr-1"></i>{{ $message }}
+                                    </p>
+                                @enderror
+                                <p class="mt-2 text-sm text-[color:var(--muted)] flex items-center gap-1">
+                                    <i class="fa fa-info-circle"></i>
+                                    <span>Slug akan dibuat otomatis dari judul artikel</span>
+                                </p>
+                            </div>
 
-        {{-- Buttons --}}
-        <div class="mt-6 flex gap-2">
-          <button id="saveDraft" type="button" class="px-4 py-2 bg-gray-100 rounded border">Simpan Draft</button>
-          <button id="publish" type="button" class="px-4 py-2 bg-amber-600 text-white rounded">Terbitkan</button>
-        </div>
+                            <!-- Excerpt -->
+                            <div>
+                                <label for="excerpt"
+                                    class="block text-sm font-semibold text-[color:var(--text-dark)] mb-2">
+                                    Ringkasan <span class="text-[color:var(--muted)] font-normal">(Opsional)</span>
+                                </label>
+                                <div class="relative">
+                                    <textarea
+                                        class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[color:var(--yellow-2)] focus:border-transparent transition-all resize-none @error('excerpt') border-red-500 @enderror"
+                                        id="excerpt" name="excerpt" rows="3" maxlength="500"
+                                        placeholder="Ringkasan singkat artikel (max 500 karakter)...">{{ old('excerpt') }}</textarea>
+                                    <div
+                                        class="absolute bottom-3 right-3 text-xs text-[color:var(--muted)] bg-white px-2 py-1 rounded">
+                                        <span id="excerptCount">0</span> / 500
+                                    </div>
+                                </div>
+                                @error('excerpt')
+                                    <p class="mt-2 text-sm text-red-600">
+                                        <i class="fa fa-exclamation-circle mr-1"></i>{{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
 
-        {{-- hidden input untuk konten HTML --}}
-        <input type="hidden" id="bodyField" name="body">
-        <input type="hidden" id="coverImage" name="cover_image">
-      </form>
+                    <!-- Content Card with CKEditor -->
+                    <div class="bg-white rounded-xl shadow-[var(--shadow-sm)] overflow-hidden">
+                        <div class="px-6 py-4 bg-gray-50 border-b border-gray-100">
+                            <h3 class="text-lg font-semibold text-[color:var(--text-dark)] flex items-center gap-2">
+                                <i class="fa fa-pen-fancy text-purple-600"></i>
+                                Konten Artikel
+                            </h3>
+                        </div>
+                        <div class="p-6">
+                            <label for="editor" class="block text-sm font-semibold text-[color:var(--text-dark)] mb-2">
+                                Konten <span class="text-red-500">*</span>
+                            </label>
+                            <textarea id="editor" name="content" class="w-full border border-gray-200 rounded-lg"
+                                placeholder="Tulis konten artikel di sini...">{{ old('content') }}</textarea>
+                            @error('content')
+                                <p class="mt-2 text-sm text-red-600">
+                                    <i class="fa fa-exclamation-circle mr-1"></i>{{ $message }}
+                                </p>
+                            @enderror
+                            <p class="text-xs text-[color:var(--muted)] mt-2">
+                                💡 Tips: Gunakan heading, bold, list, dan gambar untuk membuat artikel lebih menarik
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Featured Image Card -->
+                    <div class="bg-white rounded-xl shadow-[var(--shadow-sm)] overflow-hidden">
+                        <div class="px-6 py-4 bg-gray-50 border-b border-gray-100">
+                            <h3 class="text-lg font-semibold text-[color:var(--text-dark)] flex items-center gap-2">
+                                <i class="fa fa-image text-purple-600"></i>
+                                Gambar Unggulan
+                            </h3>
+                        </div>
+                        <div class="p-6">
+                            <label for="featured_image"
+                                class="block text-sm font-semibold text-[color:var(--text-dark)] mb-2">
+                                Upload Gambar <span class="text-[color:var(--muted)] font-normal">(Opsional)</span>
+                            </label>
+                            <div
+                                class="mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-[color:var(--yellow-2)] transition-colors">
+                                <div class="space-y-2 text-center">
+                                    <div id="imagePreview" class="hidden mb-4">
+                                        <img src="" alt="Preview" class="mx-auto h-48 rounded-lg shadow-md">
+                                        <button type="button" onclick="removePreview()"
+                                            class="mt-2 text-sm text-red-600 hover:text-red-800">
+                                            <i class="fa fa-times-circle"></i> Hapus
+                                        </button>
+                                    </div>
+                                    <div id="uploadPrompt">
+                                        <i class="fa fa-cloud-upload-alt text-4xl text-gray-400"></i>
+                                        <div class="flex text-sm text-gray-600 justify-center">
+                                            <label for="featured_image"
+                                                class="relative cursor-pointer bg-white rounded-md font-medium text-[color:var(--yellow-2)] hover:text-[color:var(--yellow-1)] focus-within:outline-none">
+                                                <span>Upload file</span>
+                                                <input id="featured_image" name="featured_image" type="file"
+                                                    class="sr-only" accept="image/*">
+                                            </label>
+                                            <p class="pl-1">atau drag and drop</p>
+                                        </div>
+                                        <p class="text-xs text-gray-500">PNG, JPG, JPEG, WEBP hingga 2MB</p>
+                                    </div>
+                                </div>
+                            </div>
+                            @error('featured_image')
+                                <p class="mt-2 text-sm text-red-600">
+                                    <i class="fa fa-exclamation-circle mr-1"></i>{{ $message }}
+                                </p>
+                            @enderror>
+                        </div>
+                    </div>
+
+                    <!-- Preview Section -->
+                    <div class="bg-white rounded-xl shadow-[var(--shadow-sm)] overflow-hidden">
+                        <div class="px-6 py-4 bg-gray-50 border-b border-gray-100">
+                            <button type="button" onclick="togglePreview()"
+                                class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all">
+                                <i class="fa fa-eye"></i>
+                                <span>👁️ Preview Artikel</span>
+                            </button>
+                        </div>
+                        <div id="previewSection" class="hidden p-6 bg-gray-50">
+                            <h3 class="font-semibold text-lg mb-3 text-[color:var(--text-dark)]">Preview:</h3>
+                            <div id="previewContent" class="prose max-w-none bg-white p-6 rounded-lg"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar (Right - 1 column) -->
+                <div class="space-y-6">
+                    <!-- Publish Settings Card -->
+                    <div class="bg-white rounded-xl shadow-[var(--shadow-sm)] overflow-hidden">
+                        <div class="px-6 py-4 bg-gray-50 border-b border-gray-100">
+                            <h3 class="text-lg font-semibold text-[color:var(--text-dark)] flex items-center gap-2">
+                                <i class="fa fa-cog text-blue-600"></i>
+                                Pengaturan
+                            </h3>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <!-- Status -->
+                            <div>
+                                <label for="status"
+                                    class="block text-sm font-semibold text-[color:var(--text-dark)] mb-2">
+                                    Status <span class="text-red-500">*</span>
+                                </label>
+                                <select
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[color:var(--yellow-2)] focus:border-transparent transition-all appearance-none bg-white @error('status') border-red-500 @enderror"
+                                    id="status" name="status" required>
+                                    <option value="draft" {{ old('status', 'draft') === 'draft' ? 'selected' : '' }}>📝
+                                        Draft</option>
+                                    <option value="pending" {{ old('status') === 'pending' ? 'selected' : '' }}>⏳ Pending
+                                        Review</option>
+                                    <option value="published" {{ old('status') === 'published' ? 'selected' : '' }}>✅
+                                        Published</option>
+                                    <option value="archived" {{ old('status') === 'archived' ? 'selected' : '' }}>📦
+                                        Archived</option>
+                                </select>
+                                @error('status')
+                                    <p class="mt-2 text-sm text-red-600">
+                                        <i class="fa fa-exclamation-circle mr-1"></i>{{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+
+                            <!-- Published Date -->
+                            <div>
+                                <label for="published_at"
+                                    class="block text-sm font-semibold text-[color:var(--text-dark)] mb-2">
+                                    Tanggal Publikasi <span class="text-[color:var(--muted)] font-normal">(Opsional)</span>
+                                </label>
+                                <input type="datetime-local"
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[color:var(--yellow-2)] focus:border-transparent transition-all @error('published_at') border-red-500 @enderror"
+                                    id="published_at" name="published_at" value="{{ old('published_at') }}">
+                                @error('published_at')
+                                    <p class="mt-2 text-sm text-red-600">
+                                        <i class="fa fa-exclamation-circle mr-1"></i>{{ $message }}
+                                    </p>
+                                @enderror
+                                <p class="mt-2 text-xs text-[color:var(--muted)]">
+                                    Kosongkan untuk menggunakan waktu saat ini
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category Card -->
+                    <div class="bg-white rounded-xl shadow-[var(--shadow-sm)] overflow-hidden">
+                        <div class="px-6 py-4 bg-gray-50 border-b border-gray-100">
+                            <h3 class="text-lg font-semibold text-[color:var(--text-dark)] flex items-center gap-2">
+                                <i class="fa fa-folder text-green-600"></i>
+                                Kategori
+                            </h3>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <!-- Category -->
+                            <div>
+                                <label for="category_id"
+                                    class="block text-sm font-semibold text-[color:var(--text-dark)] mb-2">
+                                    Kategori <span class="text-red-500">*</span>
+                                </label>
+                                <select
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[color:var(--yellow-2)] focus:border-transparent transition-all appearance-none bg-white @error('category_id') border-red-500 @enderror"
+                                    id="category_id" name="category_id" required>
+                                    <option value="">-- Pilih Kategori --</option>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}"
+                                            {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                            {{ $category->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('category_id')
+                                    <p class="mt-2 text-sm text-red-600">
+                                        <i class="fa fa-exclamation-circle mr-1"></i>{{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+
+                            <!-- Sub Category -->
+                            <div>
+                                <label for="sub_category_id"
+                                    class="block text-sm font-semibold text-[color:var(--text-dark)] mb-2">
+                                    Sub Kategori <span class="text-[color:var(--muted)] font-normal">(Opsional)</span>
+                                </label>
+                                <select
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[color:var(--yellow-2)] focus:border-transparent transition-all appearance-none bg-white @error('sub_category_id') border-red-500 @enderror"
+                                    id="sub_category_id" name="sub_category_id">
+                                    <option value="">-- Pilih Sub Kategori --</option>
+                                    @foreach ($subCategories as $subCategory)
+                                        <option value="{{ $subCategory->id }}"
+                                            data-category="{{ $subCategory->category_id }}"
+                                            {{ old('sub_category_id') == $subCategory->id ? 'selected' : '' }}
+                                            style="display: none;">
+                                            {{ $subCategory->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('sub_category_id')
+                                    <p class="mt-2 text-sm text-red-600">
+                                        <i class="fa fa-exclamation-circle mr-1"></i>{{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div
+                        class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-[var(--shadow-sm)] p-5 space-y-3">
+                        <button type="submit" id="submitBtn"
+                            class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[color:var(--yellow-1)] to-[color:var(--yellow-2)] text-[color:var(--text-dark)] font-semibold rounded-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                            <i class="fa fa-save"></i>
+                            <span>💾 Simpan Artikel</span>
+                        </button>
+                        <a href="{{ route('kontributor.artikel.index') }}"
+                            class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-300 text-[color:var(--text-dark)] font-semibold rounded-lg hover:bg-gray-50 transition-all duration-200">
+                            <i class="fa fa-times-circle"></i>
+                            <span>Batal</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 
-    {{-- kanan: editor & preview --}}
-    <div class="col-span-7 p-6">
-      <div class="flex items-center justify-between mb-4">
-        <div class="flex gap-2 items-center">
-          <button type="button" class="px-3 py-2 border rounded" onclick="exec('bold')"><strong>B</strong></button>
-          <button type="button" class="px-3 py-2 border rounded" onclick="exec('italic')"><em>I</em></button>
-          <button type="button" class="px-3 py-2 border rounded" onclick="exec('underline')"><u>U</u></button>
-          <button type="button" class="px-3 py-2 border rounded" onclick="insertLink()">Link</button>
-          <button type="button" class="px-3 py-2 border rounded" onclick="document.getElementById('imageFiles').click()">Gambar</button>
-        </div>
+    {{-- CKEditor 5 CDN --}}
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
 
-        <div class="text-sm text-gray-500">Status: <strong id="statusLabel">Draft</strong></div>
-      </div>
+    <style>
+        /* CKEditor custom styling */
+        .ck-editor__editable {
+            min-height: 500px;
+            max-height: 800px;
+        }
 
-      <div id="editor" contenteditable="true" class="min-h-[420px] p-4 border rounded prose" style="outline:none;">
-        <h2>Mulai menulis...</h2>
-        <p></p>
-      </div>
+        .ck-content {
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+        }
 
-      <div class="mt-6">
-        <label class="block text-sm font-medium text-gray-700">Preview</label>
-        <div id="preview" class="mt-3 p-4 border rounded bg-white">
-          <h1 id="previewTitle" class="text-2xl font-bold mb-2">Judul Artikel</h1>
-          <div id="previewBody" class="prose"></div>
-        </div>
-      </div>
-    </div>
-  </div>
+        /* Preview styling */
+        .prose {
+            color: #374151;
+            line-height: 1.75;
+        }
 
-  <div class="text-xs text-gray-400 mt-3">Placeholder image (contoh): <code>/mnt/data/b2891f9d-6a0d-427e-84de-628e14e34475.png</code></div>
-</div>
+        .prose img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
 
-{{-- Styles minimal (tailwind assumed), jika belum pakai tailwind, sesuaikan CSS --}}
-@endsection
+        .prose h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
 
-@section('scripts')
-<script>
-/* ========== kategori -> subkategori statik contoh ========== */
-const subcats = {
-  "Sejarah": ["Perang & Konflik","Periode Kolonial","Tokoh"],
-  "Seni & Budaya": ["Tari","Musik","Pakaian"],
-  "Arsitektur": ["Rumah Adat","Candi","Kota"]
-};
-const categoryEl = document.getElementById('category');
-const subcatEl = document.getElementById('subcategory');
-categoryEl?.addEventListener('change', e => {
-  const val = e.target.value;
-  subcatEl.innerHTML = '<option value=\"\">-- Pilih Subkategori --</option>';
-  if (subcats[val]) {
-    for (const s of subcats[val]) {
-      const opt = document.createElement('option'); opt.value = s; opt.textContent = s;
-      subcatEl.appendChild(opt);
-    }
-  }
-});
+        .prose h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-dark);
+        }
 
-/* ========== slug otomatis ========== */
-const titleEl = document.getElementById('title');
-const slugEl = document.getElementById('slug');
-titleEl?.addEventListener('input', e => {
-  const v = e.target.value;
-  slugEl.value = slugify(v);
-  document.getElementById('previewTitle').textContent = v || 'Judul Artikel';
-});
-function slugify(text){ return text.toString().normalize('NFKD').toLowerCase().trim().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'').replace(/\-+/g,'-'); }
+        .prose ul,
+        .prose ol {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
 
-/* ========== tags chips ========== */
-const tagInput = document.getElementById('tagInput');
-const tagContainer = document.getElementById('tagContainer');
-const tagsField = document.getElementById('tagsField');
-let tags = [];
-tagInput?.addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    addTag(tagInput.value);
-  }
-});
-function addTag(v){
-  v = v.trim(); if(!v) return;
-  if (!tags.includes(v)) {
-    tags.push(v);
-    renderTags();
-  }
-  tagInput.value='';
-}
-function removeTag(idx){
-  tags.splice(idx,1); renderTags();
-}
-function renderTags(){
-  tagContainer.innerHTML = '';
-  for (let i=0;i<tags.length;i++){
-    const span = document.createElement('span');
-    span.className = 'bg-amber-100 text-amber-700 px-3 py-1 rounded-full flex items-center gap-2 text-sm';
-    span.innerHTML = `${tags[i]} <button onclick="removeTag(${i})" class="ml-1 text-amber-600">✕</button>`;
-    tagContainer.appendChild(span);
-  }
-  tagContainer.appendChild(tagInput);
-  tagsField.value = tags.join(',');
-}
+        .prose li {
+            margin: 0.5rem 0;
+        }
 
-/* ========== image upload, preview + compress via canvas ========== */
-const pickBtn = document.getElementById('pickImages');
-const fileInput = document.getElementById('imageFiles');
-const thumbs = document.getElementById('thumbs');
-const coverImage = document.getElementById('coverImage');
-let uploadedImages = []; // {id, dataUrl, sizeKB, cover}
+        .prose blockquote {
+            border-left: 4px solid var(--yellow-2);
+            padding-left: 1rem;
+            margin: 1rem 0;
+            font-style: italic;
+            color: #6b7280;
+        }
 
-pickBtn?.addEventListener('click', ()=> fileInput.click());
-fileInput?.addEventListener('change', async (e)=>{
-  const files = Array.from(e.target.files || []);
-  for (const f of files) {
-    const dataUrl = await readFileAsDataURL(f);
-    const resized = await resizeDataUrl(dataUrl, 1200, 0.8);
-    const id = Date.now() + Math.random();
-    uploadedImages.push({ id, dataUrl: resized.dataUrl, sizeKB: Math.round(resized.size/1024), cover: uploadedImages.length === 0 });
-    renderThumbs();
-  }
-  // clear input
-  fileInput.value = '';
-});
+        .prose table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
 
-function readFileAsDataURL(file){ return new Promise(res => { const r = new FileReader(); r.onload = e=>res(e.target.result); r.readAsDataURL(file); }); }
-function resizeDataUrl(dataUrl, maxWidth=1200, quality=0.8){
-  return new Promise(res=>{
-    const img = new Image();
-    img.onload = ()=>{
-      const scale = Math.min(1, maxWidth / img.width);
-      const w = Math.round(img.width * scale);
-      const h = Math.round(img.height * scale);
-      const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
-      const ctx = canvas.getContext('2d'); ctx.drawImage(img,0,0,w,h);
-      canvas.toBlob(blob=>{
-        const reader = new FileReader();
-        reader.onload = ()=> res({ dataUrl: reader.result, size: blob.size });
-        reader.readAsDataURL(blob);
-      }, 'image/jpeg', quality);
-    };
-    img.src = dataUrl;
-  });
-}
+        .prose table th {
+            background-color: #f3f4f6;
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #d1d5db;
+        }
 
-function renderThumbs(){
-  thumbs.innerHTML = '';
-  for (const img of uploadedImages){
-    const wrapper = document.createElement('div');
-    wrapper.className = 'relative border rounded overflow-hidden';
-    wrapper.innerHTML = `
-      <img src="${img.dataUrl}" class="w-full h-28 object-cover cursor-pointer" onclick="insertImageToEditor('${img.dataUrl}')">
-      <div class="absolute top-2 right-2 flex gap-1">
-        <button onclick="setCoverImage('${img.id}')" class="px-2 py-1 text-xs rounded ${img.cover? 'bg-amber-600 text-white': 'bg-white text-gray-700'}">Cover</button>
-        <button onclick="removeUploadedImage('${img.id}')" class="px-2 py-1 bg-white text-red-600 rounded">Hapus</button>
-      </div>
-      <div class="p-2 text-xs text-gray-600">${img.sizeKB} KB</div>
-    `;
-    thumbs.appendChild(wrapper);
-  }
-  // update hidden cover if set
-  const cov = uploadedImages.find(i=>i.cover);
-  coverImage.value = cov ? cov.dataUrl : '';
-}
+        .prose table td {
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+        }
+    </style>
 
-/* image helpers */
-function setCoverImage(id){
-  uploadedImages = uploadedImages.map(i=> ({ ...i, cover: i.id==id }));
-  renderThumbs();
-}
-function removeUploadedImage(id){
-  uploadedImages = uploadedImages.filter(i=> i.id != id);
-  renderThumbs();
-}
+    <script>
+        let editorInstance;
 
-/* insert image to editor at caret */
-function insertImageToEditor(src){
-  const editor = document.getElementById('editor');
-  editor.focus();
-  const sel = window.getSelection();
-  if (!sel || sel.rangeCount===0){
-    editor.insertAdjacentHTML('beforeend', `<p><img src="${src}" class="max-w-full rounded"></p>`);
-    updatePreview();
-    return;
-  }
-  const range = sel.getRangeAt(0);
-  const imgNode = document.createElement('img'); imgNode.src = src; imgNode.className='max-w-full rounded';
-  range.insertNode(imgNode);
-  range.setStartAfter(imgNode);
-  range.collapse(true);
-  sel.removeAllRanges(); sel.addRange(range);
-  updatePreview();
-}
+        // Custom Upload Adapter untuk CKEditor
+        class MyUploadAdapter {
+            constructor(loader) {
+                this.loader = loader;
+            }
 
-/* editor command wrappers */
-function exec(command, val=null){ document.execCommand(command,false,val); updatePreview(); }
-function insertLink(){ const url = prompt('Masukkan URL (https://...)'); if(!url) return; exec('createLink', url); }
+            upload() {
+                return this.loader.file
+                    .then(file => new Promise((resolve, reject) => {
+                        this._initRequest();
+                        this._initListeners(resolve, reject, file);
+                        this._sendRequest(file);
+                    }));
+            }
 
-/* updatePreview */
-const editorEl = document.getElementById('editor');
-editorEl?.addEventListener('input', ()=> updatePreview());
-function updatePreview(){
-  document.getElementById('previewBody').innerHTML = editorEl.innerHTML;
-  document.getElementById('bodyField').value = editorEl.innerHTML;
-}
+            abort() {
+                if (this.xhr) {
+                    this.xhr.abort();
+                }
+            }
 
-/* save draft / publish (AJAX examples) */
-document.getElementById('saveDraft')?.addEventListener('click', ()=> submitArticle('draft'));
-document.getElementById('publish')?.addEventListener('click', ()=> submitArticle('publish'));
+            _initRequest() {
+                const xhr = this.xhr = new XMLHttpRequest();
+                xhr.open('POST', '{{ route('kontributor.artikel.uploadImage') }}', true);
+                xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
+                xhr.responseType = 'json';
+            }
 
-async function submitArticle(mode){
-  updatePreview();
-  const formData = new FormData();
-  formData.append('title', document.getElementById('title').value);
-  formData.append('slug', document.getElementById('slug').value);
-  formData.append('category', document.getElementById('category').value);
-  formData.append('subcategory', document.getElementById('subcategory').value);
-  formData.append('tags', document.getElementById('tagsField').value);
-  formData.append('body', document.getElementById('bodyField').value);
-  formData.append('mode', mode);
-  // images: append dataUrls as files (optional: send raw blobs)
-  uploadedImages.forEach((img, idx) => {
-    // convert dataUrl to blob
-    const blob = dataURLtoBlob(img.dataUrl);
-    formData.append('images[]', blob, `img_${idx}.jpg`);
-    if (img.cover) formData.append('cover_index', idx);
-  });
+            _initListeners(resolve, reject, file) {
+                const xhr = this.xhr;
+                const loader = this.loader;
+                const genericErrorText = `Couldn't upload file: ${file.name}.`;
 
-  // example: POST to /articles/store (ganti sesuai)
-  const token = document.querySelector('meta[name=\"csrf-token\"]')?.getAttribute('content') || '{{ csrf_token() }}';
-  const resp = await fetch('{{ url('/articles/store') }}', {
-    method: 'POST',
-    headers: { 'X-CSRF-TOKEN': token },
-    body: formData
-  });
+                xhr.addEventListener('error', () => reject(genericErrorText));
+                xhr.addEventListener('abort', () => reject());
+                xhr.addEventListener('load', () => {
+                    const response = xhr.response;
 
-  if (!resp.ok){
-    alert('Gagal menyimpan — periksa console / network.');
-    console.error(await resp.text());
-    return;
-  }
-  const data = await resp.json();
-  if (data.success) {
-    document.getElementById('statusLabel').textContent = mode === 'publish' ? 'Published' : 'Draft';
-    alert('Sukses: ' + (data.message || 'Disimpan'));
-    if (mode==='publish' && data.redirect) window.location.href = data.redirect;
-  } else {
-    alert('Terjadi masalah: ' + (data.message || 'unknown'));
-  }
-}
+                    if (!response || response.error) {
+                        return reject(response && response.error ? response.error.message : genericErrorText);
+                    }
 
-/* helpers */
-function dataURLtoBlob(dataurl) {
-  var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-      bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-  while(n--){ u8arr[n] = bstr.charCodeAt(n); }
-  return new Blob([u8arr], {type:mime});
-}
-</script>
+                    resolve({
+                        default: response.url
+                    });
+                });
+
+                if (xhr.upload) {
+                    xhr.upload.addEventListener('progress', evt => {
+                        if (evt.lengthComputable) {
+                            loader.uploadTotal = evt.total;
+                            loader.uploaded = evt.loaded;
+                        }
+                    });
+                }
+            }
+
+            _sendRequest(file) {
+                const data = new FormData();
+                data.append('upload', file);
+                this.xhr.send(data);
+            }
+        }
+
+        // Plugin untuk register custom adapter
+        function MyCustomUploadAdapterPlugin(editor) {
+            editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+                return new MyUploadAdapter(loader);
+            };
+        }
+
+        // Initialize CKEditor dengan Custom Upload Adapter
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                extraPlugins: [MyCustomUploadAdapterPlugin],
+
+                toolbar: {
+                    items: [
+                        'heading', '|',
+                        'bold', 'italic', 'underline', 'strikethrough', '|',
+                        'link', 'bulletedList', 'numberedList', '|',
+                        'outdent', 'indent', '|',
+                        'uploadImage', 'blockQuote', 'insertTable', '|',
+                        'undo', 'redo'
+                    ],
+                    shouldNotGroupWhenFull: true
+                },
+
+                image: {
+                    toolbar: [
+                        'imageTextAlternative', '|',
+                        'imageStyle:inline', 'imageStyle:block', 'imageStyle:side', '|',
+                        'imageStyle:alignLeft', 'imageStyle:alignCenter', 'imageStyle:alignRight'
+                    ],
+                    styles: [
+                        'inline', 'block', 'side', 'alignLeft', 'alignCenter', 'alignRight'
+                    ]
+                },
+
+                table: {
+                    contentToolbar: [
+                        'tableColumn', 'tableRow', 'mergeTableCells',
+                        'tableCellProperties', 'tableProperties'
+                    ]
+                },
+
+                heading: {
+                    options: [{
+                            model: 'paragraph',
+                            title: 'Paragraph',
+                            class: 'ck-heading_paragraph'
+                        },
+                        {
+                            model: 'heading2',
+                            view: 'h2',
+                            title: 'Heading 2',
+                            class: 'ck-heading_heading2'
+                        },
+                        {
+                            model: 'heading3',
+                            view: 'h3',
+                            title: 'Heading 3',
+                            class: 'ck-heading_heading3'
+                        },
+                        {
+                            model: 'heading4',
+                            view: 'h4',
+                            title: 'Heading 4',
+                            class: 'ck-heading_heading4'
+                        }
+                    ]
+                }
+            })
+            .then(editor => {
+                editorInstance = editor;
+                console.log('✅ CKEditor berhasil dimuat');
+
+                // Auto-save ke localStorage setiap 30 detik
+                setInterval(() => {
+                    const data = editor.getData();
+                    if (data) {
+                        localStorage.setItem('article_draft', data);
+                        console.log('💾 Draft tersimpan otomatis');
+                    }
+                }, 30000);
+
+                // Restore draft jika ada
+                const draft = localStorage.getItem('article_draft');
+                if (draft && !editor.getData()) {
+                    if (confirm('📄 Ditemukan draft tersimpan. Muat draft?')) {
+                        editor.setData(draft);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('❌ Error loading CKEditor:', error);
+                alert('Gagal memuat editor. Silakan refresh halaman.');
+            });
+
+        // Excerpt character counter
+        const excerptTextarea = document.getElementById('excerpt');
+        const excerptCount = document.getElementById('excerptCount');
+
+        if (excerptTextarea && excerptCount) {
+            excerptCount.textContent = excerptTextarea.value.length;
+
+            excerptTextarea.addEventListener('input', function() {
+                const count = this.value.length;
+                excerptCount.textContent = count;
+
+                if (count > 500) {
+                    this.value = this.value.substring(0, 500);
+                    excerptCount.textContent = 500;
+                }
+            });
+        }
+
+        // Image preview
+        const imageInput = document.getElementById('featured_image');
+        const imagePreview = document.getElementById('imagePreview');
+        const uploadPrompt = document.getElementById('uploadPrompt');
+
+        if (imageInput) {
+            imageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.querySelector('img').src = e.target.result;
+                        imagePreview.classList.remove('hidden');
+                        uploadPrompt.classList.add('hidden');
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        function removePreview() {
+            imagePreview.classList.add('hidden');
+            uploadPrompt.classList.remove('hidden');
+            imageInput.value = '';
+        }
+
+        // Filter sub categories based on selected category
+        const categorySelect = document.getElementById('category_id');
+        const subCategorySelect = document.getElementById('sub_category_id');
+
+        if (categorySelect && subCategorySelect) {
+            categorySelect.addEventListener('change', function() {
+                const selectedCategory = this.value;
+                const subCategoryOptions = subCategorySelect.querySelectorAll('option');
+
+                subCategoryOptions.forEach(option => {
+                    if (option.value === '') {
+                        option.style.display = 'block';
+                    } else {
+                        const optionCategory = option.getAttribute('data-category');
+                        option.style.display = optionCategory === selectedCategory ? 'block' : 'none';
+                    }
+                });
+
+                subCategorySelect.value = '';
+            });
+
+            // Trigger on page load
+            if (categorySelect.value) {
+                categorySelect.dispatchEvent(new Event('change'));
+            }
+        }
+
+        // Toggle preview
+        function togglePreview() {
+            const previewSection = document.getElementById('previewSection');
+            const previewContent = document.getElementById('previewContent');
+
+            if (previewSection.classList.contains('hidden')) {
+                const content = editorInstance.getData();
+                const title = document.getElementById('title').value;
+                const excerpt = document.getElementById('excerpt').value;
+
+                let previewHTML = '';
+
+                if (title) {
+                    previewHTML += `<h1 class="text-3xl font-bold mb-4">${title}</h1>`;
+                }
+                if (excerpt) {
+                    previewHTML += `<p class="text-gray-600 italic mb-6">${excerpt}</p>`;
+                }
+                previewHTML += `<div class="border-t pt-4">${content}</div>`;
+
+                previewContent.innerHTML = previewHTML;
+                previewSection.classList.remove('hidden');
+            } else {
+                previewSection.classList.add('hidden');
+            }
+        }
+
+        // Clear draft setelah submit berhasil
+        document.getElementById('articleForm').addEventListener('submit', function() {
+            localStorage.removeItem('article_draft');
+
+            // Disable submit button to prevent double submit
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '⏳ Menyimpan...';
+        });
+    </script>
 @endsection

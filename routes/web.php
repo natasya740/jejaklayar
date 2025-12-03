@@ -90,6 +90,7 @@ Route::middleware(['auth', 'checkrole:kontributor'])
 
         // Profil kontributor
         Route::get('/profil', [ProfileController::class, 'index'])->name('profil');
+        Route::get('/profil/edit', [ProfileController::class, 'edit'])->name('profil.edit');
         Route::post('/profil/update', [ProfileController::class, 'update'])->name('profil.update');
 
         // Artikel kontributor
@@ -102,11 +103,6 @@ Route::middleware(['auth', 'checkrole:kontributor'])
         });
     });
 
-/*
-|--------------------------------------------------------------------------
-| Admin Area
-|--------------------------------------------------------------------------
-*/
 /*
 |--------------------------------------------------------------------------
 | Admin Area
@@ -163,14 +159,12 @@ Route::middleware(['auth', 'checkrole:admin'])
 
             // Reject artikel (POST method)
             Route::post('/{artikel}/reject', [AdminController::class, 'rejectArtikel'])->name('reject');
-        }); // <- pastikan grup artikel ditutup DI SINI
+        }); 
 
         /*
         |--------------------------------------------------------------------------
         | Admin User Management (CRUD + Toggle)
         |--------------------------------------------------------------------------
-        |
-        | Resource routes untuk users diletakkan di luar group artikel.
         */
         Route::resource('users', UserController::class)->except(['show']);
 
@@ -178,7 +172,7 @@ Route::middleware(['auth', 'checkrole:admin'])
         Route::post('users/{user}/toggle', [UserController::class, 'toggle'])
             ->name('users.toggle');
 
-        // Jika Anda masih membutuhkan route logs di AdminController:
+        // Route logs
         Route::get('/logs', [AdminController::class, 'logs'])->name('logs.index');
     });
 

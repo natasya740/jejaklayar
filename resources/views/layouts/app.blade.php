@@ -15,6 +15,7 @@
     <!-- Fonts & Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Playfair+Display:wght@600;800&display=swap" rel="stylesheet">
 
     <style>
         /* --- BASE / LAYOUT --- */
@@ -228,7 +229,7 @@
             @auth
                 <div class="user-menu">
                     <div class="user-toggle" id="user-menu-toggle">
-                        <img src="{{ asset('FOTO/avatar.png') }}"
+                        <img src="{{ asset('images/avatar.jpg') }}"
                              onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=random'"
                              alt="Profil" class="profile-img">
                         <span>{{ explode(' ', Auth::user()->name)[0] }} ▼</span>
@@ -355,7 +356,7 @@
                 setTimeout(() => {
                     splash.classList.add('fade-out');
                     setTimeout(() => splash.style.display = 'none', 800);
-                }, 2500);
+                }, 500);
             }
 
             // ===== Click Spark Effect class =====
