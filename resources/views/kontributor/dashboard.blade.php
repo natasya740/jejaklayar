@@ -32,11 +32,20 @@
     </div>
 
     <div class="flex items-center gap-3">
-      <a href="{{ route('kontributor.artikel.form') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg shadow-sm bg-gradient-to-r from-yellow-400 to-yellow-500 text-[color:#071027] font-semibold focus:ring-4 focus:ring-yellow-200 hover:-translate-y-1 transition">
+      <a href="{{ route('kontributor.artikel.create') }}"
+      class="inline-flex items-center gap-2 px-4 py-2 rounded-lg shadow-sm 
+          bg-gradient-to-r from-yellow-400 to-yellow-500 
+          text-[#071027] font-semibold 
+          focus:ring-4 focus:ring-yellow-200 
+          hover:-translate-y-1 transition">
+     Tambah Artikel
+     </a>
+
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="#071027" stroke-width="1.6"><path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span class="text-sm">Tulis Artikel Baru</span>
       </a>
-      <a href="{{ route('kontributor.artikel.show') }}" class="text-sm text-gray-600 hover:underline hidden md:inline">Lihat Semua Artikel</a>
+      <a href="{{ route('kontributor.artikel.index') }}" class="text-sm text-gray-600 hover:underline hidden md:inline">Lihat Semua Artikel</a>
+
     </div>
   </div>
 
@@ -93,13 +102,15 @@
         <span class="text-sm text-gray-500">— pantau status kirimanmu</span>
       </div>
       <div>
-        <a href="{{ route('kontributor.artikel.saya') }}" class="text-sm text-yellow-600 hover:underline">Lihat Semua</a>
+        <a href="{{ route('kontributor.artikel.index') }}" class="text-sm text-yellow-600 hover:underline">Lihat Semua</a>
+
       </div>
     </div>
 
     <div class="p-4 space-y-3">
       @if($artikels->isEmpty())
-        <div class="text-center py-6 text-gray-500">Belum ada artikel. <a href="{{ route('kontributor.artikel.form') }}" class="text-yellow-600 font-semibold">Tulis sekarang</a></div>
+        <div class="text-center py-6 text-gray-500">Belum ada artikel. <a href="{{ route('kontributor.artikel.create') }}" class="text-yellow-600 font-semibold">Tulis sekarang</a>
+
       @else
         <ul class="space-y-3">
           @foreach($artikels->take(6) as $artikel)

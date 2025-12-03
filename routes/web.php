@@ -19,6 +19,10 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TentangController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\HelpController;
+
+Route::get('/faq', [HelpController::class, 'faq'])->name('faq');
+Route::get('/panduan', [HelpController::class, 'panduan'])->name('panduan');
 
 /*
 |--------------------------------------------------------------------------
@@ -85,7 +89,7 @@ Route::middleware(['auth', 'checkrole:kontributor'])
         Route::get('/dashboard', [KontributorController::class, 'index'])->name('dashboard');
 
         // Profil kontributor
-        Route::get('/profil', [ProfileController::class, 'show'])->name('profil');
+        Route::get('/profil', [ProfileController::class, 'index'])->name('profil');
         Route::post('/profil/update', [ProfileController::class, 'update'])->name('profil.update');
 
         // Artikel kontributor
