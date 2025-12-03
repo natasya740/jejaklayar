@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="id">
-
+<!-- layouts/dashboard_admin.blade.php -->
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -315,16 +315,6 @@
                         <span class="ml-3">Kelola Artikel</span>
                     </a>
 
-                    {{-- Validasi Artikel (Legacy) --}}
-                    <a href="{{ route('admin.artikel.pending') }}"
-                        class="{{ request()->routeIs('admin.artikel.pending') || request()->routeIs('admin.artikel.review') ? 'sidebar-active' : '' }} rounded-lg focus-ring mt-2 flex items-center justify-between"
-                        title="Validasi Artikel">
-                        <div class="flex items-center">
-                            <i class="fa fa-check-circle"></i>
-                            <span class="ml-3">Validasi Artikel</span>
-                        </div>
-                    </a>
-
                     {{-- Categories --}}
                     <a href="{{ route('admin.categories.index') }}"
                         class="{{ request()->routeIs('admin.categories.*') ? 'sidebar-active' : '' }} rounded-lg focus-ring mt-2"
@@ -341,21 +331,6 @@
                         <span class="ml-3">Sub Kategori</span>
                     </a>
 
-                    {{-- Media Manager --}}
-                    <a href="{{ route('admin.media.index') }}"
-                        class="{{ request()->routeIs('admin.media.*') ? 'sidebar-active' : '' }} rounded-lg focus-ring mt-2"
-                        title="Media Manager">
-                        <i class="fa fa-photo-video"></i>
-                        <span class="ml-3">Media</span>
-                    </a>
-
-                    {{-- Halaman Statis --}}
-                    <a href="{{ route('admin.pages.index') }}"
-                        class="{{ request()->routeIs('admin.pages.*') ? 'sidebar-active' : '' }} rounded-lg focus-ring mt-2"
-                        title="Halaman Statis">
-                        <i class="fa fa-file"></i>
-                        <span class="ml-3">Halaman</span>
-                    </a>
 
                     {{-- ================= PENGGUNA ================= --}}
                     <div class="sidebar-section-title">Pengguna</div>
@@ -366,17 +341,6 @@
                         <i class="fa fa-users-cog"></i>
                         <span class="ml-3">Kelola Pengguna</span>
                     </a>
-
-                    {{-- ================= SISTEM ================= --}}
-                    <div class="sidebar-section-title">Sistem</div>
-
-                    <a href="{{ route('admin.audit.index') }}"
-                        class="{{ request()->routeIs('admin.audit.*') ? 'sidebar-active' : '' }} rounded-lg focus-ring mt-2"
-                        title="Audit Mini">
-                        <i class="fa fa-history"></i>
-                        <span class="ml-3">Audit Mini</span>
-                    </a>
-
                 </div>
             </nav>
 

@@ -8,6 +8,45 @@
 
 @section('content')
     <div class="space-y-6">
+        {{-- Alert Messages --}}
+        @if (session('success'))
+            <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg shadow-sm animate-fade-in">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fa fa-check-circle text-green-500 text-xl"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
+                    </div>
+                    <div class="ml-auto pl-3">
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()"
+                            class="text-green-500 hover:text-green-700 transition-colors">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg shadow-sm animate-fade-in">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fa fa-exclamation-circle text-red-500 text-xl"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-red-800">{{ session('error') }}</p>
+                    </div>
+                    <div class="ml-auto pl-3">
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()"
+                            class="text-red-500 hover:text-red-700 transition-colors">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
@@ -168,22 +207,6 @@
                                             title="Edit">
                                             <i class="fa fa-edit text-sm"></i>
                                         </a>
-
-                                        {{-- Form Hidden untuk Delete --}}
-                                        <form id="delete-form-{{ $category->id }}"
-                                            action="{{ route('admin.categories.destroy', $category) }}" method="POST"
-                                            style="display: none;">
-                                            @csrf
-                                            @method('DELETE')
-                                        </form>
-
-                                        {{-- Tombol Hapus dengan Pop-up --}}
-                                        <button type="button"
-                                            onclick="showDeleteModal('{{ $category->name }}', {{ $category->id }})"
-                                            class="w-8 h-8 flex items-center justify-center bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-all duration-200 hover:scale-110"
-                                            title="Hapus">
-                                            <i class="fa fa-trash text-sm"></i>
-                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -233,17 +256,23 @@
         </div>
     </div>
 
+    {{-- FORMS HIDDEN UNTUK DELETE (LETAKKAN DI LUAR TABEL) --}}
+    @foreach ($categories as $category)
+        <form id="delete-form-{{ $category->id }}" action="{{ route('admin.categories.destroy', $category->id) }}"
+            method="POST" class="hidden">
+            @csrf
+            @method('DELETE')
+        </form>
+    @endforeach
+
     {{-- MODAL POP-UP KONFIRMASI HAPUS --}}
     <div id="deleteModal" class="fixed inset-0 z-50 hidden">
-        <!-- Backdrop Blur -->
         <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300"
             onclick="closeDeleteModal()"></div>
 
-        <!-- Modal Content -->
         <div class="fixed inset-0 flex items-center justify-center p-4">
             <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative transform transition-all duration-300 scale-95 opacity-0"
                 id="modalContent">
-                <!-- Icon Warning dengan Animasi -->
                 <div class="flex justify-center mb-6">
                     <div class="relative">
                         <div class="absolute inset-0 bg-red-400 rounded-full animate-ping opacity-75"></div>
@@ -253,19 +282,15 @@
                     </div>
                 </div>
 
-                <!-- Title -->
                 <h3 class="text-2xl font-bold text-gray-800 text-center mb-4">
                     Yakin Ingin Menghapus?
                 </h3>
 
-                <!-- Message -->
                 <p class="text-gray-600 text-center mb-2">
                     Anda akan menghapus kategori:
                 </p>
                 <div class="bg-gray-50 rounded-lg p-3 mb-4">
-                    <p class="text-lg font-semibold text-gray-800 text-center" id="categoryName">
-                        <!-- Nama kategori akan muncul disini -->
-                    </p>
+                    <p class="text-lg font-semibold text-gray-800 text-center" id="categoryName"></p>
                 </div>
                 <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
                     <p class="text-sm text-red-600 text-center flex items-center justify-center gap-2">
@@ -274,13 +299,12 @@
                     </p>
                 </div>
 
-                <!-- Buttons -->
                 <div class="flex gap-3">
                     <button onclick="closeDeleteModal()"
                         class="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-all duration-200 hover:shadow-md">
                         <i class="fa fa-times mr-2"></i>Batal
                     </button>
-                    <button onclick="confirmDelete()"
+                    <button onclick="confirmDelete()" id="confirmDeleteBtn"
                         class="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-200 hover:shadow-lg">
                         <i class="fa fa-trash mr-2"></i>Hapus
                     </button>
@@ -291,7 +315,6 @@
 
     @push('styles')
         <style>
-            /* Custom Pagination Styles */
             .pagination-wrapper nav {
                 display: flex;
                 gap: 0.5rem;
@@ -341,26 +364,22 @@
                 cursor: not-allowed;
             }
 
-            /* Search Input Animation */
             #searchInput:focus {
                 animation: searchPulse 0.3s ease;
             }
 
             @keyframes searchPulse {
-                0% {
+
+                0%,
+                100% {
                     transform: scale(1);
                 }
 
                 50% {
                     transform: scale(1.02);
                 }
-
-                100% {
-                    transform: scale(1);
-                }
             }
 
-            /* Hover Animation for Table Rows */
             tbody tr {
                 transition: all 0.2s ease;
             }
@@ -369,7 +388,22 @@
                 transform: scale(1.005);
             }
 
-            /* Modal Animation */
+            .animate-fade-in {
+                animation: fadeIn 0.3s ease-in;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
             #deleteModal.show #modalContent {
                 animation: modalSlideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
             }
@@ -385,14 +419,6 @@
                     transform: scale(1) translateY(0);
                 }
             }
-
-            /* Mobile Responsive Badge */
-            @media (max-width: 1024px) {
-                .mobile-badge-show {
-                    display: inline-flex !important;
-                    margin-left: 0.5rem;
-                }
-            }
         </style>
     @endpush
 
@@ -400,28 +426,34 @@
         <script>
             let selectedCategoryId = null;
 
-            // Fungsi untuk menampilkan modal delete
             function showDeleteModal(categoryName, categoryId) {
                 selectedCategoryId = categoryId;
-                document.getElementById('categoryName').textContent = categoryName;
+
+                const categoryNameEl = document.getElementById('categoryName');
                 const modal = document.getElementById('deleteModal');
                 const modalContent = document.getElementById('modalContent');
 
+                if (!categoryNameEl || !modal || !modalContent) {
+                    console.error('Modal elements not found');
+                    return;
+                }
+
+                categoryNameEl.textContent = categoryName;
                 modal.classList.remove('hidden');
                 modal.classList.add('show');
-                document.body.style.overflow = 'hidden'; // Prevent scrolling
+                document.body.style.overflow = 'hidden';
 
-                // Trigger animation
                 setTimeout(() => {
                     modalContent.style.opacity = '1';
                     modalContent.style.transform = 'scale(1) translateY(0)';
                 }, 10);
             }
 
-            // Fungsi untuk menutup modal
             function closeDeleteModal() {
                 const modal = document.getElementById('deleteModal');
                 const modalContent = document.getElementById('modalContent');
+
+                if (!modal || !modalContent) return;
 
                 modalContent.style.opacity = '0';
                 modalContent.style.transform = 'scale(0.95) translateY(-20px)';
@@ -429,42 +461,89 @@
                 setTimeout(() => {
                     modal.classList.add('hidden');
                     modal.classList.remove('show');
-                    document.body.style.overflow = 'auto'; // Enable scrolling
+                    document.body.style.overflow = 'auto';
                     selectedCategoryId = null;
                 }, 300);
             }
 
-            // Fungsi untuk konfirmasi hapus
             function confirmDelete() {
-                if (selectedCategoryId) {
-                    document.getElementById('delete-form-' + selectedCategoryId).submit();
+                if (!selectedCategoryId) {
+                    console.error('No category selected');
+                    alert('Terjadi kesalahan. Silakan refresh halaman.');
+                    return;
                 }
+
+                const form = document.getElementById('delete-form-' + selectedCategoryId);
+
+                if (!form) {
+                    console.error('Delete form not found for category ID:', selectedCategoryId);
+                    alert('Form tidak ditemukan. Silakan refresh halaman.');
+                    return;
+                }
+
+                const deleteBtn = document.getElementById('confirmDeleteBtn');
+                if (deleteBtn) {
+                    deleteBtn.disabled = true;
+                    deleteBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i>Menghapus...';
+                }
+
+                console.log('Submitting delete form for category ID:', selectedCategoryId);
+                form.submit();
             }
 
             // Close modal dengan tombol ESC
             document.addEventListener('keydown', function(event) {
                 if (event.key === 'Escape') {
                     const modal = document.getElementById('deleteModal');
-                    if (!modal.classList.contains('hidden')) {
+                    if (modal && !modal.classList.contains('hidden')) {
                         closeDeleteModal();
                     }
                 }
             });
 
             // Simple Search Filter
-            document.getElementById('searchInput').addEventListener('input', function(e) {
-                const searchTerm = e.target.value.toLowerCase();
-                const tableRows = document.querySelectorAll('tbody tr');
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    const searchTerm = e.target.value.toLowerCase();
+                    const tableRows = document.querySelectorAll('tbody tr');
 
-                tableRows.forEach(row => {
-                    const categoryName = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
-                    const slug = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() || '';
+                    tableRows.forEach(row => {
+                        // Skip empty state row
+                        if (row.querySelector('td[colspan]')) {
+                            return;
+                        }
 
-                    if (categoryName.includes(searchTerm) || slug.includes(searchTerm)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
+                        const categoryName = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() ||
+                            '';
+                        const slug = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() || '';
+
+                        if (categoryName.includes(searchTerm) || slug.includes(searchTerm)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Auto-hide alerts after 5 seconds
+            document.addEventListener('DOMContentLoaded', function() {
+                const alerts = document.querySelectorAll('.animate-fade-in');
+                alerts.forEach(alert => {
+                    setTimeout(() => {
+                        alert.style.transition = 'opacity 0.5s ease';
+                        alert.style.opacity = '0';
+                        setTimeout(() => alert.remove(), 500);
+                    }, 5000);
+                });
+
+                // Debug: Log untuk memastikan forms ada
+                const deleteForms = document.querySelectorAll('[id^="delete-form-"]');
+                console.log('🔍 Found', deleteForms.length, 'delete forms');
+
+                deleteForms.forEach(form => {
+                    console.log('Form ID:', form.id, 'Action:', form.action);
                 });
             });
         </script>

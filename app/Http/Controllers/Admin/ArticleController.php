@@ -9,7 +9,9 @@ use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class ArticleController extends Controller
 {
@@ -144,19 +146,59 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        // Hapus featured image jika ada
-        if ($article->featured_image) {
-            Storage::disk('public')->delete($article->featured_image);
+        try {
+            DB::beginTransaction();
+
+            // Log untuk debugging
+            Log::info('Attempting to delete article', [
+                'article_id' => $article->id,
+                'title' => $article->title,
+                'user_id' => Auth::id()
+            ]);
+
+            // 1. Hapus featured image jika ada
+            if ($article->featured_image) {
+                if (Storage::disk('public')->exists($article->featured_image)) {
+                    Storage::disk('public')->delete($article->featured_image);
+                    Log::info('Deleted featured image', ['path' => $article->featured_image]);
+                }
+            }
+
+            // 2. Hapus gambar dari konten artikel
+            $deletedContentImages = $this->cleanupContentImages($article->content);
+            Log::info('Deleted content images', ['count' => count($deletedContentImages)]);
+
+            // 3. Simpan informasi artikel sebelum dihapus (untuk log)
+            $articleTitle = $article->title;
+            $articleId = $article->id;
+
+            // 4. Hapus artikel dari database
+            $article->delete();
+
+            DB::commit();
+
+            Log::info('Article deleted successfully', [
+                'article_id' => $articleId,
+                'title' => $articleTitle
+            ]);
+
+            return redirect()
+                ->route('admin.articles.index')
+                ->with('success', "🗑️ Artikel \"$articleTitle\" berhasil dihapus!");
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Failed to delete article', [
+                'article_id' => $article->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()
+                ->back()
+                ->with('error', '❌ Gagal menghapus artikel: ' . $e->getMessage());
         }
-
-        // Hapus gambar dari konten artikel (opsional)
-        $this->cleanupContentImages($article->content);
-
-        $article->delete();
-
-        return redirect()
-            ->route('admin.articles.index')
-            ->with('success', '🗑️ Artikel berhasil dihapus!');
     }
 
     /**
@@ -164,7 +206,7 @@ class ArticleController extends Controller
      */
     public function uploadImage(Request $request)
     {
-        \Log::info('CKEditor Upload Request', [
+        Log::info('CKEditor Upload Request', [
             'has_file' => $request->hasFile('upload'),
             'all_files' => $request->allFiles(),
         ]);
@@ -197,7 +239,7 @@ class ArticleController extends Controller
             // Buat nama file unik
             $filename = 'article_' . time() . '_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
             
-            \Log::info('Uploading CKEditor image', [
+            Log::info('Uploading CKEditor image', [
                 'filename' => $filename,
                 'original_name' => $file->getClientOriginalName(),
                 'size' => $file->getSize(),
@@ -219,7 +261,7 @@ class ArticleController extends Controller
             // URL untuk akses file
             $url = asset('storage/' . $path);
 
-            \Log::info('CKEditor image uploaded successfully', [
+            Log::info('CKEditor image uploaded successfully', [
                 'path' => $path,
                 'url' => $url
             ]);
@@ -236,7 +278,7 @@ class ArticleController extends Controller
             ]);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::error('CKEditor validation error', ['errors' => $e->errors()]);
+            Log::error('CKEditor validation error', ['errors' => $e->errors()]);
             return response()->json([
                 'uploaded' => 0,
                 'error' => [
@@ -244,7 +286,7 @@ class ArticleController extends Controller
                 ]
             ], 422);
         } catch (\Exception $e) {
-            \Log::error('CKEditor upload error', [
+            Log::error('CKEditor upload error', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -259,25 +301,128 @@ class ArticleController extends Controller
 
     /**
      * Helper: Cleanup images from content when deleting article
+     * 
+     * @param string $content HTML content containing images
+     * @return array Paths of deleted images
      */
     private function cleanupContentImages($content)
     {
-        // Extract semua URL gambar dari konten HTML
-        preg_match_all('/<img[^>]+src="([^">]+)"/', $content, $matches);
-        
-        if (!empty($matches[1])) {
-            foreach ($matches[1] as $imageUrl) {
-                // Extract path dari URL (misal: storage/articles/content/xxx.jpg)
-                if (strpos($imageUrl, 'storage/articles/content/') !== false) {
-                    $path = str_replace(asset('storage/'), '', $imageUrl);
+        $deletedImages = [];
+
+        try {
+            // Extract semua URL gambar dari konten HTML
+            // Pola regex yang lebih robust untuk menangkap berbagai format URL
+            preg_match_all('/<img[^>]+src=["\']([^"\']+)["\'][^>]*>/i', $content, $matches);
+            
+            if (!empty($matches[1])) {
+                foreach ($matches[1] as $imageUrl) {
+                    // Normalisasi URL untuk mendapatkan path relatif
+                    $path = $this->extractStoragePath($imageUrl);
                     
-                    // Hapus file jika ada
-                    if (Storage::disk('public')->exists($path)) {
-                        Storage::disk('public')->delete($path);
-                        \Log::info('Deleted content image: ' . $path);
+                    if ($path && Storage::disk('public')->exists($path)) {
+                        try {
+                            Storage::disk('public')->delete($path);
+                            $deletedImages[] = $path;
+                            Log::info('Deleted content image', ['path' => $path]);
+                        } catch (\Exception $e) {
+                            Log::warning('Failed to delete content image', [
+                                'path' => $path,
+                                'error' => $e->getMessage()
+                            ]);
+                        }
                     }
                 }
             }
+        } catch (\Exception $e) {
+            Log::error('Error during content images cleanup', [
+                'error' => $e->getMessage()
+            ]);
+        }
+
+        return $deletedImages;
+    }
+
+    /**
+     * Extract storage path from full URL
+     * 
+     * @param string $url Full URL or path
+     * @return string|null Storage path relative to public disk
+     */
+    private function extractStoragePath($url)
+    {
+        // Hapus base URL jika ada
+        $url = str_replace([
+            url('storage/'),
+            asset('storage/'),
+            '/storage/',
+            'storage/'
+        ], '', $url);
+
+        // Hanya proses jika path termasuk articles/
+        if (strpos($url, 'articles/') === 0 || strpos($url, '/articles/') === 0) {
+            return ltrim($url, '/');
+        }
+
+        return null;
+    }
+
+    /**
+     * Batch delete articles (optional - untuk future feature)
+     */
+    public function batchDestroy(Request $request)
+    {
+        $request->validate([
+            'article_ids' => 'required|array',
+            'article_ids.*' => 'exists:articles,id'
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $deletedCount = 0;
+            $errors = [];
+
+            foreach ($request->article_ids as $articleId) {
+                try {
+                    $article = Article::findOrFail($articleId);
+                    
+                    // Hapus featured image
+                    if ($article->featured_image && Storage::disk('public')->exists($article->featured_image)) {
+                        Storage::disk('public')->delete($article->featured_image);
+                    }
+                    
+                    // Hapus content images
+                    $this->cleanupContentImages($article->content);
+                    
+                    // Hapus artikel
+                    $article->delete();
+                    $deletedCount++;
+                    
+                } catch (\Exception $e) {
+                    $errors[] = "Gagal menghapus artikel ID {$articleId}: " . $e->getMessage();
+                    Log::error('Batch delete error', [
+                        'article_id' => $articleId,
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            if ($deletedCount > 0) {
+                $message = "✅ Berhasil menghapus {$deletedCount} artikel.";
+                if (!empty($errors)) {
+                    $message .= " Namun ada beberapa error: " . implode(', ', $errors);
+                }
+                return redirect()->back()->with('success', $message);
+            }
+
+            return redirect()->back()->with('error', '❌ Gagal menghapus artikel: ' . implode(', ', $errors));
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Batch delete failed', ['error' => $e->getMessage()]);
+            return redirect()->back()->with('error', '❌ Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 }

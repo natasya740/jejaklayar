@@ -18,12 +18,16 @@ use App\Http\Controllers\PustakaController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TentangController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PublicController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\HelpController;
-
+use App\Http\Controllers\Kontributor\ArticleController as KontributorArticleController;
+use App\Http\Controllers\Kontributor\DashboardController as KontributorDashboardController;
 Route::get('/faq', [HelpController::class, 'faq'])->name('faq');
 Route::get('/panduan', [HelpController::class, 'panduan'])->name('panduan');
-
+Route::get('/search', [PublicController::class, 'search'])->name('search');
+Route::get('/kategori/{slug}', [PublicController::class, 'category'])->name('category.show');
+Route::get('/kategori/{categorySlug}/{subCategorySlug}', [PublicController::class, 'subCategory'])->name('subcategory.show');
 /*
 |--------------------------------------------------------------------------
 | Halaman Umum (Publik)
@@ -38,7 +42,10 @@ Route::get('/search', [SearchController::class, 'index'])->name('search');
 Route::get('/budaya', [BudayaController::class, 'index'])->name('budaya');
 Route::get('/pustaka', [PustakaController::class, 'index'])->name('pustaka');
 Route::get('/tentang', [TentangController::class, 'index'])->name('tentang');
-
+// Tambahkan route ini di bagian Halaman Umum (Publik), setelah route subcategory
+Route::get('/kategori/{categorySlug}/{subCategorySlug}/{articleSlug}', 
+    [PublicController::class, 'article']
+)->name('article.show');
 /*
 |--------------------------------------------------------------------------
 | Dashboard User (hanya setelah login)
@@ -81,25 +88,41 @@ Route::post('/team', [AuthController::class, 'loginAdmin'])->name('login.admin.p
 | Kontributor Area
 |--------------------------------------------------------------------------
 */
+// Route untuk Kontributor
 Route::middleware(['auth', 'checkrole:kontributor'])
     ->prefix('kontributor')
     ->name('kontributor.')
     ->group(function () {
 
-        Route::get('/dashboard', [KontributorController::class, 'index'])->name('dashboard');
+        // Dashboard
+        Route::get('/dashboard', [App\Http\Controllers\Kontributor\DashboardController::class, 'index'])->name('dashboard');
+        
 
         // Profil kontributor
         Route::get('/profil', [ProfileController::class, 'index'])->name('profil');
         Route::get('/profil/edit', [ProfileController::class, 'edit'])->name('profil.edit');
         Route::post('/profil/update', [ProfileController::class, 'update'])->name('profil.update');
 
-        // Artikel kontributor
-        Route::prefix('artikel')->name('artikel.')->group(function () {
-            Route::get('/', [KontributorController::class, 'indexArticles'])->name('index');
-            Route::get('/baru', [KontributorController::class, 'showArticleForm'])->name('create');
-            Route::post('/store', [KontributorController::class, 'storeContent'])->name('store');
-            Route::get('/{artikel}', [KontributorController::class, 'showArticle'])->name('show')
-                ->whereNumber('artikel');
+        // Artikel kontributor - menggunakan ArticleController
+        Route::prefix('articles')->name('articles.')->group(function () {
+            // List artikel
+            Route::get('/', [KontributorArticleController::class, 'index'])->name('index');
+            
+            // Create artikel
+            Route::get('/create', [KontributorArticleController::class, 'create'])->name('create');
+            Route::post('/', [KontributorArticleController::class, 'store'])->name('store');
+            
+            // Upload image untuk CKEditor
+            Route::post('/upload-image', [KontributorArticleController::class, 'uploadImage'])->name('upload-image');
+            
+            // Get subcategories by category (AJAX)
+            Route::get('/subcategories', [KontributorArticleController::class, 'getSubCategories'])->name('subcategories');
+            
+            // Show, Edit, Update, Delete artikel
+            Route::get('/{article}', [KontributorArticleController::class, 'show'])->name('show');
+            Route::get('/{article}/edit', [KontributorArticleController::class, 'edit'])->name('edit');
+            Route::put('/{article}', [KontributorArticleController::class, 'update'])->name('update');
+            Route::delete('/{article}', [KontributorArticleController::class, 'destroy'])->name('destroy');
         });
     });
 

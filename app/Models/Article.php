@@ -11,6 +11,9 @@ class Article extends Model
 {
     use HasFactory;
 
+    public $incrementing = true;
+    protected $keyType = 'int';
+
     protected $fillable = [
         'user_id',
         'category_id',
@@ -46,6 +49,12 @@ class Article extends Model
         return $this->belongsTo(SubCategory::class);
     }
 
+    // Relasi Polymorphic ke Files
+    public function files()
+    {
+        return $this->morphMany(File::class, 'fileable');
+    }
+
     // Auto generate slug
     protected static function boot()
     {
@@ -70,5 +79,23 @@ class Article extends Model
         return $query->where('status', 'published')
                     ->whereNotNull('published_at')
                     ->where('published_at', '<=', now());
+    }
+
+    // Scope untuk artikel milik user tertentu
+    public function scopeByUser($query, $userId)
+    {
+        return $query->where('user_id', $userId);
+    }
+
+    // Scope untuk artikel pending (menunggu approval)
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
+    }
+
+    // Scope untuk artikel draft
+    public function scopeDraft($query)
+    {
+        return $query->where('status', 'draft');
     }
 }

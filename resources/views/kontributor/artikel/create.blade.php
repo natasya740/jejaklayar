@@ -11,7 +11,7 @@
         <nav class="flex mb-6" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-2 text-sm">
                 <li class="inline-flex items-center">
-                    <a href="{{ route('kontributor.artikel.index') }}"
+                    <a href="{{ route('kontributor.articles.index') }}"
                         class="text-[color:var(--muted)] hover:text-[color:var(--yellow-2)] transition-colors">
                         <i class="fa fa-newspaper mr-1"></i>Artikel
                     </a>
@@ -324,7 +324,7 @@
                             <i class="fa fa-save"></i>
                             <span>💾 Simpan Artikel</span>
                         </button>
-                        <a href="{{ route('kontributor.artikel.index') }}"
+                        <a href="{{ route('kontributor.articles.index') }}"
                             class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-300 text-[color:var(--text-dark)] font-semibold rounded-lg hover:bg-gray-50 transition-all duration-200">
                             <i class="fa fa-times-circle"></i>
                             <span>Batal</span>

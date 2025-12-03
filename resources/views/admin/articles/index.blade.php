@@ -226,14 +226,6 @@
                                         @csrf
                                         @method('DELETE')
                                     </form>
-                                    
-                                    {{-- Tombol Hapus dengan Pop-up --}}
-                                    <button type="button"
-                                            onclick="showDeleteModal('{{ $article->title }}', {{ $article->id }})"
-                                            class="w-8 h-8 flex items-center justify-center bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-all duration-200 hover:scale-110"
-                                            title="Hapus">
-                                        <i class="fa fa-trash text-sm"></i>
-                                    </button>
                                 </div>
                             </td>
                         </tr>
