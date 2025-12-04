@@ -1,384 +1,662 @@
-/* ==================== VARIABLES ==================== */
-:root {
-  --yellow: #ffd95a;
-  --accent: #8e562c;
-  --text: #222;
-  --muted: #666;
-  --katalog: #f9f4ee;
-  --radius: 14px;
-  --max: 1100px;
+/**
+ * Budaya page styles (Jejak Layar).
+ *
+ * Tujuan:
+ * - Tampilan bersih, ringan, dan selaras dengan app.blade.php & style.css.
+ * - Fokus pada halaman Budaya: hero, intro, grid kategori, dan quote.
+ * - Tidak mengubah header, footer, atau layout global.
+ *
+ * Struktur:
+ * 1. Layout & wrapper
+ * 2. Hero Budaya
+ * 3. Intro "Mengenal Budaya"
+ * 4. Grid Kategori Budaya
+ * 5. Quote section
+ * 6. Scroll reveal (IntersectionObserver)
+ * 7. Responsive tweaks
+ */
+
+/* =========================================
+   1. LAYOUT & WRAPPER (.bd-page)
+   ========================================= */
+
+.bd-page {
+  /* Mengikuti background body dari app.blade (krem lembut) */
+  background: transparent;
+  padding: 1.5rem 0 3.5rem;
 }
 
-/* ==================== HERO SECTION (COMPACT & MATCH HTML STATIC) ==================== */
-section.hero {
-  /* Background kuning gradasi seperti HTML statis */
-  background: linear-gradient(180deg, rgba(255, 217, 90, 0.85), rgba(255, 217, 90, 0.75));
-  color: #000000;
-  
-  /* UKURAN HERO LEBIH KECIL - seperti HTML statis */
-  min-height: 62vh; /* Sama dengan HTML statis */
-  
-  /* Flexbox untuk posisi konten */
+/* Kontainer seragam dengan max-width di style.css / app */
+.bd-page .container {
+  max-width: var(--max-width, 1100px);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* =========================================
+   2. HERO BUDAYA
+   Markup: &lt;section class="hero bd-hero"&gt; ... &lt;/section&gt;
+   ========================================= */
+
+.bd-hero {
+  position: relative;
+  margin-top: 0.5rem;
+  /* Override .hero global: lebih pendek & rapat ke header */
+  min-height: 52vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  /* Reset margin agar tidak ada gap */
-  margin-top: 0;
-  margin-bottom: 0;
-  padding: 0;
-  
+  padding: 2.5rem 0 2.75rem;
+  color: #111827;
+}
+
+/* Latar belakang lembut, senada dengan tema kuning */
+.bd-hero-pattern {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.9), transparent 60%),
+    radial-gradient(circle at 100% 0%, rgba(255, 232, 170, 0.7), transparent 60%),
+    linear-gradient(180deg,
+      rgba(255, 217, 90, 0.9),
+      rgba(255, 217, 90, 0.8));
+  pointer-events: none;
+}
+
+/* Isi hero (teks kiri, ornamen kanan) */
+.bd-hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: var(--max-width, 1100px);
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 0 1.5rem;
+}
+
+.bd-hero-text {
+  max-width: 580px;
+}
+
+.bd-hero-eyebrow {
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: rgba(55, 65, 81, 0.85);
+  margin-bottom: 0.4rem;
+}
+
+.bd-hero h1 {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(2rem, 3vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: #1f2937;
+  margin: 0 0 0.75rem;
+}
+
+.bd-hero h1 .accent {
+  color: var(--accent, #8b5e3c);
+}
+
+/* Garis aksen di bawah judul */
+.bd-hero-underline {
+  width: 86px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #e8b84d, #8e562c);
+  box-shadow: 0 0 6px rgba(232, 184, 77, 0.4);
+  margin-bottom: 1.1rem;
+}
+
+.bd-hero .lead {
+  font-size: 1rem;
+  color: #374151;
+  opacity: 0.95;
+  max-width: 520px;
+}
+
+/* CTA hero – konsisten dengan .btn-primary tapi lebih halus */
+.bd-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem 1.2rem;
+  margin-top: 1.6rem;
+}
+
+.bd-hero-cta {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.8rem 1.7rem;
+  background: var(--accent, #8b5e3c);
+  color: #fff !important;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
+  position: relative;
+  overflow: hidden;
+  border: 2px solid transparent;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* Efek shine halus */
+.bd-hero-cta::after {
+  content: "";
+  position: absolute;
+  top: -120%;
+  left: -30%;
+  width: 60%;
+  height: 320%;
+  background: linear-gradient(120deg,
+      rgba(255, 255, 255, 0.18),
+      rgba(255, 255, 255, 0.6),
+      rgba(255, 255, 255, 0.12));
+  transform: translateX(-120%) rotate(18deg);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+
+.bd-hero-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.22);
+  background-color: #6d4428;
+  border-color: #fbbf24;
+}
+
+.bd-hero-cta:hover::after {
+  transform: translateX(220%) rotate(18deg);
+}
+
+/* Link sekunder ke intro */
+.bd-hero-secondary {
+  font-size: 0.95rem;
+  color: #4b5563;
+  text-decoration: none;
+  position: relative;
+}
+
+.bd-hero-secondary::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.08rem;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(75, 85, 99, 0.9),
+      transparent);
+  transform-origin: center;
+  transform: scaleX(0);
+  transition: transform 0.25s ease-out;
+}
+
+.bd-hero-secondary:hover::after {
+  transform: scaleX(1);
+}
+
+/* Ornamen bulat di kanan hero – simple orbit */
+.bd-hero-ornament {
+  width: 190px;
+  height: 190px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.9;
+  filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.22));
+  animation: bd-orb-float 10s ease-in-out infinite;
+}
+
+@keyframes bd-orb-float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Scroll indicator kecil di bawah hero */
+.bd-scroll-indicator {
+  position: absolute;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(55, 65, 81, 0.75);
+}
+
+.bd-scroll-line {
+  width: 1px;
+  height: 26px;
+  border-radius: 999px;
+  background: linear-gradient(to bottom,
+      rgba(55, 65, 81, 0),
+      rgba(55, 65, 81, 0.9),
+      rgba(55, 65, 81, 0));
   position: relative;
   overflow: hidden;
 }
 
-/* Konten hero (inner wrapper) */
-section.hero .hero-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  max-width: var(--max);
-  width: 100%;
-  padding: 40px 20px; /* ← UBAH NILAI INI untuk naik/turun posisi konten */
-  text-align: left;
+.bd-scroll-line::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  height: 40%;
+  top: -30%;
+  background-color: rgba(55, 65, 81, 0.9);
+  border-radius: 999px;
+  animation: bd-scroll-pulse 1.8s ease-in-out infinite;
 }
 
-/* Tipografi Judul - seperti HTML statis */
-section.hero h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(2rem, 4vw, 2.6rem); /* Responsive seperti HTML statis */
-  font-weight: 800;
-  margin-bottom: 8px; /* Jarak ke subtitle seperti HTML statis */
-  margin-top: 0; /* ← UBAH NILAI INI untuk naik/turun title secara spesifik */
-  color: #1f2937;
-  line-height: 1.2;
+@keyframes bd-scroll-pulse {
+  0% {
+    transform: translateY(0);
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: translateY(140%);
+    opacity: 0;
+  }
 }
 
-/* Aksen warna pada kata "Bengkalis" */
-section.hero h1 span,
-section.hero h1 .accent {
-  color: #8e562c;
-}
+/* =========================================
+   3. INTRO "MENGENAL BUDAYA"
+   ========================================= */
 
-/* Subtitle / lead text */
-section.hero p,
-section.hero .lead {
-  color: #374151;
-  opacity: 0.9;
-  max-width: 620px;
-  line-height: 1.7;
-  font-size: clamp(1rem, 2vw, 1.1rem);
-  margin-bottom: 12px; /* Jarak ke button seperti HTML statis */
-}
-
-/* Tombol Hero */
-.btn-hero,
-section.hero .btn.primary {
-  display: inline-block;
-  background-color: #8e562c;
-  color: #fff;
-  padding: 10px 16px;
-  border-radius: 10px;
-  font-weight: 700;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.btn-hero:hover,
-section.hero .btn.primary:hover {
-  background-color: #70401d;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* Ornament dekoratif (opsional) */
-.bd-hero-ornament {
-  width: 120px;
-  height: 120px;
-  opacity: 0.14;
-  filter: blur(1px);
-}
-
-/* ==================== INTRO (MENGENAL BUDAYA) ==================== */
-section.intro {
-  background: transparent;
-  padding: 44px 1rem;
+.bd-intro {
+  padding: 3rem 0 2rem;
   text-align: center;
 }
 
-section.intro h2,
-.section-title {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: 700;
-  color: #8e562c;
-  margin-bottom: 10px;
+.bd-intro .container {
+  max-width: var(--max-width, 1100px);
 }
 
-section.intro p,
-.section-sub {
-  max-width: 800px;
+/* Judul section intro */
+.bd-intro .section-title {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.7rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--accent, #8b5e3c);
+  margin-bottom: 0.75rem;
+}
+
+/* Garis aksen kecil di sebelah judul */
+.section-title-accent {
+  display: inline-block;
+  width: 80px;
+  height: 2px;
+  margin-left: 0.6rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #e8b84d, #8e562c);
+}
+
+.bd-intro .section-sub {
+  max-width: 760px;
   margin: 0 auto;
-  color: #000000;
+  color: var(--text, #222222);
   line-height: 1.8;
   font-size: clamp(1rem, 2vw, 1.05rem);
 }
 
-/* ==================== KATEGORI (GRID CARDS) ==================== */
-section.categories {
-  background: transparent;
-  padding: 20px 1rem 40px;
-  text-align: center;
+/* =========================================
+   4. GRID KATEGORI BUDAYA
+   ========================================= */
+
+.bd-kategori {
+  padding: 2rem 0 3.2rem;
 }
 
-section.categories h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(1.8rem, 3vw, 2.2rem);
+.bd-kategori .container {
+  max-width: var(--max-width, 1100px);
+}
+
+/* Header section kategori (judul + subjudul) */
+.bd-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
+  margin-bottom: 1.8rem;
+}
+
+.bd-kategori .section-title {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.9rem, 3vw, 2.2rem);
   font-weight: 700;
-  margin-bottom: 18px;
   color: #1f2937;
+  margin-bottom: 0.4rem;
 }
 
-/* Grid layout seperti HTML statis */
+.bd-section-subtitle {
+  max-width: 540px;
+  font-size: 0.95rem;
+  color: var(--muted, #666666);
+}
+
+/* Grid kartu kategori */
 .grid-categories,
 .grid-cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 kolom di desktop */
-  gap: 28px;
-  max-width: var(--max);
-  margin: 18px auto 0;
-  padding: 0 20px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin: 0 auto;
 }
 
-/* Card category style - mirip HTML statis */
-.card-category,
-.card {
+.bd-kategori-grid {
+  max-width: var(--max-width, 1100px);
+}
+
+/* Kartu kategori – tampilan sederhana, fokus gambar & overlay */
+.bd-card {
   position: relative;
-  height: 320px; /* Tinggi seperti HTML statis */
   border-radius: 16px;
   overflow: hidden;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.2, 1), box-shadow 0.3s ease;
+  text-decoration: none;
+  color: #ffffff;
+  height: 270px;
   display: flex;
   align-items: flex-end;
-  text-decoration: none;
-  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+  background: #000;
   transform-origin: center;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    opacity 0.6s ease,
+    transform 0.6s ease;
 }
 
-.card-category:hover,
-.card:hover {
-  transform: translateY(-10px) scale(1.02);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
-}
-
-/* Gambar card (jika pakai <img>) */
-.card-img {
+.bd-card-img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   z-index: 0;
+  transition: transform 0.6s ease;
 }
 
-/* Gradient Overlay hitam */
-.card-overlay,
-.card::after {
-  content: "";
+/* Overlay gelap tipis agar teks jelas */
+.bd-card-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.55));
+  background: linear-gradient(180deg,
+      rgba(0, 0, 0, 0.15),
+      rgba(0, 0, 0, 0.6));
   z-index: 1;
-  transition: background 0.3s;
 }
 
-.card-category:hover::after,
-.card:hover .card-overlay {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7));
-}
-
-/* Content/text di dalam card */
-.card-content,
-.card-body {
+/* Isi kartu */
+.bd-card-body {
   position: relative;
   z-index: 2;
-  padding: 22px;
-  color: white;
+  padding: 1.1rem 1.2rem;
   width: 100%;
   text-align: left;
 }
 
-.card-content h3,
-.card-body h3,
-.card h3 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(1.2rem, 2vw, 1.35rem);
+/* Badge kategori induk (Budaya) */
+.bd-card-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.14rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(232, 184, 77, 0.9);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #fdf3d9;
+  margin-bottom: 0.45rem;
+}
+
+.bd-card-title {
+  font-family: "Playfair Display", serif;
+  font-size: 1.2rem;
   font-weight: 700;
-  margin-bottom: 6px;
-  color: #fdfdfc; /* Putih gading seperti HTML statis */
+  margin-bottom: 0.2rem;
 }
 
-.card-content p,
-.card-body p,
-.card p {
-  font-size: 0.95rem;
-  opacity: 0.95;
-  color: rgba(255, 255, 255, 0.85); /* Abu terang seperti HTML statis */
-  margin: 0;
+.bd-card-text {
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.9);
 }
 
-/* Link di card (jika ada) */
-.card-link {
+/* Link kecil di bagian bawah card */
+.bd-card-link {
+  margin-top: 0.7rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #fcd34d;
+}
+
+.bd-card-link-arrow {
   display: inline-block;
-  color: var(--yellow);
-  font-weight: 700;
-  text-decoration: none;
-  padding: 6px 0;
+  transform: translateY(1px);
+  transition: transform 0.25s ease;
 }
 
-/* ==================== QUOTES SECTION ==================== */
-.bd-quote,
-section.quote {
-  padding: 36px 1rem;
-  background: linear-gradient(90deg, rgba(255, 217, 90, 0.474), rgba(255, 217, 90, 0.474));
+/* Hover card – sedikit naik & zoom gambar */
+.bd-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.22);
 }
 
-.quote-inner {
-  max-width: 880px;
-  margin: 0 auto;
+.bd-card:hover .bd-card-img {
+  transform: scale(1.05);
+}
+
+.bd-card:hover .bd-card-link-arrow {
+  transform: translate(3px, 1px);
+}
+
+/* Variasi animasi kiri / kanan (kelas dari Blade) */
+.bd-card-left {
+  transform: translateY(18px);
+}
+
+.bd-card-right {
+  transform: translateY(18px);
+}
+
+/* State kosong jika belum ada sub‑kategori */
+.bd-grid-empty {
   text-align: center;
+  padding: 3rem 1.5rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px dashed rgba(156, 163, 175, 0.6);
+  color: var(--muted, #666666);
 }
 
-.quote,
-blockquote {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  color: var(--text);
-  min-height: 50px;
+/* =========================================
+   5. QUOTE SECTION
+   ========================================= */
+
+.bd-quote {
+  padding: 2.2rem 0 3rem;
+}
+
+.bd-quote .container {
+  max-width: 780px;
+}
+
+/* Blok quote kuning lembut di tengah */
+.quote-inner {
+  position: relative;
+  margin: 0 auto;
+  padding: 2rem 2.4rem;
+  border-radius: 18px;
+  background: linear-gradient(135deg,
+      rgba(255, 217, 90, 0.95),
+      rgba(255, 237, 160, 0.98));
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.bd-quote-decor {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.4), transparent 55%),
+    radial-gradient(circle at 100% 100%,
+      rgba(251, 191, 36, 0.5),
+      transparent 55%);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.quote {
   position: relative;
   margin: 0;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.4rem, 2.4vw, 1.8rem);
+  color: #1f2937;
+  min-height: 40px;
 }
 
+.quote-mark {
+  position: absolute;
+  top: -1.3rem;
+  left: -0.2rem;
+  font-size: 3.2rem;
+  color: rgba(142, 86, 44, 0.35);
+}
+
+/* Rotasi kutipan (sesuai script IntersectionObserver di Blade) */
 .q-item {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
+  inset: 0;
+  padding-left: 2.1rem;
   opacity: 0;
-  transform: translateY(8px);
-  transition: all 0.6s;
+  transform: translateY(6px);
+  transition:
+    opacity 0.6s ease-out,
+    transform 0.6s ease-out;
 }
 
 .q-item.show {
   opacity: 1;
-  transform: none;
-}
-
-/* ==================== WARISAN/CLOSING SECTION ==================== */
-.bd-closing,
-section.warisan {
-  min-height: 280px;
-  background: url('../FOTO/Peta\ Bengkalis.webp') center/cover no-repeat fixed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  transform: translateY(0);
   position: relative;
-  margin-top: 18px;
-  text-align: center;
-  color: white;
 }
 
-.bd-closing-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4));
+/* =========================================
+   6. SCROLL REVEAL (IntersectionObserver)
+   Script di Blade menambah .in pada:
+   - .card, .bd-hero-text, .bd-intro .container, .quote-inner
+   ========================================= */
+
+.bd-hero-text,
+.bd-intro .container,
+.quote-inner,
+.bd-card {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.7s ease-out,
+    transform 0.7s ease-out;
 }
 
-.bd-closing-inner,
-section.warisan h2,
-section.warisan p {
-  position: relative;
-  z-index: 2;
-  color: #fff;
+.bd-hero-text.in,
+.bd-intro .container.in,
+.quote-inner.in,
+.bd-card.in {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.bd-closing-inner h2,
-section.warisan h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  margin-bottom: 8px;
-}
+/* =========================================
+   7. RESPONSIVE TWEAKS
+   ========================================= */
 
+@media (max-width: 960px) {
+  .bd-hero-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-/* ==================== RESPONSIVE ==================== */
-@media (max-width: 1024px) {
+  .bd-hero-ornament {
+    margin-top: 1.5rem;
+    margin-inline: auto;
+  }
+
+  .bd-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .grid-categories,
   .grid-cards {
-    grid-template-columns: repeat(2, 1fr); /* 2 kolom di tablet */
-  }
-  
-  section.hero .hero-content {
-    padding: 30px 20px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 768px) {
-  section.hero {
-    min-height: 50vh; /* Lebih kecil di mobile */
+@media (max-width: 640px) {
+  .bd-hero {
+    padding: 2rem 0 2.3rem;
+    min-height: 46vh;
   }
 
-  section.hero .hero-content {
-    flex-direction: column;
-    text-align: center;
-    padding: 30px 16px;
+  .bd-hero-inner {
+    padding: 0 1.25rem;
+    gap: 1.6rem;
   }
 
-  section.hero h1 {
-    font-size: 1.8rem;
+  .bd-hero h1 {
+    font-size: 1.9rem;
   }
 
-  section.hero p {
+  .bd-hero .lead {
     max-width: 100%;
   }
 
+  .bd-scroll-indicator {
+    bottom: 1.1rem;
+  }
+
   .grid-categories,
   .grid-cards {
-    grid-template-columns: 1fr; /* 1 kolom di mobile */
-    gap: 20px;
-    padding: 0 16px;
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
   }
 
-  .card-category,
-  .card {
-    height: 300px;
+  .bd-card {
+    height: 250px;
   }
 
-  .bd-closing,
-  section.warisan {
-    background-attachment: scroll;
-  }
-}
-
-@media (max-width: 480px) {
-  section.hero h1 {
-    font-size: 1.6rem;
+  .quote-inner {
+    padding: 1.8rem 1.6rem;
   }
 
-  .btn-hero,
-  section.hero .btn.primary {
-    padding: 10px 20px;
-    font-size: 0.9rem;
-  }
-
-  section.intro,
-  section.categories {
-    padding: 30px 16px;
+  .q-item {
+    padding-left: 1.6rem;
   }
 }
