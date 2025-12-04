@@ -1,87 +1,113 @@
 @extends('layouts.dashboard_kontributor')
 
-{{-- 
-|--------------------------------------------------------------------------
-| Pengaturan Judul Halaman dan Subtitle
-|--------------------------------------------------------------------------
-| 
-| Mengisi yield('title') di <title> HTML dan yield('page-title') di Topbar.
-|
---}}
-
 @section('title', 'Dashboard Kontributor')
+@section('page-title', 'Dashboard')
+@section('page-subtitle', 'Selamat datang kembali, ' . auth()->user()->name)
 
-@section('page-title', 'Dashboard Kontributor')
-
-{{-- Opsional: Jika layout Anda memiliki section 'page-subtitle' --}}
-@section('page-subtitle', 'Ringkasan dan statistik Anda')
-
-
-{{-- 
-|--------------------------------------------------------------------------
-| Konten Utama Halaman
-|--------------------------------------------------------------------------
-| 
-| Semua konten spesifik halaman diletakkan di dalam section 'content'.
-| Ini akan mengisi area @yield('content') di layout.
-|
---}}
 @section('content')
-
-    {{-- STATISTIK/KARTU RINGKASAN --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-        
-        {{-- Card 1: Total Artikel --}}
-        <div class="card p-6 bg-white shadow-premium rounded-xl">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Total Artikel -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-500">Total Artikel</p>
-                    {{-- Ganti '42' dengan variabel data Anda, misalnya: {{ $total_articles }} --}}
-                    <p class="text-3xl font-bold mt-1 text-primary-dark">42</p>
+                    <p class="text-gray-500 text-sm font-medium">Total Artikel</p>
+                    <h3 class="text-3xl font-bold text-gray-900 mt-2">{{ $totalArticles ?? 0 }}</h3>
                 </div>
-                <i class="fa fa-file-alt text-4xl text-primary-light"></i>
+                <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
+                    <i class="fa fa-file-alt text-blue-600 text-xl"></i>
+                </div>
             </div>
         </div>
 
-        {{-- Card 2: Artikel Dipublikasi --}}
-        <div class="card p-6 bg-white shadow-premium rounded-xl">
+        <!-- Artikel Disetujui -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-500">Dipublikasi</p>
-                    {{-- Ganti '30' dengan variabel data Anda, misalnya: {{ $published_articles }} --}}
-                    <p class="text-3xl font-bold mt-1 text-green-600">30</p>
+                    <p class="text-gray-500 text-sm font-medium">Disetujui</p>
+                    <h3 class="text-3xl font-bold text-green-600 mt-2">{{ $approvedArticles ?? 0 }}</h3>
                 </div>
-                <i class="fa fa-check-circle text-4xl text-green-300"></i>
+                <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center">
+                    <i class="fa fa-check-circle text-green-600 text-xl"></i>
+                </div>
             </div>
         </div>
 
-        {{-- Card 3: Menunggu Review --}}
-        <div class="card p-6 bg-white shadow-premium rounded-xl">
+        <!-- Artikel Pending -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-500">Menunggu Review</p>
-                    {{-- Ganti '12' dengan variabel data Anda, misalnya: {{ $pending_articles }} --}}
-                    <p class="text-3xl font-bold mt-1 text-yellow-600">12</p>
+                    <p class="text-gray-500 text-sm font-medium">Menunggu Review</p>
+                    <h3 class="text-3xl font-bold text-yellow-600 mt-2">{{ $pendingArticles ?? 0 }}</h3>
                 </div>
-                <i class="fa fa-hourglass-half text-4xl text-yellow-300"></i>
+                <div class="w-14 h-14 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <i class="fa fa-clock text-yellow-600 text-xl"></i>
+                </div>
             </div>
         </div>
     </div>
-    
-    {{-- AKSI CEPAT --}}
-    <div class="card bg-white shadow-premium rounded-xl p-6">
-        <h2 class="text-xl font-semibold mb-4 border-b pb-2">Aksi Cepat</h2>
-        {{-- Ganti '#'' dengan route yang sebenarnya --}}
-        <a href="{{ route('kontributor.articles.create') }}" class="btn btn-primary bg-primary-dark hover:bg-primary text-white font-medium py-2 px-4 rounded transition duration-200 inline-flex items-center">
-            <i class="fa fa-pen-nib mr-2"></i> Tulis Artikel Baru
+
+    <!-- Quick Actions -->
+    <div class="bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-xl shadow-lg p-8 mb-8 text-white">
+        <h2 class="text-2xl font-bold mb-4">Mulai Berkontribusi</h2>
+        <p class="mb-6 opacity-90">Bagikan pengetahuan dan cerita Anda tentang budaya Melayu Bengkalis</p>
+        <a href="{{ route('kontributor.articles.create') }}"
+            class="inline-flex items-center gap-2 bg-white text-yellow-600 px-6 py-3 rounded-lg font-semibold hover:shadow-xl transition-all">
+            <i class="fa fa-plus-circle"></i>
+            <span>Upload Artikel Baru</span>
         </a>
     </div>
 
-    {{-- Contoh Tabel Terbaru --}}
-    <div class="mt-6 card bg-white shadow-premium rounded-xl p-6">
-        <h2 class="text-xl font-semibold mb-4 border-b pb-2">Artikel Terbaru Anda</h2>
-        {{-- Tempatkan Tabel Daftar Artikel di sini --}}
-        <p class="text-gray-500">Tabel data atau grafik akan ditampilkan di sini.</p>
-    </div>
+    <!-- Recent Articles -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100">
+            <h3 class="text-lg font-bold text-gray-900">Artikel Terbaru Saya</h3>
+        </div>
 
+        <div class="divide-y divide-gray-100">
+            @forelse($recentArticles ?? [] as $article)
+                <div class="px-6 py-4 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 mb-1">{{ $article->title }}</h4>
+                            <p class="text-sm text-gray-500">{{ $article->created_at->diffForHumans() }}</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            @if ($article->status === 'approved')
+                                <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+                                    Disetujui
+                                </span>
+                            @elseif($article->status === 'pending')
+                                <span class="px-3 py-1 bg-yellow-100 text-yellow-700 text-xs font-semibold rounded-full">
+                                    Pending
+                                </span>
+                            @elseif($article->status === 'rejected')
+                                <span class="px-3 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded-full">
+                                    Ditolak
+                                </span>
+                            @endif
+
+                            <a href="{{ route('kontributor.articles.show', $article->id) }}"
+                                class="text-yellow-600 hover:text-yellow-700">
+                                <i class="fa fa-eye"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="px-6 py-12 text-center text-gray-500">
+                    <i class="fa fa-inbox text-4xl mb-3 opacity-50"></i>
+                    <p>Belum ada artikel. Mulai berkontribusi sekarang!</p>
+                </div>
+            @endforelse
+        </div>
+
+        @if (($recentArticles ?? collect())->count() > 0)
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                <a href="{{ route('kontributor.articles.index') }}"
+                    class="text-yellow-600 hover:text-yellow-700 font-semibold text-sm">
+                    Lihat Semua Artikel →
+                </a>
+            </div>
+        @endif
+    </div>
 @endsection

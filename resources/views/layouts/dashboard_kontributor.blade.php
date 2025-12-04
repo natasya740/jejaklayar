@@ -348,6 +348,18 @@
       box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
       transition: all 0.3s ease;
       border: 3px solid white;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ✅ PERBAIKAN: Styling untuk IMG di dalam user-avatar */
+    .user-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
 
     .user-avatar:hover {
@@ -987,13 +999,19 @@
             </div>
           </div>
 
+          {{-- ✅ PERBAIKAN: User Avatar dengan Foto --}}
           <div class="user-info">
             <div class="user-details hidden sm:block">
               <div class="user-name">{{ auth()->user()->name ?? 'Pengguna' }}</div>
               <div class="user-role">{{ ucfirst(auth()->user()->role ?? 'kontributor') }}</div>
             </div>
             <div class="user-avatar">
-              {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
+              @if(auth()->user()->avatar)
+                <img src="{{ asset('storage/profile/' . auth()->user()->avatar) }}" 
+                     alt="{{ auth()->user()->name }}">
+              @else
+                {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
+              @endif
             </div>
           </div>
         </div>

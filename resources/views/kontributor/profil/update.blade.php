@@ -7,6 +7,19 @@
 @section('content')
 <div class="max-w-4xl mx-auto">
     
+    <!-- Success Message -->
+    @if(session('success'))
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center justify-between animate-fade-in">
+        <div class="flex items-center gap-2">
+            <i class="fa fa-check-circle"></i>
+            <span>{{ session('success') }}</span>
+        </div>
+        <button onclick="this.parentElement.remove()" class="text-green-700 hover:text-green-900">
+            <i class="fa fa-times"></i>
+        </button>
+    </div>
+    @endif
+
     <!-- Error Message -->
     @if(session('error'))
     <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center justify-between">
@@ -35,7 +48,7 @@
     </div>
     @endif
 
-    <form action="{{ route('kontributor.profil.update') }}" method="POST" enctype="multipart/form-data" id="profileForm">
+    <form action="{{ route('kontributor.profil.update') }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -65,46 +78,30 @@
                             @endif
                         </div>
                         
-                        <!-- Button Kamera - Edit Avatar -->
-                        <button type="button" 
-                                onclick="document.getElementById('avatar').click()"
-                                class="absolute -bottom-2 -right-2 bg-yellow-500 text-white rounded-full p-3 shadow-lg hover:bg-yellow-600 transition-all hover:scale-110 z-10"
-                                title="Ganti Foto Profil">
-                            <i class="fa fa-camera"></i>
-                        </button>
-
-                        <!-- Delete Avatar Button (if avatar exists) -->
-                        @if($user->avatar)
-                        <button type="button" 
-                                onclick="confirmDeleteAvatar()"
-                                class="absolute -bottom-2 -left-2 bg-red-500 text-white rounded-full p-3 shadow-lg hover:bg-red-600 transition-all hover:scale-110 z-10"
-                                title="Hapus Foto Profil">
-                            <i class="fa fa-trash text-xs"></i>
-                        </button>
-                        @endif
+                        <!-- Overlay Icon -->
+                        <div class="absolute inset-0 rounded-full bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" onclick="document.getElementById('avatar').click()">
+                            <i class="fa fa-camera text-white text-2xl"></i>
+                        </div>
                     </div>
 
-                    <!-- Upload Input (Hidden) -->
+                    <!-- Upload Input -->
                     <div class="flex-1 w-full">
                         <label for="avatar" class="block text-sm font-medium text-gray-700 mb-2">
                             Pilih Foto Baru
                         </label>
-                        
-                        <!-- Hidden File Input -->
                         <input type="file" 
                                name="avatar" 
                                id="avatar"
-                               accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                               accept="image/*"
                                onchange="previewAvatar(this)"
-                               class="hidden">
-                        
-                        <!-- Custom Button untuk Pilih File -->
-                        <button type="button" 
-                                onclick="document.getElementById('avatar').click()"
-                                class="w-full px-4 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-all font-semibold flex items-center justify-center gap-2 shadow-md">
-                            <i class="fa fa-camera"></i>
-                            <span>Pilih Foto dari Perangkat</span>
-                        </button>
+                               class="block w-full text-sm text-gray-500 
+                                      file:mr-4 file:py-3 file:px-4 
+                                      file:rounded-lg file:border-0 
+                                      file:text-sm file:font-semibold 
+                                      file:bg-yellow-500 file:text-white 
+                                      hover:file:bg-yellow-600 
+                                      file:cursor-pointer cursor-pointer
+                                      file:transition-colors">
                         
                         @error('avatar')
                         <p class="text-red-500 text-sm mt-2 flex items-center gap-1">
@@ -112,24 +109,14 @@
                         </p>
                         @enderror
 
-                        <!-- File Info -->
-                        <div id="fileInfo" class="mt-2 hidden">
-                            <div class="flex items-center gap-2 text-sm text-gray-600 bg-blue-50 px-3 py-2 rounded-lg">
-                                <i class="fa fa-file-image text-blue-500"></i>
-                                <span id="fileName"></span>
-                                <span class="text-gray-400">•</span>
-                                <span id="fileSize"></span>
-                            </div>
-                        </div>
-
                         <div class="mt-3 space-y-1">
                             <p class="text-xs text-gray-500 flex items-center gap-1">
                                 <i class="fa fa-info-circle text-blue-500"></i>
-                                Format: JPEG, JPG, PNG, GIF, WEBP
+                                Semua format gambar didukung
                             </p>
                             <p class="text-xs text-gray-500 flex items-center gap-1">
                                 <i class="fa fa-info-circle text-blue-500"></i>
-                                Ukuran maksimal: 10MB
+                                Tidak ada batasan ukuran file
                             </p>
                         </div>
                     </div>
@@ -219,7 +206,7 @@
                                 </li>
                                 <li class="flex items-start gap-2">
                                     <i class="fa fa-check text-blue-600 mt-1"></i>
-                                    <span>Ukuran foto maksimal 10MB untuk performa optimal</span>
+                                    <span>Tidak ada batasan ukuran file</span>
                                 </li>
                             </ul>
                         </div>
@@ -245,45 +232,13 @@
     </form>
 </div>
 
-<!-- Delete Avatar Form (hidden) -->
-<form id="deleteAvatarForm" action="{{ route('kontributor.profil.delete-avatar') }}" method="POST" class="hidden">
-    @csrf
-    @method('DELETE')
-</form>
-
 <script>
-// Preview avatar sebelum upload dengan validasi
+// Preview avatar before upload (TANPA VALIDASI UKURAN DAN FORMAT)
 function previewAvatar(input) {
     if (input.files && input.files[0]) {
         const file = input.files[0];
-        const fileInfo = document.getElementById('fileInfo');
-        const fileName = document.getElementById('fileName');
-        const fileSize = document.getElementById('fileSize');
         
-        // Validasi ukuran file (10MB = 10 * 1024 * 1024 bytes)
-        const maxSize = 10 * 1024 * 1024;
-        if (file.size > maxSize) {
-            alert('❌ Ukuran file terlalu besar!\nMaksimal 10MB\n\nUkuran file Anda: ' + formatFileSize(file.size));
-            input.value = '';
-            fileInfo.classList.add('hidden');
-            return;
-        }
-
-        // Validasi tipe file
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-        if (!allowedTypes.includes(file.type)) {
-            alert('❌ Format file tidak didukung!\nGunakan: JPEG, JPG, PNG, GIF, atau WEBP');
-            input.value = '';
-            fileInfo.classList.add('hidden');
-            return;
-        }
-
-        // Tampilkan info file
-        fileName.textContent = file.name;
-        fileSize.textContent = formatFileSize(file.size);
-        fileInfo.classList.remove('hidden');
-
-        // Preview gambar
+        // Preview image langsung tanpa validasi
         const reader = new FileReader();
         reader.onload = function(e) {
             const preview = document.getElementById('avatarPreview');
@@ -305,25 +260,9 @@ function previewAvatar(input) {
     }
 }
 
-// Format ukuran file
-function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-}
-
-// Konfirmasi hapus avatar
-function confirmDeleteAvatar() {
-    if (confirm('⚠️ Apakah Anda yakin ingin menghapus foto profil?')) {
-        document.getElementById('deleteAvatarForm').submit();
-    }
-}
-
 // Auto hide messages after 5 seconds
 setTimeout(() => {
-    const messages = document.querySelectorAll('.bg-green-100, .bg-red-100, .bg-blue-100');
+    const messages = document.querySelectorAll('.bg-green-100, .bg-red-100');
     messages.forEach(msg => {
         msg.style.transition = 'opacity 0.5s, transform 0.5s';
         msg.style.opacity = '0';
@@ -332,21 +271,17 @@ setTimeout(() => {
     });
 }, 5000);
 
-// Form validation before submit
-document.getElementById('profileForm').addEventListener('submit', function(e) {
-    const name = document.getElementById('name').value.trim();
-    const email = document.getElementById('email').value.trim();
-    
-    if (name === '' || email === '') {
-        e.preventDefault();
-        alert('⚠️ Nama dan Email wajib diisi!');
-        return false;
+// Add fade-in animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fade-in {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
     }
-    
-    // Show loading state
-    const submitBtn = this.querySelector('button[type="submit"]');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> <span>Menyimpan...</span>';
-});
+    .animate-fade-in {
+        animation: fade-in 0.3s ease-out;
+    }
+`;
+document.head.appendChild(style);
 </script>
 @endsection
