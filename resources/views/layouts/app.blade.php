@@ -86,7 +86,7 @@
                 @auth
                     <div class="user-menu">
                         <div class="user-toggle" id="user-menu-toggle">
-                            <img src="{{ asset('FOTO/avatar.png') }}"
+                            <img src="{{ asset('images/avatar.jpg') }}"
                                 onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=random'"
                                 alt="Profil" class="profile-img">
                             <span>{{ explode(' ', Auth::user()->name)[0] }} ▼</span>
@@ -150,7 +150,7 @@
         @auth
             <div class="mobile-user-section">
                 <div class="mobile-user-info">
-                    <img src="{{ asset('FOTO/avatar.png') }}"
+                    <img src="{{ asset('images/avatar.jpg') }}"
                         onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=random'"
                         alt="Profil" class="profile-img">
                     <span>{{ Auth::user()->name }}</span>
