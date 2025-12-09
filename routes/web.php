@@ -13,6 +13,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BudayaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HelpController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\Kontributor\ArticleController as KontributorArticleController;
 use App\Http\Controllers\Kontributor\DashboardController as KontributorDashboardController;
@@ -29,10 +30,8 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Homepage
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+// Homepage dengan Circular Gallery
+Route::get('/', [HomeController::class, 'index'])->name('home'); 
 
 // Search
 Route::get('/search', [SearchController::class, 'index'])->name('search');
@@ -104,7 +103,7 @@ Route::middleware(['auth', 'checkrole:kontributor'])
 
         /*
         |--------------------------------------------------------------------------
-        | Profil Kontributor - PERBAIKAN ROUTE
+        | Profil Kontributor
         |--------------------------------------------------------------------------
         */
         Route::prefix('profil')->name('profil.')->group(function () {
@@ -114,7 +113,7 @@ Route::middleware(['auth', 'checkrole:kontributor'])
             Route::delete('/avatar', [ProfileController::class, 'deleteAvatar'])->name('delete-avatar');
         });
 
-        // Shortcut route untuk profil (tanpa 'profil.' prefix)
+        // Shortcut route untuk profil (backward compatibility)
         Route::get('/profil', [ProfileController::class, 'index'])->name('profil');
 
         /*

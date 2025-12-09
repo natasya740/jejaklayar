@@ -26,7 +26,6 @@
   padding: 1.5rem 0 3.5rem;
 }
 
-/* Kontainer seragam dengan max-width di style.css / app */
 .bd-page .container {
   max-width: var(--max-width, 1100px);
   margin: 0 auto;
@@ -35,7 +34,6 @@
 
 /* =========================================
    2. HERO BUDAYA
-   Markup: &lt;section class="hero bd-hero"&gt; ... &lt;/section&gt;
    ========================================= */
 
 .bd-hero {
@@ -50,20 +48,15 @@
   color: #111827;
 }
 
-/* Latar belakang lembut, senada dengan tema kuning */
 .bd-hero-pattern {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.9), transparent 60%),
+  background: radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.9), transparent 60%),
     radial-gradient(circle at 100% 0%, rgba(255, 232, 170, 0.7), transparent 60%),
-    linear-gradient(180deg,
-      rgba(255, 217, 90, 0.9),
-      rgba(255, 217, 90, 0.8));
+    linear-gradient(180deg, rgba(255, 217, 90, 0.9), rgba(255, 217, 90, 0.8));
   pointer-events: none;
 }
 
-/* Isi hero (teks kiri, ornamen kanan) */
 .bd-hero-inner {
   position: relative;
   z-index: 1;
@@ -101,7 +94,6 @@
   color: var(--accent, #8b5e3c);
 }
 
-/* Garis aksen di bawah judul */
 .bd-hero-underline {
   width: 86px;
   height: 3px;
@@ -118,7 +110,7 @@
   max-width: 520px;
 }
 
-/* CTA hero – konsisten dengan .btn-primary tapi lebih halus */
+/* CTA hero */
 .bd-hero-actions {
   display: flex;
   flex-wrap: wrap;
@@ -142,14 +134,10 @@
   position: relative;
   overflow: hidden;
   border: 2px solid transparent;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    background-color 0.2s ease,
-    border-color 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 }
 
-/* Efek shine halus */
+/* Efek shine */
 .bd-hero-cta::after {
   content: "";
   position: absolute;
@@ -157,10 +145,7 @@
   left: -30%;
   width: 60%;
   height: 320%;
-  background: linear-gradient(120deg,
-      rgba(255, 255, 255, 0.18),
-      rgba(255, 255, 255, 0.6),
-      rgba(255, 255, 255, 0.12));
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.12));
   transform: translateX(-120%) rotate(18deg);
   transition: transform 0.7s ease;
   pointer-events: none;
@@ -177,7 +162,6 @@
   transform: translateX(220%) rotate(18deg);
 }
 
-/* Link sekunder ke intro */
 .bd-hero-secondary {
   font-size: 0.95rem;
   color: #4b5563;
@@ -192,10 +176,7 @@
   bottom: -0.08rem;
   width: 100%;
   height: 1px;
-  background: linear-gradient(90deg,
-      transparent,
-      rgba(75, 85, 99, 0.9),
-      transparent);
+  background: linear-gradient(90deg, transparent, rgba(75, 85, 99, 0.9), transparent);
   transform-origin: center;
   transform: scaleX(0);
   transition: transform 0.25s ease-out;
@@ -205,7 +186,6 @@
   transform: scaleX(1);
 }
 
-/* Ornamen bulat di kanan hero – simple orbit */
 .bd-hero-ornament {
   width: 190px;
   height: 190px;
@@ -230,7 +210,6 @@
   }
 }
 
-/* Scroll indicator kecil di bawah hero */
 .bd-scroll-indicator {
   position: absolute;
   left: 50%;
@@ -250,10 +229,7 @@
   width: 1px;
   height: 26px;
   border-radius: 999px;
-  background: linear-gradient(to bottom,
-      rgba(55, 65, 81, 0),
-      rgba(55, 65, 81, 0.9),
-      rgba(55, 65, 81, 0));
+  background: linear-gradient(to bottom, rgba(55, 65, 81, 0), rgba(55, 65, 81, 0.9), rgba(55, 65, 81, 0));
   position: relative;
   overflow: hidden;
 }
@@ -294,7 +270,6 @@
   max-width: var(--max-width, 1100px);
 }
 
-/* Judul section intro */
 .bd-intro .section-title {
   font-family: "Playfair Display", serif;
   font-size: clamp(1.7rem, 3vw, 2rem);
@@ -303,7 +278,6 @@
   margin-bottom: 0.75rem;
 }
 
-/* Garis aksen kecil di sebelah judul */
 .section-title-accent {
   display: inline-block;
   width: 80px;
@@ -333,7 +307,6 @@
   max-width: var(--max-width, 1100px);
 }
 
-/* Header section kategori (judul + subjudul) */
 .bd-section-header {
   display: flex;
   justify-content: space-between;
@@ -356,7 +329,6 @@
   color: var(--muted, #666666);
 }
 
-/* Grid kartu kategori */
 .grid-categories,
 .grid-cards {
   display: grid;
@@ -369,7 +341,6 @@
   max-width: var(--max-width, 1100px);
 }
 
-/* Kartu kategori – tampilan sederhana, fokus gambar & overlay */
 .bd-card {
   position: relative;
   border-radius: 16px;
@@ -382,11 +353,7 @@
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
   background: #000;
   transform-origin: center;
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease,
-    opacity 0.6s ease,
-    transform 0.6s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.6s ease, transform 0.6s ease;
 }
 
 .bd-card-img {
@@ -399,17 +366,13 @@
   transition: transform 0.6s ease;
 }
 
-/* Overlay gelap tipis agar teks jelas */
 .bd-card-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg,
-      rgba(0, 0, 0, 0.15),
-      rgba(0, 0, 0, 0.6));
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.6));
   z-index: 1;
 }
 
-/* Isi kartu */
 .bd-card-body {
   position: relative;
   z-index: 2;
@@ -418,7 +381,6 @@
   text-align: left;
 }
 
-/* Badge kategori induk (Budaya) */
 .bd-card-badge {
   display: inline-flex;
   align-items: center;
@@ -445,7 +407,6 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
-/* Link kecil di bagian bawah card */
 .bd-card-link {
   margin-top: 0.7rem;
   font-size: 0.8rem;
@@ -463,7 +424,6 @@
   transition: transform 0.25s ease;
 }
 
-/* Hover card – sedikit naik & zoom gambar */
 .bd-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 16px 30px rgba(0, 0, 0, 0.22);
@@ -477,7 +437,6 @@
   transform: translate(3px, 1px);
 }
 
-/* Variasi animasi kiri / kanan (kelas dari Blade) */
 .bd-card-left {
   transform: translateY(18px);
 }
@@ -486,7 +445,6 @@
   transform: translateY(18px);
 }
 
-/* State kosong jika belum ada sub‑kategori */
 .bd-grid-empty {
   text-align: center;
   padding: 3rem 1.5rem;
@@ -508,15 +466,12 @@
   max-width: 780px;
 }
 
-/* Blok quote kuning lembut di tengah */
 .quote-inner {
   position: relative;
   margin: 0 auto;
   padding: 2rem 2.4rem;
   border-radius: 18px;
-  background: linear-gradient(135deg,
-      rgba(255, 217, 90, 0.95),
-      rgba(255, 237, 160, 0.98));
+  background: linear-gradient(135deg, rgba(255, 217, 90, 0.95), rgba(255, 237, 160, 0.98));
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
   overflow: hidden;
 }
@@ -524,11 +479,8 @@
 .bd-quote-decor {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.4), transparent 55%),
-    radial-gradient(circle at 100% 100%,
-      rgba(251, 191, 36, 0.5),
-      transparent 55%);
+  background: radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.4), transparent 55%),
+    radial-gradient(circle at 100% 100%, rgba(251, 191, 36, 0.5), transparent 55%);
   opacity: 0.6;
   pointer-events: none;
 }
@@ -550,28 +502,22 @@
   color: rgba(142, 86, 44, 0.35);
 }
 
-/* Rotasi kutipan (sesuai script IntersectionObserver di Blade) */
 .q-item {
   position: absolute;
   inset: 0;
   padding-left: 2.1rem;
   opacity: 0;
   transform: translateY(6px);
-  transition:
-    opacity 0.6s ease-out,
-    transform 0.6s ease-out;
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
 }
 
 .q-item.show {
   opacity: 1;
   transform: translateY(0);
-  position: relative;
 }
 
 /* =========================================
    6. SCROLL REVEAL (IntersectionObserver)
-   Script di Blade menambah .in pada:
-   - .card, .bd-hero-text, .bd-intro .container, .quote-inner
    ========================================= */
 
 .bd-hero-text,
@@ -580,9 +526,7 @@
 .bd-card {
   opacity: 0;
   transform: translateY(18px);
-  transition:
-    opacity 0.7s ease-out,
-    transform 0.7s ease-out;
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
 }
 
 .bd-hero-text.in,

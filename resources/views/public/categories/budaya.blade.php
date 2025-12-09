@@ -16,7 +16,7 @@
 
             <div class="hero-content bd-hero-inner">
                 <div class="bd-hero-text">
-                    <p class="bd-hero-eyebrow">Jejak Sayar • Budaya</p>
+                    <p class="bd-hero-eyebrow">Jejak Layar • Budaya</p>
                     <h1>
                         Budaya Melayu <span class="accent">Bengkalis</span>
                     </h1>
@@ -38,6 +38,8 @@
 
                 {{-- Ornament dekoratif (bergerak pelan) --}}
                 <div class="bd-hero-ornament" aria-hidden="true">
+                    <img src="{{ asset('images/LogoJejakLayar.png') }}" alt="Ornament Dekoratif"
+                        class="bd-hero-ornament-img">
                     <svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet">
                         <defs>
                             <linearGradient id="g" x1="0" x2="1">
