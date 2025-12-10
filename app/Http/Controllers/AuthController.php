@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -24,9 +24,13 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255', 
+            'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'g-recaptcha-response' => 'required|captcha',
+        ], [
+            'g-recaptcha-response.required' => 'Silakan verifikasi bahwa Anda bukan robot.',
+            'g-recaptcha-response.captcha' => 'Verifikasi captcha gagal. Silakan coba lagi.',
         ]);
 
         User::create([
@@ -44,7 +48,7 @@ class AuthController extends Controller
     // ---------------------------
     public function showLogin()
     {
-        return view('auth.login'); // resources/views/auth/login.blade.php
+        return view('auth.login');
     }
 
     /**
@@ -52,45 +56,53 @@ class AuthController extends Controller
      * Menolak akun admin di halaman ini (minta pindah ke /team)
      */
     public function loginUser(Request $request)
-{
-    $credentials = $request->validate([
-        'email'    => ['required', 'email'],
-        'password' => ['required'],
-        'g-recaptcha-response' => ['required', 'captcha'], // Validasi reCAPTCHA
-    ]);
-
-    $remember = $request->filled('remember');
-
-    if (! Auth::attempt($credentials, $remember)) {
-        throw ValidationException::withMessages([
-            'email' => ['Email atau password salah.']
+    {
+        $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+            'g-recaptcha-response' => ['required', 'captcha'],
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Password wajib diisi.',
+            'g-recaptcha-response.required' => 'Silakan verifikasi bahwa Anda bukan robot.',
+            'g-recaptcha-response.captcha' => 'Verifikasi captcha gagal. Silakan coba lagi.',
         ]);
+
+        $credentials = $request->only('email', 'password');
+        $remember = $request->filled('remember');
+
+        if (! Auth::attempt($credentials, $remember)) {
+            throw ValidationException::withMessages([
+                'email' => ['Email atau password salah.'],
+            ]);
+        }
+
+        $request->session()->regenerate();
+
+        $userRole = strtolower(optional(Auth::user())->role ?? '');
+
+        // Jika akun admin mencoba masuk lewat form kontributor -> tolak
+        if ($userRole === 'admin') {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()->withErrors([
+                'email' => 'Akun admin tidak dapat login di halaman ini. Silakan gunakan halaman login admin.',
+            ])->onlyInput('email');
+        }
+
+        // Redirect untuk kontributor (atau role lain selain admin)
+        return redirect()->intended(route('kontributor.dashboard'));
     }
 
-    $request->session()->regenerate();
-
-    $userRole = strtolower(optional(Auth::user())->role ?? '');
-
-    // Jika akun admin mencoba masuk lewat form kontributor -> tolak
-    if ($userRole === 'admin') {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return back()->withErrors([
-            'email' => 'Akun admin tidak dapat login di halaman ini. Silakan gunakan halaman login admin.'
-        ])->onlyInput('email');
-    }
-
-    // Redirect untuk kontributor (atau role lain selain admin)
-    return redirect()->intended(route('kontributor.dashboard'));
-}
     // ---------------------------
     // LOGIN ADMIN (FORM /team)
     // ---------------------------
     public function showLoginAdmin()
     {
-        return view('auth.admin_login'); // resources/views/auth/admin_login.blade.php
+        return view('auth.admin_login');
     }
 
     /**
@@ -99,16 +111,24 @@ class AuthController extends Controller
      */
     public function loginAdmin(Request $request)
     {
-        $credentials = $request->validate([
-            'email'    => ['required','email'],
+        $request->validate([
+            'email' => ['required', 'email'],
             'password' => ['required'],
+            'g-recaptcha-response' => ['required', 'captcha'],
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Password wajib diisi.',
+            'g-recaptcha-response.required' => 'Silakan verifikasi bahwa Anda bukan robot.',
+            'g-recaptcha-response.captcha' => 'Verifikasi captcha gagal. Silakan coba lagi.',
         ]);
 
+        $credentials = $request->only('email', 'password');
         $remember = $request->filled('remember');
 
         if (! Auth::attempt($credentials, $remember)) {
             return back()->withErrors([
-                'email' => 'Email atau password salah.'
+                'email' => 'Email atau password salah.',
             ])->onlyInput('email');
         }
 
@@ -117,17 +137,15 @@ class AuthController extends Controller
         $userRole = strtolower(optional(Auth::user())->role ?? '');
 
         if ($userRole !== 'admin') {
-            // jika bukan admin, langsung logout dan tolak akses
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
             return back()->withErrors([
-                'email' => 'Akun Anda tidak memiliki akses admin.'
+                'email' => 'Akun Anda tidak memiliki akses admin.',
             ])->onlyInput('email');
         }
 
-        // sukses: admin diarahkan ke dashboard admin
         return redirect()->intended(route('admin.dashboard'));
     }
 
@@ -153,7 +171,15 @@ class AuthController extends Controller
 
     public function sendResetLink(Request $request)
     {
-        $request->validate(['email' => 'required|email']);
+        $request->validate([
+            'email' => 'required|email',
+            'g-recaptcha-response' => ['required', 'captcha'],
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'g-recaptcha-response.required' => 'Silakan verifikasi bahwa Anda bukan robot.',
+            'g-recaptcha-response.captcha' => 'Verifikasi captcha gagal. Silakan coba lagi.',
+        ]);
 
         $status = Password::sendResetLink($request->only('email'));
 
@@ -172,13 +198,17 @@ class AuthController extends Controller
     public function resetPassword(Request $request)
     {
         $request->validate([
-            'token'                 => 'required',
-            'email'                 => 'required|email',
-            'password'              => 'required|min:8|confirmed',
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:8|confirmed',
+            'g-recaptcha-response' => ['required', 'captcha'],
+        ], [
+            'g-recaptcha-response.required' => 'Silakan verifikasi bahwa Anda bukan robot.',
+            'g-recaptcha-response.captcha' => 'Verifikasi captcha gagal. Silakan coba lagi.',
         ]);
 
         $status = Password::reset(
-            $request->only('email','password','password_confirmation','token'),
+            $request->only('email', 'password', 'password_confirmation', 'token'),
             function (User $user, $password) {
                 $user->forceFill([
                     'password' => Hash::make($password),
