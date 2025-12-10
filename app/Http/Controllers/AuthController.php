@@ -7,9 +7,12 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\InvalidStateException;
 
 class AuthController extends Controller
 {
@@ -51,10 +54,6 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    /**
-     * loginUser - proses login untuk kontributor / user umum
-     * Menolak akun admin di halaman ini (minta pindah ke /team)
-     */
     public function loginUser(Request $request)
     {
         $request->validate([
@@ -82,7 +81,6 @@ class AuthController extends Controller
 
         $userRole = strtolower(optional(Auth::user())->role ?? '');
 
-        // Jika akun admin mencoba masuk lewat form kontributor -> tolak
         if ($userRole === 'admin') {
             Auth::logout();
             $request->session()->invalidate();
@@ -93,7 +91,6 @@ class AuthController extends Controller
             ])->onlyInput('email');
         }
 
-        // Redirect untuk kontributor (atau role lain selain admin)
         return redirect()->intended(route('kontributor.dashboard'));
     }
 
@@ -105,10 +102,6 @@ class AuthController extends Controller
         return view('auth.admin_login');
     }
 
-    /**
-     * loginAdmin - proses login khusus admin
-     * Menolak akun non-admin di halaman ini
-     */
     public function loginAdmin(Request $request)
     {
         $request->validate([
@@ -147,6 +140,118 @@ class AuthController extends Controller
         }
 
         return redirect()->intended(route('admin.dashboard'));
+    }
+
+    // ---------------------------
+    // GOOGLE OAUTH
+    // ---------------------------
+
+    /**
+     * Redirect ke halaman login Google
+     * PENTING: Tidak menggunakan stateless() agar session OAuth berfungsi dengan baik
+     */
+    public function redirectToGoogle()
+    {
+        try {
+            // tambahkan scope jika butuh informasi extra
+            return Socialite::driver('google')->scopes(['openid', 'profile', 'email'])->redirect();
+        } catch (\Exception $e) {
+            Log::error('Google OAuth Redirect Error: '.$e->getMessage(), [
+                'file' => $e->getFile() ?? null,
+                'line' => $e->getLine() ?? null,
+            ]);
+
+            return redirect()->route('login')->withErrors([
+                'email' => 'Terjadi kesalahan saat menghubungkan ke Google. Silakan coba lagi.',
+            ]);
+        }
+    }
+
+    /**
+     * Handle callback dari Google
+     * Menggunakan session normal (bukan stateless) untuk menghindari InvalidStateException
+     */
+    public function handleGoogleCallback(Request $request)
+    {
+        try {
+            // untuk debugging, log query param yg masuk (HATI-HATI: jangan log token/personal data di prod)
+            Log::debug('Google callback query', ['query' => $request->query()]);
+
+            // Dapatkan user dari Google (menggunakan session untuk state verification)
+            $googleUser = Socialite::driver('google')->user();
+
+            // Cek apakah user sudah ada berdasarkan google_id
+            $user = User::where('google_id', $googleUser->getId())->first();
+
+            if (! $user) {
+                // Cek apakah email sudah terdaftar (user existing yang belum link Google)
+                $user = User::where('email', $googleUser->getEmail())->first();
+
+                if ($user) {
+                    // Link akun existing dengan Google
+                    $user->update([
+                        'google_id' => $googleUser->getId(),
+                        'avatar' => $googleUser->getAvatar(),
+                    ]);
+
+                    Log::info('Google account linked to existing user: '.$user->email);
+                } else {
+                    // Buat user baru
+                    $user = User::create([
+                        'name' => $googleUser->getName(),
+                        'email' => $googleUser->getEmail(),
+                        'google_id' => $googleUser->getId(),
+                        'avatar' => $googleUser->getAvatar(),
+                        'password' => null,
+                        'role' => 'kontributor',
+                    ]);
+
+                    Log::info('New user created via Google OAuth: '.$user->email);
+                }
+            } else {
+                if ($user->avatar !== $googleUser->getAvatar()) {
+                    $user->update(['avatar' => $googleUser->getAvatar()]);
+                }
+            }
+
+            if (strtolower($user->role) === 'admin') {
+                Log::warning('Admin attempted to login via Google: '.$user->email);
+
+                return redirect()->route('login')->withErrors([
+                    'email' => 'Akun admin tidak dapat login menggunakan Google. Silakan gunakan halaman login admin.',
+                ]);
+            }
+
+            // Login user dengan remember me aktif
+            Auth::login($user, true);
+            Log::info('User logged in via Google: '.$user->email);
+
+            return redirect()->intended(route('kontributor.dashboard'));
+
+        } catch (InvalidStateException $e) {
+            // Error ini terjadi jika state OAuth tidak cocok (session expired atau cookie/session bermasalah)
+            Log::error('Google OAuth Invalid State: '.$e->getMessage(), ['request' => $request->all()]);
+
+            return redirect()->route('login')->withErrors([
+                'email' => 'Sesi login Google telah kedaluwarsa atau tidak valid. Silakan coba lagi.',
+            ]);
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            Log::error('Google OAuth Client Error: '.$e->getMessage());
+
+            return redirect()->route('login')->withErrors([
+                'email' => 'Gagal mengambil data dari Google. Silakan coba lagi atau hubungi administrator.',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Google OAuth General Error: '.$e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->route('login')->withErrors([
+                'email' => 'Terjadi kesalahan saat login dengan Google. Silakan coba lagi atau gunakan login biasa.',
+            ]);
+        }
     }
 
     // ---------------------------

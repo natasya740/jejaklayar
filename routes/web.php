@@ -29,23 +29,13 @@ use Illuminate\Support\Facades\Route;
 | Halaman Umum (Publik) - Tanpa Login
 |--------------------------------------------------------------------------
 */
-
-// Homepage dengan Circular Gallery
-Route::get('/', [HomeController::class, 'index'])->name('home'); 
-
-// Search
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/search', [SearchController::class, 'index'])->name('search');
-
-// Halaman Statis
 Route::get('/budaya', [BudayaController::class, 'index'])->name('budaya');
 Route::get('/pustaka', [PustakaController::class, 'index'])->name('pustaka');
 Route::get('/tentang', [TentangController::class, 'index'])->name('tentang');
-
-// FAQ & Panduan
 Route::get('/faq', [HelpController::class, 'faq'])->name('faq');
 Route::get('/panduan', [HelpController::class, 'panduan'])->name('panduan');
-
-// Kategori & Artikel Publik
 Route::get('/kategori/{slug}', [PublicController::class, 'category'])->name('category.show');
 Route::get('/kategori/{categorySlug}/{subCategorySlug}', [PublicController::class, 'subCategory'])->name('subcategory.show');
 Route::get('/kategori/{categorySlug}/{subCategorySlug}/{articleSlug}', [PublicController::class, 'article'])->name('article.show');
@@ -55,7 +45,6 @@ Route::get('/kategori/{categorySlug}/{subCategorySlug}/{articleSlug}', [PublicCo
 | Autentikasi - Login, Register, Logout
 |--------------------------------------------------------------------------
 */
-
 // Login User Biasa
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'loginUser'])->name('login.post');
@@ -79,10 +68,18 @@ Route::post('/team', [AuthController::class, 'loginAdmin'])->name('login.admin.p
 
 /*
 |--------------------------------------------------------------------------
+| Google OAuth Routes (single declaration)
+|--------------------------------------------------------------------------
+| Pastikan route ini hanya ada satu kali dan methodnya GET.
+*/
+Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+
+/*
+|--------------------------------------------------------------------------
 | Dashboard User Umum (Setelah Login)
 |--------------------------------------------------------------------------
 */
-
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'home'])->name('dashboard');
 });
@@ -92,20 +89,12 @@ Route::middleware('auth')->group(function () {
 | Kontributor Area
 |--------------------------------------------------------------------------
 */
-
 Route::middleware(['auth', 'checkrole:kontributor'])
     ->prefix('kontributor')
     ->name('kontributor.')
     ->group(function () {
-
-        // Dashboard Kontributor
         Route::get('/dashboard', [KontributorDashboardController::class, 'index'])->name('dashboard');
 
-        /*
-        |--------------------------------------------------------------------------
-        | Profil Kontributor
-        |--------------------------------------------------------------------------
-        */
         Route::prefix('profil')->name('profil.')->group(function () {
             Route::get('/', [ProfileController::class, 'index'])->name('index');
             Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
@@ -113,29 +102,14 @@ Route::middleware(['auth', 'checkrole:kontributor'])
             Route::delete('/avatar', [ProfileController::class, 'deleteAvatar'])->name('delete-avatar');
         });
 
-        // Shortcut route untuk profil (backward compatibility)
         Route::get('/profil', [ProfileController::class, 'index'])->name('profil');
 
-        /*
-        |--------------------------------------------------------------------------
-        | Artikel Kontributor
-        |--------------------------------------------------------------------------
-        */
         Route::prefix('articles')->name('articles.')->group(function () {
-            // List artikel
             Route::get('/', [KontributorArticleController::class, 'index'])->name('index');
-
-            // Create artikel
             Route::get('/create', [KontributorArticleController::class, 'create'])->name('create');
             Route::post('/', [KontributorArticleController::class, 'store'])->name('store');
-
-            // Upload image untuk CKEditor
             Route::post('/upload-image', [KontributorArticleController::class, 'uploadImage'])->name('upload-image');
-
-            // Get subcategories by category (AJAX)
             Route::get('/subcategories', [KontributorArticleController::class, 'getSubCategories'])->name('subcategories');
-
-            // Show, Edit, Update, Delete artikel
             Route::get('/{article}', [KontributorArticleController::class, 'show'])->name('show');
             Route::get('/{article}/edit', [KontributorArticleController::class, 'edit'])->name('edit');
             Route::put('/{article}', [KontributorArticleController::class, 'update'])->name('update');
@@ -148,102 +122,33 @@ Route::middleware(['auth', 'checkrole:kontributor'])
 | Admin Area
 |--------------------------------------------------------------------------
 */
-
 Route::middleware(['auth', 'checkrole:admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-
-        // Dashboard Admin
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-
-        /*
-        |--------------------------------------------------------------------------
-        | Categories Management
-        |--------------------------------------------------------------------------
-        */
         Route::resource('categories', CategoryController::class);
-
-        /*
-        |--------------------------------------------------------------------------
-        | Sub Categories Management
-        |--------------------------------------------------------------------------
-        */
         Route::resource('sub-categories', SubCategoryController::class);
         Route::get('sub-categories-by-category/{category}', [SubCategoryController::class, 'getByCategory'])
             ->name('sub-categories.by-category');
-
-        /*
-        |--------------------------------------------------------------------------
-        | Articles Management (Admin)
-        |--------------------------------------------------------------------------
-        */
         Route::resource('articles', ArticleController::class);
-
-        // CKEditor Image Upload untuk Articles
         Route::post('articles/upload-image', [ArticleController::class, 'uploadImage'])
             ->name('articles.uploadImage');
-
-        /*
-        |--------------------------------------------------------------------------
-        | Validasi Artikel dari Kontributor
-        |--------------------------------------------------------------------------
-        */
         Route::prefix('artikel')->name('artikel.')->group(function () {
-            // Halaman daftar artikel pending
             Route::get('/pending', [AdminController::class, 'pendingArtikel'])->name('pending');
-
-            // Halaman review artikel
             Route::get('/{artikel}/review', [AdminController::class, 'reviewArtikel'])->name('review');
-
-            // Approve artikel (POST method)
             Route::post('/{artikel}/approve', [AdminController::class, 'approveArtikel'])->name('approve');
-
-            // Reject artikel (POST method)
             Route::post('/{artikel}/reject', [AdminController::class, 'rejectArtikel'])->name('reject');
         });
-
-        /*
-        |--------------------------------------------------------------------------
-        | User Management (CRUD)
-        |--------------------------------------------------------------------------
-        */
         Route::resource('users', UserController::class)->except(['show']);
-
-        // Toggle aktif/nonaktif user
-        Route::post('users/{user}/toggle', [UserController::class, 'toggle'])
-            ->name('users.toggle');
-
-        /*
-        |--------------------------------------------------------------------------
-        | Media Manager
-        |--------------------------------------------------------------------------
-        */
+        Route::post('users/{user}/toggle', [UserController::class, 'toggle'])->name('users.toggle');
         Route::prefix('media')->name('media.')->group(function () {
             Route::get('/', [AdminMediaController::class, 'index'])->name('index');
             Route::post('/upload', [AdminMediaController::class, 'upload'])->name('upload');
             Route::delete('/{media}', [AdminMediaController::class, 'destroy'])->name('destroy');
         });
-
-        /*
-        |--------------------------------------------------------------------------
-        | Pages (Halaman Statis)
-        |--------------------------------------------------------------------------
-        */
         Route::resource('pages', AdminPageController::class)->except(['show']);
-
-        /*
-        |--------------------------------------------------------------------------
-        | Audit Log
-        |--------------------------------------------------------------------------
-        */
         Route::get('/audit', [AuditController::class, 'index'])->name('audit.index');
-
-        /*
-        |--------------------------------------------------------------------------
-        | System Logs
-        |--------------------------------------------------------------------------
-        */
         Route::get('/logs', [AdminController::class, 'logs'])->name('logs.index');
     });
 
@@ -252,9 +157,7 @@ Route::middleware(['auth', 'checkrole:admin'])
 | API Helper Routes
 |--------------------------------------------------------------------------
 */
-
 Route::prefix('api')->name('api.')->group(function () {
-    // Get subkategori berdasarkan kategori
     Route::get('/kategori/{kategori}/subkategori', [KategoriController::class, 'getSubKategori'])
         ->name('subkategori')
         ->where('kategori', '[A-Za-z0-9\-\_]+');
